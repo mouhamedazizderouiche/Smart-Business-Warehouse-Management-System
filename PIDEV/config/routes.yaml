@@ -1,5 +1,12 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+# config/routes.yaml
+home:
+    path: /
+    controller: App\Controller\HomePageController::home
+
+app_loginpage:
+    path: /login
+    controller: App\Controller\LoginPageController::index
+
+produit:
+    path: /produit
+    controller: App\Controller\HomePageController::produit
