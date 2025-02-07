@@ -10,3 +10,53 @@ app_loginpage:
 produit:
     path: /produit
     controller: App\Controller\HomePageController::produit
+
+reclamation_index:
+    path: /reclamation
+    controller: App\Controller\ReclamationController::index
+    methods: GET
+
+reclamation_new:
+    path: /reclamation/new
+    controller: App\Controller\ReclamationController::new
+    methods: [GET, POST]
+
+reclamation_show:
+    path: /reclamation/{id}
+    controller: App\Controller\ReclamationController::show
+    methods: GET
+
+reclamation_edit:
+    path: /reclamation/{id}/edit
+    controller: App\Controller\ReclamationController::edit
+    methods: [GET, POST]
+
+reclamation_delete:
+    path: /reclamation/{id}/delete
+    controller: App\Controller\ReclamationController::delete
+    methods: POST
+
+message_reclamation_index:
+    path: /message-reclamation
+    controller: App\Controller\MessageReclamationController::index
+    methods: GET
+
+message_reclamation_new:
+    path: /message-reclamation/{reclamationId}/new
+    controller: App\Controller\MessageReclamationController::new
+    methods: [GET, POST]
+
+message_reclamation_show:
+    path: /message-reclamation/{id}
+    controller: App\Controller\MessageReclamationController::show
+    methods: GET
+
+message_reclamation_edit:
+    path: /message-reclamation/{id}/edit
+    controller: App\Controller\MessageReclamationController::edit
+    methods: [GET, POST]
+
+message_reclamation_delete:
+    path: /message-reclamation/{id}/delete
+    controller: App\Controller\MessageReclamationController::delete
+    methods: POST

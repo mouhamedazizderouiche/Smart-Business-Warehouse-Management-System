@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Message Reclamation{% endblock %}
+
+{% block body %}
+    <h1>Edit Message Reclamation</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.contenu) }}
+        {{ form_row(form.dateMessage) }}
+        {{ form_row(form.reclamation) }}
+
+       
+    {{ form_end(form) }}
+
+    <a href="{{ path('message_reclamation_index') }}">Back to List</a>
+{% endblock %}

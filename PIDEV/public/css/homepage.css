@@ -117,4 +117,107 @@ a{
     color: #000;
 }
 
+.agriplanner-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 4px 20px;
+    background-color: #fff; 
+    border-bottom: 1px solid #ddd;
+}
 
+.logo-agriplanner {
+    height: 40px;
+    flex: 1; 
+}
+
+.logo-agriplanner img {
+    height: 100%;
+}
+
+.nav-links {
+    flex: 2; 
+    display: flex;
+    justify-content: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+}
+
+ul li {
+    color: #000;
+    font-size: 18px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #000;
+    padding: 10px;
+}
+
+ul li a:hover {
+    color: #7AAE49;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropbtn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #000;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 180px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border: 1px solid #ddd;
+}
+
+.dropdown-content a {
+    color: #000;
+    padding: 10px;
+    display: block;
+    font-size: 16px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f9f9f9;
+    color: #7AAE49;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.login-buttons {
+    background-color: #000;
+    width: 40%; 
+    height: 40px;  
+    border-radius: 8px;
+    font-size: 16px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex: 1;
+    text-align: right;
+}

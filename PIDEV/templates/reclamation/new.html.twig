@@ -1,0 +1,34 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Agriplanner</title>
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+</head>
+
+{% include 'navbar/navbar.html.twig' %}
+
+{% block body %}
+<div class="reclamation-container">
+    <h1>Submit a Reclamation</h1>
+    <p>We value your feedback. Please describe your concern below.</p>
+
+    {{ form_start(form) }}
+
+    <div class="form-group">
+        <label for="{{ form.dateReclamation.vars.id }}">Date of Reclamation:</label>
+        {{ form_widget(form.dateReclamation) }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.description.vars.id }}">Describe Your Reclamation: <span class="required">*</span></label>
+        {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
+        <p class="error-message">{{ form_errors(form.description) }}</p>
+    </div>
+
+    <div class="form-group">
+        {{ form_widget(form.save, {'attr': {'class': 'submit-button'}}) }}
+    </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

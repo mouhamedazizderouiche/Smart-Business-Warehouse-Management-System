@@ -1,0 +1,39 @@
+{% block title %}Message Reclamations{% endblock %}
+
+{% block body %}
+    <h1>Message Reclamations</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Contenu</th>
+                <th>Date Message</th>
+                <th>Reclamation</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for messageReclamation in message_reclamations %}
+                <tr>
+                    <td>{{ messageReclamation.contenu }}</td>
+                    <td>{{ messageReclamation.dateMessage|date('Y-m-d H:i') }}</td>
+                    <td>{{ messageReclamation.reclamation.id }}</td>
+                    <td>
+                        <a href="{{ path('message_reclamation_show', {'id': messageReclamation.id}) }}">Show</a>
+                        <a href="{{ path('message_reclamation_edit', {'id': messageReclamation.id}) }}">Edit</a>
+                        <form action="{{ path('message_reclamation_delete', {'id': messageReclamation.id}) }}" method="post" style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ messageReclamation.id) }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">No message reclamations found</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('message_reclamation_new') }}">Create New Message Reclamation</a>
+{% endblock %}

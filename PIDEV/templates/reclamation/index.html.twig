@@ -1,0 +1,39 @@
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+{% endblock %}
+
+{% block body %}
+
+    {% include 'navbar/navbar.html.twig' %}
+
+    <div class="homepage-content">
+        <div class="hero-text">
+            <span>Reclamations :</span> Gérez vos réclamations efficacement.
+        </div>
+
+        <div class="app-description">
+            Consultez et gérez vos réclamations. Vous pouvez ajouter une nouvelle réclamation, voir les détails, ou modifier celles existantes.
+        </div>
+
+        <div class="homepage-buttons">
+            <a href="{{ path('reclamation_new') }}" class="sign-up-button">Créer une réclamation</a>
+        </div>
+
+        <div class="reclamation-list">
+            <h2>Liste des Réclamations</h2>
+            <ul>
+                {% for reclamation in reclamations %}
+                    <li>
+                        <a href="{{ path('reclamation_show', {'id': reclamation.id}) }}">
+                            {{ reclamation.description }} ({{ reclamation.dateReclamation|date('Y-m-d H:i') }})
+                        </a>
+                        <a href="{{ path('message_reclamation_new', {'reclamationId': reclamation.id}) }}" class="comment-button">Commenter sur cette réclamation</a>
+                    </li>
+                {% else %}
+                    <p>Aucune réclamation disponible.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reclamation Details{% endblock %}
+
+{% block body %}
+    <h1>Reclamation Details</h1>
+    <p><strong>Description:</strong> {{ reclamation.description }}</p>
+    <p><strong>Date:</strong> {{ reclamation.dateReclamation|date('Y-m-d H:i') }}</p>
+    <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}">Edit</a>
+    <form method="post" action="{{ path('reclamation_delete', {'id': reclamation.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+        <button type="submit">Delete</button>
+    </form>
+{% endblock %}
