@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use StatutReclamation;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ReclamationsRepository::class)]
 #[ORM\HasLifecycleCallbacks] 
 class Reclamations
@@ -21,6 +21,11 @@ class Reclamations
     private ?\DateTimeInterface $dateReclamation = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "The content cannot be empty.")]
+    #[Assert\Regex(
+        pattern: "/^\S+\s+\S+.*$/",
+        message: "The content must contain at least two words."
+    )]
     private ?string $description = null;
 
     #[ORM\Column(enumType: StatutReclamation::class)]

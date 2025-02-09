@@ -14,7 +14,7 @@ produit:
 message_reclamation_index:
     path: /message-reclamation/view/{id}
     controller: App\Controller\MessageReclamationController::index
-    methods: GET
+    methods: [GET, POST]
 
 reclamation_new:
     path: /reclamation/new
@@ -52,14 +52,15 @@ message_reclamation_show:
     methods: GET
 
 message_reclamation_edit:
-    path: /message-reclamation/{id}/edit
-    controller: App\Controller\MessageReclamationController::edit
+    path: /message/{id}/edit
+    controller: App\Controller\MessageReclamationController::editMessage
     methods: [GET, POST]
 
 message_reclamation_delete:
-    path: /message-reclamation/{id}/delete
-    controller: App\Controller\MessageReclamationController::delete
-    methods: POST
+    path: /message/{id}
+    controller: App\Controller\MessageReclamationController::deleteMessage
+    methods: [POST]
+
 
 message_add:
     path: /message-reclamation/add

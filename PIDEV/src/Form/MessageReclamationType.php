@@ -15,18 +15,15 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 class MessageReclamationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
-{
-    $builder
-        ->add('contenu', TextareaType::class, [
-            'label' => 'Your Message',
-            'attr' => ['placeholder' => 'Type your message here...'],
-        ])
-        ->add('save', SubmitType::class, [
-            'label' => 'Send Message',
-        ]);
-        
-        
-}
+    {
+        $builder
+            ->add('contenu', TextareaType::class)
+            ->add('save', SubmitType::class, [
+                'label' => 'Send Message',
+            ]);
+            
+            
+    }
 
     public function configureOptions(OptionsResolver $resolver)
     {

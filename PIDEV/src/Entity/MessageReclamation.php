@@ -6,6 +6,7 @@ use App\Repository\MessageReclamationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MessageReclamationRepository::class)]
 #[ORM\HasLifecycleCallbacks] 
@@ -16,6 +17,7 @@ class MessageReclamation
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "The content cannot be empty.")]
     private ?string $contenu = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
