@@ -1,14 +1,170 @@
-{% extends 'base.html.twig' %}
+{% include 'navbar/navbar.html.twig' %}
 
-{% block title %}Reclamation Details{% endblock %}
+<div class="page-wrapper">
+    <div class="content-container">
+        <!-- Main Content -->
+        <div class="main-container">
+            <h2 class="header">Reclamation Discussions</h2>
 
-{% block body %}
-    <h1>Reclamation Details</h1>
-    <p><strong>Description:</strong> {{ reclamation.description }}</p>
-    <p><strong>Date:</strong> {{ reclamation.dateReclamation|date('Y-m-d H:i') }}</p>
-    <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}">Edit</a>
-    <form method="post" action="{{ path('reclamation_delete', {'id': reclamation.id}) }}">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
-        <button type="submit">Delete</button>
-    </form>
-{% endblock %}
+            {% if reclamations is empty %}
+                <p class="no-reclamations">No reclamations available.</p>
+            {% else %}
+                <div class="reclamations-container">
+                    {% for reclamation in reclamations %}
+                        <a href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}" class="reclamation-item">
+                            <div class="reclamation-content">
+                                <p class="reclamation-text">{{ reclamation.description }}</p>
+                                <p class="reclamation-date">Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="search-section">
+                <input type="text" class="search-bar" placeholder="Search reclamations...">
+                <button class="search-btn">🔍</button>
+            </div>
+            <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_new') }}'">
+                Start a New Reclamation
+            </button>
+            <button class="btn subscribe-btn">Subscribe to Forum</button>
+            <p class="subscribe-text">
+                Subscribe to be notified whenever new reclamations are created in this forum.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Global Styles */
+    body {
+        background-color: #ffffff;
+        color: #333;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .page-wrapper {
+        padding: 20px;
+    }
+
+    /* Layout */
+    .content-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    .main-container {
+        width: 70%;
+    }
+    .sidebar {
+        width: 25%;
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Header and No Content Message */
+    .header {
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: #6C983B; /* Green accent */
+        border-bottom: 2px solid #EEC044; /* Yellow accent */
+        padding-bottom: 10px;
+    }
+    .no-reclamations {
+        font-size: 18px;
+        color: #ff5555;
+        padding: 10px;
+    }
+
+    /* Reclamation Items */
+    .reclamations-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .reclamation-item {
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid #7AAE49; /* Green accent */
+        box-shadow: 0 2px 5px rgba(122, 174, 73, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-decoration: none; /* Remove underline */
+        display: block;      /* Make the anchor a block element */
+        color: inherit;      /* Inherit the text color */
+    }
+    .reclamation-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(122, 174, 73, 0.3);
+    }
+    .reclamation-text {
+        font-size: 16px;
+        margin: 0 0 10px;
+        font-weight: bold;
+        color: #333;
+    }
+    .reclamation-date {
+        font-size: 12px;
+        color: #666;
+        margin: 0;
+    }
+
+    /* Sidebar: Search and Buttons */
+    .search-section {
+        display: flex;
+        gap: 5px;
+    }
+    .search-bar {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #7AAE49;
+        border-radius: 4px;
+        background-color: #ffffff;
+        color: #333;
+    }
+    .search-btn {
+        background-color: #7AAE49;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        color: #ffffff;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        text-decoration: none;
+    }
+    .add-reclamation-btn {
+        background-color: #7AAE49;
+        color: #ffffff;
+    }
+    .subscribe-btn {
+        background-color: #6C983B;
+        color: #ffffff;
+    }
+    .subscribe-text {
+        font-size: 12px;
+        margin-top: 10px;
+        color: #333;
+    }
+</style>

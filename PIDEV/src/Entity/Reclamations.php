@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\ReclamationsRepository;
@@ -7,15 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use StatutReclamation;
 
 #[ORM\Entity(repositoryClass: ReclamationsRepository::class)]
+#[ORM\HasLifecycleCallbacks] 
 class Reclamations
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: "uuid")]
+    private ?Uuid $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateReclamation = null;
@@ -30,8 +30,6 @@ class Reclamations
      * @var Collection<int, MessageReclamation>
      */
     #[ORM\OneToMany(targetEntity: MessageReclamation::class, mappedBy: 'reclamation')]
-
-
     private Collection $reclamations;
 
     public function __construct()
@@ -40,21 +38,33 @@ class Reclamations
         $this->statut = StatutReclamation::EN_ATTENTE;
     }
 
-    public function getId(): ?int
+    #[ORM\PrePersist] 
+    public function generateUuid(): void
+    {
+        if ($this->id === null) {
+            $this->id = Uuid::v4();  
+        }
+    }
+
+    public function getId(): ?Uuid
     {
         return $this->id;
+    }
+
+    public function setId(Uuid $id): static
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getDateReclamation(): ?\DateTimeInterface
     {
         return $this->dateReclamation;
     }
-    
 
     public function setDateReclamation(\DateTimeInterface $dateReclamation): static
     {
         $this->dateReclamation = $dateReclamation;
-
         return $this;
     }
 
@@ -66,9 +76,9 @@ class Reclamations
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
+
     public function getStatut(): StatutReclamation
     {
         return $this->statut;
@@ -79,9 +89,6 @@ class Reclamations
         $this->statut = $statut;
     }
 
-    /**
-     * @return Collection<int, MessageReclamation>
-     */
     public function getReclamations(): Collection
     {
         return $this->reclamations;
@@ -93,23 +100,21 @@ class Reclamations
             $this->reclamations->add($reclamation);
             $reclamation->setReclamation($this);
         }
-
         return $this;
     }
 
     public function removeReclamation(MessageReclamation $reclamation): static
     {
         if ($this->reclamations->removeElement($reclamation)) {
-            // set the owning side to null (unless already changed)
             if ($reclamation->getReclamation() === $this) {
                 $reclamation->setReclamation(null);
             }
         }
-
         return $this;
     }
+
     public function __toString(): string
     {
-        return $this->description; 
+        return $this->description;
     }
 }

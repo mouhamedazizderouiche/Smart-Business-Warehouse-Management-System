@@ -1,24 +1,18 @@
+{# templates/message_reclamation/show.html.twig #}
+
 {% extends 'base.html.twig' %}
 
-{% block title %}Message Reclamation{% endblock %}
+{% block title %}Message Reclamation Details{% endblock %}
 
 {% block body %}
-    <h1>Message Reclamation Details</h1>
+    <div class="message-reclamation-container">
+        <h1>Message Reclamation Details</h1>
 
-    <table>
-        <tr>
-            <th>Contenu</th>
-            <td>{{ message_reclamation.contenu }}</td>
-        </tr>
-        <tr>
-            <th>Date Message</th>
-            <td>{{ message_reclamation.dateMessage|date('Y-m-d H:i') }}</td>
-        </tr>
-        <tr>
-            <th>Reclamation</th>
-            <td>{{ message_reclamation.reclamation.id }}</td>
-        </tr>
-    </table>
+        <p><strong>ID:</strong> {{ messageReclamation.id }}</p>
+        <p><strong>Content:</strong> {{ messageReclamation.contenu }}</p>
+        <p><strong>Date of Message:</strong> {{ messageReclamation.dateMessage|date('Y-m-d H:i:s') }}</p>
+        <p><strong>Reclamation ID:</strong> {{ messageReclamation.reclamation.id }}</p>
 
-    <a href="{{ path('message_reclamation_index') }}">Back to List</a>
+        <a href="{{ path('message_reclamation_index') }}">Back to List</a>
+    </div>
 {% endblock %}

@@ -15,34 +15,74 @@ use App\Entity\Reclamations;
 
 class MessageReclamationController extends AbstractController
 {
-    /**
-     * @Route("/message-reclamation", name="message_reclamation_index")
-     */
-    public function index(MessageReclamationRepository $messageReclamationRepository): Response
+     #[Route('/view/{id?}', name:'message_reclamation_index', methods:['GET', 'POST'])]
+
+    public function index(Request $request, EntityManagerInterface $em, ?string $id = null): Response
     {
-        
-        $messageReclamations = $messageReclamationRepository->findAll();
+        $reclamations = $em->getRepository(Reclamations::class)->findAll();
+        $reclamationMessages = [];
+        foreach ($reclamations as $reclamation) {
+            $messages = $em->getRepository(MessageReclamation::class)
+                ->findBy(['reclamation' => $reclamation]);
+            $reclamationMessages[(string) $reclamation->getId()] = $messages;
+        }
+
+        $selectedReclamation = $id 
+            ? $em->getRepository(Reclamations::class)->find($id) 
+            : (!empty($reclamations) ? $reclamations[0] : null);
+        $messageReclamation = new MessageReclamation();
+        if ($selectedReclamation) {
+            $messageReclamation->setReclamation($selectedReclamation);
+            $messageReclamation->setDateMessage(new \DateTime());
+        }
+        $form = $this->createForm(MessageReclamationType::class, $messageReclamation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($messageReclamation);
+            $em->flush();
+            return $this->redirectToRoute('message_reclamation_index', ['id' => $selectedReclamation ? $selectedReclamation->getId() : null]);
+        }
 
         return $this->render('message_reclamation/index.html.twig', [
-            'message_reclamations' => $messageReclamations,
+            'reclamations' => $reclamations,
+            'reclamationMessages' => $reclamationMessages,
+            'selectedReclamation' => $selectedReclamation,
+            'form' => $form->createView(),
         ]);
     }
 
-    /**
-     * @Route("/message-reclamation/{id}", name="message_reclamation_show", requirements={"id"="\d+"})
-     */
-    public function show(MessageReclamation $messageReclamation): Response
-    {
-        return $this->render('message_reclamation/show.html.twig', [
-            'message_reclamation' => $messageReclamation,
-        ]);
-    }
 
-    /**
-     * @Route("/message-reclamation/{reclamationId}/new", name="message_reclamation_new", methods={"GET", "POST"})
-     */
+    // #[Route('/view/{id?}', name: 'message_reclamation_index', methods: ['GET'])]
+    // public function index(EntityManagerInterface $em, ?string $id = null): Response
+    // {
+    //     // Get all reclamations
+    //     $reclamations = $em->getRepository(Reclamations::class)->findAll();
 
-    public function new(Request $request, EntityManagerInterface $em, int $reclamationId): Response
+    //     // Build an array mapping reclamation IDs (as strings) to their messages
+    //     $reclamationMessages = [];
+    //     foreach ($reclamations as $reclamation) {
+    //         $messages = $em->getRepository(MessageReclamation::class)
+    //             ->findBy(['reclamation' => $reclamation]);
+    //         $reclamationMessages[(string) $reclamation->getId()] = $messages;
+    //     }
+
+    //     $selectedReclamation = $id 
+    //         ? $em->getRepository(Reclamations::class)->find($id) 
+    //         : (!empty($reclamations) ? $reclamations[0] : null);
+
+    //     return $this->render('message_reclamation/index.html.twig', [
+    //         'reclamations'         => $reclamations,
+    //         'reclamationMessages'  => $reclamationMessages,
+    //         'selectedReclamation'  => $selectedReclamation,
+    //     ]);
+    // }
+
+
+    #[Route("/message-reclamation/{reclamationId}/new", name:"message_reclamation_new", methods:["GET", "POST"])]
+
+
+    public function new(Request $request, EntityManagerInterface $em, string $reclamationId): Response
     {
         $reclamation = $em->getRepository(Reclamations::class)->find($reclamationId);
     
@@ -52,6 +92,7 @@ class MessageReclamationController extends AbstractController
     
         $messageReclamation = new MessageReclamation();
         $messageReclamation->setReclamation($reclamation);
+        $messageReclamation->setDateMessage(new \DateTime());
     
         $form = $this->createForm(MessageReclamationType::class, $messageReclamation);
     
@@ -64,7 +105,7 @@ class MessageReclamationController extends AbstractController
             return $this->redirectToRoute('message_reclamation_index');
         }
     
-        return $this->render('message_reclamation/new.html.twig', [
+        return $this->render('message_reclamation/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -101,4 +142,7 @@ class MessageReclamationController extends AbstractController
 
         return $this->redirectToRoute('message_reclamation_index');
     }
+
+
+
 }

@@ -10,20 +10,22 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 class MessageReclamationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
 {
     $builder
-        ->add('contenu', TextareaType::class)
-        ->add('dateMessage', DateTimeType::class)
-        ->add('reclamation', EntityType::class, [
-            'class' => Reclamations::class,
-            'choice_label' => 'description',
-            'disabled' => true, 
-            'data' => $options['data']->getReclamation(), 
+        ->add('contenu', TextareaType::class, [
+            'label' => 'Your Message',
+            'attr' => ['placeholder' => 'Type your message here...'],
+        ])
+        ->add('save', SubmitType::class, [
+            'label' => 'Send Message',
         ]);
+        
+        
 }
 
     public function configureOptions(OptionsResolver $resolver)

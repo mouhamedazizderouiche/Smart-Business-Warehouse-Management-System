@@ -1,43 +1,27 @@
-<!DOCTYPE html>
-<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - Agriplanner</title>
     <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
-    <style>
-        
 </head>
-<body>
+
 
 <div class="agriplanner-navbar">
-    <!-- Logo -->
     <div class="logo-agriplanner">
         <img src="{{ asset('images/logo.png') }}" alt="Logo">
     </div>
-
-    <!-- Navigation Links (Centered) -->
     <div class="nav-links">
-        <ul>
-            <li><a href="{{ path('home') }}">Accueil</a></li>
-            <li><a href="{{ path('produit') }}">Produit</a></li>
-            <li class="dropdown">
-                <button class="dropbtn">Réclamation</button>
-                <div class="dropdown-content">
-                    <a href="{{ path('reclamation_index') }}">Consulter Réclamation</a>
-                    <a href="{{ path('reclamation_new') }}">Envoyer Réclamation</a>
-                </div>
-            </li>
-            <li><a href="#">Evenement</a></li>
-            <li><a href="#">Stock</a></li>
-        </ul>
-    </div>
-
-    <!-- Login Button (Right Side) -->
-    <div class="login-buttons" id="loginDiv" data-login-url="{{ path('app_loginpage') }}">
-        Se connecter
+        <div>
+            <ul>
+                <li><a href="{{ path('home') }}">Accueil</a></li>
+                <li><a href="{{ path('produit') }}">Produit</a></li>
+                <li>Services</li>
+                <li>Comment ça fonctionne?</li>
+                <li>Questions et réponses</li>
+            </ul>
+        </div>
+        <div class="login-buttons" id="loginDiv" data-login-url="{{ path('app_loginpage') }}">
+            Se connecter
+        </div>
     </div>
 </div>
-
-</body>
-</html>

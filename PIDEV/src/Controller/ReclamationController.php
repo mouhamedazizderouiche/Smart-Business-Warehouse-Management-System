@@ -10,22 +10,43 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Entity\MessageReclamation;
+use App\Form\MessageReclamationType;
 #[Route('/reclamation')]
 class ReclamationController extends AbstractController
 {
-    #[Route('/', name: 'reclamation_index', methods: ['GET'])]
-    public function index(ReclamationsRepository $reclamationsRepository): Response
+    #[Route('/view/{id?}', name: 'reclamation_index', methods: ['GET'])]
+    public function index(EntityManagerInterface $em, ?string $id = null): Response
     {
+        // Get all reclamations
+        $reclamations = $em->getRepository(Reclamations::class)->findAll();
+
+        // Build an array mapping reclamation IDs (as strings) to their messages
+        $reclamationMessages = [];
+        foreach ($reclamations as $reclamation) {
+            $messages = $em->getRepository(MessageReclamation::class)
+                ->findBy(['reclamation' => $reclamation]);
+            $reclamationMessages[(string) $reclamation->getId()] = $messages;
+        }
+
+        $selectedReclamation = $id 
+            ? $em->getRepository(Reclamations::class)->find($id) 
+            : (!empty($reclamations) ? $reclamations[0] : null);
+
         return $this->render('reclamation/index.html.twig', [
-            'reclamations' => $reclamationsRepository->findAll(),
+            'reclamations'         => $reclamations,
+            'reclamationMessages'  => $reclamationMessages,
+            'selectedReclamation'  => $selectedReclamation,
         ]);
     }
+
+
 
     #[Route('/new', name: 'reclamation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $reclamation = new Reclamations();
+        
         $form = $this->createForm(ReclamationsType::class, $reclamation);
         $form->handleRequest($request);
 
@@ -33,7 +54,7 @@ class ReclamationController extends AbstractController
             $entityManager->persist($reclamation);
             $entityManager->flush();
 
-            return $this->redirectToRoute('reclamation_index');
+            return $this->redirectToRoute('reclamation_show');
         }
 
         return $this->render('reclamation/new.html.twig', [
@@ -42,11 +63,14 @@ class ReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'reclamation_show', methods: ['GET'])]
-    public function show(Reclamations $reclamation): Response
+    #[Route('/', name: 'reclamation_show', methods: ['GET'])]
+    public function show(EntityManagerInterface $em): Response
     {
+       
+        $reclamations = $em->getRepository(Reclamations::class)->findAll();
+
         return $this->render('reclamation/show.html.twig', [
-            'reclamation' => $reclamation,
+            'reclamations' => $reclamations,
         ]);
     }
 
@@ -78,4 +102,34 @@ class ReclamationController extends AbstractController
 
         return $this->redirectToRoute('reclamation_index');
     }
+
+    #[Route('/add/{reclamationId}', name: 'reclamation_add', methods: ['GET', 'POST'])]
+    public function add(Request $request, EntityManagerInterface $entityManager, string $reclamationId): Response
+    {
+        $reclamation = $entityManager->getRepository(Reclamations::class)->find($reclamationId);
+        if (!$reclamation) {
+            throw $this->createNotFoundException('Reclamation not found.');
+        }
+
+        $form = $this->createForm(MessageReclamationType::class); 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $message = $form->getData();
+            $message->setDateMessage(new \DateTime());
+            $message->setReclamation($reclamation);
+            $entityManager->persist($message);
+            $entityManager->flush();
+        }
+
+        return $this->render('reclamation/index.html.twig', [
+            'selectedReclamation' => $reclamation,
+            'form' => $form->createView(),
+        ]);
+    }
+
+
+     
+
+    
 }
