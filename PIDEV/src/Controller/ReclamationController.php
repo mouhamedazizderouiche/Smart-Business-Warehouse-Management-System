@@ -10,8 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\MessageReclamation;
-use App\Form\MessageReclamationType;
+
 #[Route('/reclamation')]
 class ReclamationController extends AbstractController
 {
@@ -38,15 +37,26 @@ class ReclamationController extends AbstractController
     }
 
     #[Route('/', name: 'reclamation_show', methods: ['GET'])]
-    public function show(EntityManagerInterface $em): Response
-    {
-       
-        $reclamations = $em->getRepository(Reclamations::class)->findAll();
+public function show(Request $request, EntityManagerInterface $em): Response
+{
+    $repository = $em->getRepository(Reclamations::class);
 
-        return $this->render('reclamation/show.html.twig', [
-            'reclamations' => $reclamations,
-        ]);
-    }
+    $limit = 5; 
+    $page = max(1, (int) $request->query->get('page', 1)); 
+    $offset = ($page - 1) * $limit; 
+
+    $totalReclamations = $repository->count([]); 
+    $reclamations = $repository->findBy([], ['dateReclamation' => 'DESC'], $limit, $offset);
+
+    $totalPages = ceil($totalReclamations / $limit); 
+
+    return $this->render('reclamation/show.html.twig', [
+        'reclamations' => $reclamations,
+        'currentPage' => $page,
+        'totalPages' => $totalPages
+    ]);
+}
+
 
     #[Route('/{id}/edit', name: 'reclamation_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Reclamations $reclamation, EntityManagerInterface $entityManager): Response

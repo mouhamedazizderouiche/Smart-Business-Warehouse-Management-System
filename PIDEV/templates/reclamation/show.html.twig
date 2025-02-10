@@ -13,23 +13,36 @@
                     {% for reclamation in reclamations %}
                         <div class="reclamation-item">
                             
-<a href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}" class="reclamation-content">
-                            <div class="reclamation-content">
-                                <p class="reclamation-text">{{ reclamation.description }}</p>
-                                <p class="reclamation-date">Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</p>
-                            </div>
-                            <!-- Right: Edit and Delete Buttons -->
-                            <div class="buttons-container">
-                                <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="edit-btn">✏️</a>
-                                <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
-                                    <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this reclamation?');">
-                                        🗑️
-                                    </button>
-                                </form>
-                            </div>
-                             </a>
+                            <a href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}" class="reclamation-content">
+                                <div class="reclamation-content">
+                                    <p class="reclamation-text">{{ reclamation.description }}</p>
+                                    <p class="reclamation-date">Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</p>
+                                </div>
+                                <!-- Right: Edit and Delete Buttons -->
+                                <div class="buttons-container">
+                                    <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="edit-btn">✏️</a>
+                                    <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this reclamation?');">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </div>
+                            </a>
                         </div>
                     {% endfor %}
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination">
+                    {% if currentPage > 1 %}
+                        <a href="{{ path('reclamation_show', {'page': currentPage - 1}) }}" class="pagination-btn">⬅️ Previous</a>
+                    {% endif %}
+
+                    <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+
+                    {% if currentPage < totalPages %}
+                        <a href="{{ path('reclamation_show', {'page': currentPage + 1}) }}" class="pagination-btn">Next ➡️</a>
+                    {% endif %}
                 </div>
             {% endif %}
         </div>
@@ -203,4 +216,27 @@ body {
     color: #333;
 }
 
+/* Pagination Controls */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+.pagination-btn {
+    text-decoration: none;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #7AAE49;
+    border-radius: 4px;
+    color: #7AAE49;
+    transition: background-color 0.3s, color 0.3s;
+}
+.pagination-btn:hover {
+    background-color: #7AAE49;
+    color: #ffffff;
+}
+.pagination-info {
+    font-size: 14px;
+    margin: 0 10px;
+    color: #333;
+}
 </style>
