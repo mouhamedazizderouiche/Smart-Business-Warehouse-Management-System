@@ -3,13 +3,33 @@ home:
     path: /
     controller: App\Controller\HomePageController::home
 
+shop:
+    path: /shop
+    controller: App\Controller\HomePageController::shop
+
+shopdetails:
+    path: /shop/details
+    controller: App\Controller\HomePageController::details
+
+contact:
+    path: /contact
+    controller: App\Controller\HomePageController::contact
+
+cart:
+    path: /cart
+    controller: App\Controller\HomePageController::cart
+
+checkout:
+    path: /checkout
+    controller: App\Controller\HomePageController::checkout
+
+testimonial:
+    path: /testimonial
+    controller: App\Controller\HomePageController::testimonial
+
 app_loginpage:
     path: /login
     controller: App\Controller\LoginPageController::index
-
-produit:
-    path: /produit
-    controller: App\Controller\HomePageController::produit
 
 message_reclamation_index:
     path: /message-reclamation/view/{id}
