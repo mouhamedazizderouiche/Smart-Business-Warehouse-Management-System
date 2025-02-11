@@ -20,6 +20,11 @@ class Reclamations
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateReclamation = null;
 
+    #[ORM\Column(type: "integer")]
+    #[Assert\NotNull(message: "The rate cannot be null.")]
+    #[Assert\Range(min: 1, max: 5, notInRangeMessage: "The rate must be between 1 and 5.")]
+    private ?int $rate = 1;
+
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "The content cannot be empty.")]
     #[Assert\Regex(
@@ -30,6 +35,7 @@ class Reclamations
 
     #[ORM\Column(enumType: StatutReclamation::class)]
     private StatutReclamation $statut;
+    
 
     /**
      * @var Collection<int, MessageReclamation>
@@ -122,4 +128,14 @@ class Reclamations
     {
         return $this->description;
     }
+        public function getRate(): ?int
+    {
+        return $this->rate;
+    }
+
+    public function setRate(int $rate): static
+    {
+        $this->rate = $rate;
+        return $this;
+}
 }

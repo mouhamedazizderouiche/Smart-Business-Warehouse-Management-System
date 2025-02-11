@@ -25,7 +25,7 @@ checkout:
 
 testimonial:
     path: /testimonial
-    controller: App\Controller\HomePageController::testimonial
+    controller: App\Controller\ReclamationController::testimonial
 
 message_reclamation_index:
     path: /message-reclamation/view/{id}
@@ -35,6 +35,11 @@ message_reclamation_index:
 reclamation_new:
     path: /reclamation/new
     controller: App\Controller\ReclamationController::new
+    methods: [GET, POST]
+
+reclamation_newReview:
+    path: /reclamation/newReview
+    controller: App\Controller\ReclamationController::newReview
     methods: [GET, POST]
 
 reclamation_show:
@@ -61,6 +66,7 @@ message_reclamation_new:
     path: /message-reclamation/{reclamationId}/new
     controller: App\Controller\MessageReclamationController::new
     methods: [GET, POST]
+
 
 message_reclamation_show:
     path: /message-reclamation/{id}
