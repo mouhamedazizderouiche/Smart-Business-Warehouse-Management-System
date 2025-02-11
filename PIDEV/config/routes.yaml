@@ -27,10 +27,6 @@ testimonial:
     path: /testimonial
     controller: App\Controller\HomePageController::testimonial
 
-app_loginpage:
-    path: /login
-    controller: App\Controller\LoginPageController::index
-
 message_reclamation_index:
     path: /message-reclamation/view/{id}
     controller: App\Controller\MessageReclamationController::index
