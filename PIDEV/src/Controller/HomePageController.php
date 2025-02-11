@@ -18,7 +18,7 @@ class HomePageController extends AbstractController
     #[Route('/shop', name: 'shop')]
     public function shop(): Response
     {
-        return $this->render('homepage/index.html.twig');
+        return $this->render('homepage/shop.html.twig');
     }
 
     #[Route('/shop/details', name: 'shopdetails')]
