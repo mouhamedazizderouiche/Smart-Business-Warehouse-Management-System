@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use StatutReclamation;
 
 #[Route('/reclamation')]
 class ReclamationController extends AbstractController
@@ -37,25 +38,34 @@ class ReclamationController extends AbstractController
     }
 
     #[Route('/', name: 'reclamation_show', methods: ['GET'])]
-public function show(Request $request, EntityManagerInterface $em): Response
-{
-    $repository = $em->getRepository(Reclamations::class);
-
-    $limit = 5; 
-    $page = max(1, (int) $request->query->get('page', 1)); 
-    $offset = ($page - 1) * $limit; 
-
-    $totalReclamations = $repository->count([]); 
-    $reclamations = $repository->findBy([], ['dateReclamation' => 'DESC'], $limit, $offset);
-
-    $totalPages = ceil($totalReclamations / $limit); 
-
-    return $this->render('reclamation/show.html.twig', [
-        'reclamations' => $reclamations,
-        'currentPage' => $page,
-        'totalPages' => $totalPages
-    ]);
-}
+    public function show(Request $request, EntityManagerInterface $em): Response
+    {
+        $repository = $em->getRepository(Reclamations::class);
+    
+        $limit = 5;
+        $page = max(1, (int) $request->query->get('page', 1));
+        $offset = ($page - 1) * $limit;
+        $criteria = ['statut' => StatutReclamation::EN_ATTENTE];
+        $totalReclamations = $repository->count($criteria);
+        $totalPages = (int) ceil($totalReclamations / $limit);
+    
+        if ($page > $totalPages && $totalPages > 0) {
+            throw $this->createNotFoundException("Page not found");
+        }
+        $reclamations = $repository->findBy(
+            $criteria,
+            ['dateReclamation' => 'DESC'],
+            $limit,
+            $offset
+        );
+    
+        return $this->render('reclamation/show.html.twig', [
+            'reclamations' => $reclamations,
+            'currentPage'  => $page,
+            'totalPages'   => $totalPages
+        ]);
+    }
+    
 
 
     #[Route('/{id}/edit', name: 'reclamation_edit', methods: ['GET', 'POST'])]
@@ -86,7 +96,40 @@ public function show(Request $request, EntityManagerInterface $em): Response
 
         return $this->redirectToRoute('reclamation_show');
     }
+    #[Route('/testimonial', name: 'testimonial')]
+    public function testimonial(EntityManagerInterface $entityManager): Response
+    {
+        $reclamations = $entityManager->getRepository(Reclamations::class)->findBy([
+            'statut' => StatutReclamation::AVIS
+        ]);
+    
+        return $this->render('homepage/testimonial.html.twig', [
+            'reclamations' => $reclamations
+        ]);
+    }
 
+    #[Route('/newReview', name: 'reclamation_newReview', methods: ['GET', 'POST'])]
+    public function newReview(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $reclamation = new Reclamations();
+        
+        $form = $this->createForm(ReclamationsType::class, $reclamation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $reclamation->setStatut(StatutReclamation::AVIS);
+
+            $entityManager->persist($reclamation);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('testimonial');
+        }
+        return $this->render('reclamation/newReview.html.twig', [
+            'reclamation' => $reclamation,
+            'form' => $form->createView(),
+        ]);
+    }
 
 
      
