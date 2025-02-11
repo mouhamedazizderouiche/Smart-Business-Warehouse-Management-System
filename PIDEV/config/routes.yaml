@@ -86,3 +86,19 @@ message_add:
     path: /message-reclamation/add
     controller: App\Controller\ReclamationController::add
     methods: [GET, POST]
+
+ajout_produit:
+    path: /produit/ajout
+    controller: App\Controller\ProductsController::home
+
+liste_produits:
+    path: /produit
+    controller: App\Controller\ProductsController::listeProduits
+
+edit-produit:
+    path: /produit/edit/{id}
+    controller: App\Controller\ProductsController::editProduit
+
+delete-produit:
+    path: /produit/delete/{id}
+    controller: App\Controller\ProductsController::deleteProduit
