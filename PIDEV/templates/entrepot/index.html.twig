@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entrepots{% endblock %}
+
+{% block body %}
+    <h1>Liste des Entrepots</h1>
+
+    <a href="{{ path('entrepot_new') }}">Créer un nouvel entrepôt</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Adresse</th>
+                <th>Responsable</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entrepot in entrepots %}
+                <tr>
+                    <td>{{ entrepot.nom }}</td>
+                    <td>{{ entrepot.adresse }}</td>
+                    <td>{{ entrepot.responsable }}</td>
+                    <td>
+                        <a href="{{ path('entrepot_show', {'id': entrepot.id}) }}">Voir</a>
+                        <a href="{{ path('entrepot_edit', {'id': entrepot.id}) }}">Modifier</a>
+                        <form action="{{ path('entrepot_delete', {'id': entrepot.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet entrepôt ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entrepot.id) }}">
+                            <button type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

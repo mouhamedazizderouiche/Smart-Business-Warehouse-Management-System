@@ -104,3 +104,16 @@ edit-produit:
 delete-produit:
     path: /produit/delete/{id}
     controller: App\Controller\ProductsController::deleteProduit
+
+
+stock:
+    resource: ../src/Controller/StockController.php
+    type: annotation
+
+app_entrepot:
+    path: /entrepot
+    controller: App\Controller\EntrepotController::index
+
+entrepot:
+    resource: ../src/Controller/EntrepotController.php
+    type: annotation

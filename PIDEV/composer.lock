@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "151c635a51385c1da9134f27b83c2a41",
+=======
+    "content-hash": "0d52eef46821e5886f0e60367c8ed1ec",
+>>>>>>> gestionstock
     "packages": [
         {
             "name": "composer/semver",
@@ -1302,6 +1306,7 @@
             "time": "2025-01-24T11:45:48+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "eckinox/tinymce-bundle",
             "version": "v2.0.0",
             "source": {
@@ -1349,6 +1354,8 @@
             "time": "2024-04-25T20:37:57+00:00"
         },
         {
+=======
+>>>>>>> gestionstock
             "name": "egulias/email-validator",
             "version": "4.0.3",
             "source": {
