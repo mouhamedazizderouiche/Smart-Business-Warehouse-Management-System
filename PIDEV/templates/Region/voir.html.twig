@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la région{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Détails de la région</h1>
+        
+        <p><strong>Nom:</strong> {{ region.nom }}</p>
+        <p><strong>Ville:</strong> {{ region.ville }}</p>
+        <p><strong>Description:</strong> {{ region.description }}</p>
+        
+        <a href="{{ path('app_region') }}" class="btn btn-primary">Retour à la liste</a>
+    </div>
+{% endblock %}

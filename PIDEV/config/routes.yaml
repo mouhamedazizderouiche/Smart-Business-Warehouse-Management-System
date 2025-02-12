@@ -117,3 +117,58 @@ app_entrepot:
 entrepot:
     resource: ../src/Controller/EntrepotController.php
     type: annotation
+
+#nesrine routes
+app_evenement_liste:
+    path: /evenements
+    controller: App\Controller\EvenementController::liste
+
+app_evenement_ajout:
+    path: /evenement/ajout
+    controller: App\Controller\EvenementController::ajout
+
+app_evenement:
+    path: /evenement
+    controller: App\Controller\EvenementController::index
+app_evenement_voir:
+    path: /evenement/{id}
+    controller: App\Controller\EvenementController::voir
+
+app_evenement_modifier:
+    path: /evenement/modifier/{id}
+    controller: App\Controller\EvenementController::modifier
+
+app_evenement_supprimer:
+    path: /evenement/supprimer/{id}
+    controller: App\Controller\EvenementController::supprimer
+
+
+app_evenements_front:
+    path: /public/evenements
+    controller: App\Controller\EvenementController::afficherEvenementsFront
+    methods: [GET]
+
+app_dashboard:
+    path: /dashboard
+    controller: App\Controller\DashboardController::index
+    methods: GET
+
+app_region:
+    path: /region
+    controller: App\Controller\RegionController::index
+
+app_region_ajouter:
+    path: /region/ajouter
+    controller: App\Controller\RegionController::ajouter
+
+app_region_voir:
+    path: /region/{id}
+    controller: App\Controller\RegionController::voir
+
+app_region_modifier:
+    path: /region/modifier/{id}
+    controller: App\Controller\RegionController::modifier
+
+app_region_supprimer:
+    path: /region/supprimer/{id}
+    controller: App\Controller\RegionController::supprimer

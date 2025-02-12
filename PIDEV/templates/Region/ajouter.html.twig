@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une région{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Ajouter une région</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.ville) }}
+            {{ form_row(form.description) }}
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        {{ form_end(form) }}
+        
+        <a href="{{ path('app_region') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+    </div>
+{% endblock %}
