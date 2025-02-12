@@ -1,15 +1,10 @@
 # config/routes.yaml
-app_loginpage:
-    path: /login
-    controller: App\Controller\LoginPageController::index
 
 
 stock:
     resource: ../src/Controller/StockController.php
     type: annotation
 
-
-# config/routes.yaml
 app_entrepot:
     path: /entrepot
     controller: App\Controller\EntrepotController::index
