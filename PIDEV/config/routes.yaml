@@ -25,11 +25,7 @@ checkout:
 
 testimonial:
     path: /testimonial
-    controller: App\Controller\HomePageController::testimonial
-
-app_loginpage:
-    path: /login
-    controller: App\Controller\LoginPageController::index
+    controller: App\Controller\ReclamationController::testimonial
 
 message_reclamation_index:
     path: /message-reclamation/view/{id}
@@ -39,6 +35,11 @@ message_reclamation_index:
 reclamation_new:
     path: /reclamation/new
     controller: App\Controller\ReclamationController::new
+    methods: [GET, POST]
+
+reclamation_newReview:
+    path: /reclamation/newReview
+    controller: App\Controller\ReclamationController::newReview
     methods: [GET, POST]
 
 reclamation_show:
@@ -65,6 +66,7 @@ message_reclamation_new:
     path: /message-reclamation/{reclamationId}/new
     controller: App\Controller\MessageReclamationController::new
     methods: [GET, POST]
+
 
 message_reclamation_show:
     path: /message-reclamation/{id}
@@ -102,3 +104,16 @@ edit-produit:
 delete-produit:
     path: /produit/delete/{id}
     controller: App\Controller\ProductsController::deleteProduit
+
+
+stock:
+    resource: ../src/Controller/StockController.php
+    type: annotation
+
+app_entrepot:
+    path: /entrepot
+    controller: App\Controller\EntrepotController::index
+
+entrepot:
+    resource: ../src/Controller/EntrepotController.php
+    type: annotation

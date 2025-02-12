@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entrepot Details{% endblock %}
+
+{% block body %}
+    <h1>Détails de l'entrepôt</h1>
+
+    <p><strong>Nom:</strong> {{ entrepot.nom }}</p>
+    <p><strong>Adresse:</strong> {{ entrepot.adresse }}</p>
+    <p><strong>Responsable:</strong> {{ entrepot.responsable }}</p>
+
+    <a href="{{ path('entrepot_edit', {'id': entrepot.id}) }}">Modifier</a>
+    <a href="{{ path('entrepot_index') }}">Retour à la liste</a>
+{% endblock %}

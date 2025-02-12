@@ -72,13 +72,24 @@
                 padding: 15px;
             }
         }
+          .star-rating {
+        font-size: 24px;
+        color: #ccc;
+        cursor: pointer;
+        }
+        .star-rating .star {
+            display: inline-block;
+        }
+        .star-rating .star.selected,
+        .star-rating .star:hover {
+            color: #ffcc00;
+        }
     </style>
 </head>
 
 {% include 'homepage/newNav.html.twig' %}
 
 {% block body %}
-
 <div class="reclamation-container">
     <h1>Submit a Reclamation</h1>
     <p>We value your feedback. Please describe your concern below.</p>
@@ -86,14 +97,26 @@
     {{ form_start(form) }}
 
     <div class="form-group">
-        <label for="{{ form.dateReclamation.vars.id }}">Date of Reclamation:</label>
+        <label for="{{ form.dateReclamation.vars.id }}">Date of Review:</label>
         {{ form_widget(form.dateReclamation, {'attr': {'class': 'form-control'}}) }}
     </div>
 
     <div class="form-group">
-        <label for="{{ form.description.vars.id }}">Describe Your Reclamation: <span class="required">*</span></label>
+        <label for="{{ form.description.vars.id }}">Describe Your experience with us: <span class="required">*</span></label>
         {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
         <p class="error-message">{{ form_errors(form.description) }}</p>
+    </div>
+
+    <!-- Star Rating System -->
+    <div class="form-group">
+        <label>Rate Your Experience:</label>
+        <div class="star-rating">
+            {% for i in 1..5 %}
+                <span class="star" data-value="{{ i }}">&#9733;</span>
+            {% endfor %}
+        </div>
+        {{ form_widget(form.rate, {'attr': {'class': 'rating-value'}}) }}
+        <p class="error-message">{{ form_errors(form.rate) }}</p>
     </div>
 
     <div class="form-group">
@@ -102,4 +125,26 @@
 
     {{ form_end(form) }}
 </div>
+
+<!-- Add JavaScript for Star Rating -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.star-rating .star');
+        const ratingInput = document.getElementById('{{ form.rate.vars.id }}');
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                ratingInput.value = value;
+
+                // Update star appearance
+                stars.forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                for (let i = 0; i < value; i++) {
+                    stars[i].classList.add('selected');
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

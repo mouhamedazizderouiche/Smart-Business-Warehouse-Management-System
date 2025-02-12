@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class ReclamationsType extends AbstractType
 {
@@ -19,6 +20,9 @@ class ReclamationsType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('description', TextareaType::class)
+            ->add('rate', HiddenType::class, [
+                'attr' => ['id' => 'rating-value'],
+            ])
             ->add('save', SubmitType::class, ['label' => 'Submit Reclamation']);
     }
 
