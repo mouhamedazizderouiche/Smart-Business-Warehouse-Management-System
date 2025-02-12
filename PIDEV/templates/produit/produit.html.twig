@@ -26,6 +26,12 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
+
+        body{
+            font-family: 'Poppins', sans-serif;
+        }
+
         .fruite-item {
             display: flex;
             flex-direction: column;
@@ -33,7 +39,7 @@
         }
 
         .fruite-img img {
-            height: 250px;
+            height: 260px;
             object-fit: cover;
         }
 
@@ -66,6 +72,37 @@
         .fruite-name span {
             font-weight: bold;
         }
+
+        .container-flui
+        {
+            display: flex;
+            align-items: center;
+        }
+        .add-btn
+        {
+            height: 45px;
+            width: 180px;
+            margin: 0 0 0 auto;
+            border-radius: 4px ;
+            border: 1px solid #bbbbbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        row.g-4.justify-content-center
+        {
+            margin: 0 0 10px 0 !important;
+        }
+
+        .container.py-5
+        {
+            margin: 0 0 0 auto !important;
+        }
+
     </style>
 </head>
 
@@ -104,8 +141,10 @@
 
 <!-- Fruits Shop Start -->
 <div class="container-fluid fruite py-5">
-    <div class="container py-5">
-        <h1 class="mb-4">Fresh Fruits Shop</h1>
+    <div class="container py-5" >
+        <div class="container-flui">
+        <h1 class="mb-4">Fresh Fruits Shop</h1><div class="add-btn" onclick="window.location.href='{{ path('ajout_produit') }}'">Ajouter produit</div>
+        </div>
         <div class="row g-4">
             <div class="col-lg-12">
                 <div class="row g-4">
@@ -148,21 +187,27 @@
                                         <div class="fruite-img">
                                             <img src="{{ asset(produit.urlImageProduit) }}" class="img-fluid w-100 rounded-top" alt="Image produit">
                                         </div>
+                                        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
+                                            {{ produit.categorie.nom }}
+                                        </div>
                                         <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                             <h4>{{ produit.nom }}</h4>
                                             <p>{{ produit.description }}</p>
                                             <p class="text-dark fs-5 fw-bold mb-0">{{ produit.prixUnitaire }} DT</p>
 
-                                            <div class="d-flex justify-content-between mt-3">
-                                                <a href="{{ path('edit-produit', {id: produit.id}) }}" class="btn btn-warning">
-                                                    <i class="fas fa-edit"></i> Modifier
+                                            <div class="d-flex justify-content-end gap-2 mt-3">
+                                                <a href="{{ path('edit-produit', {id: produit.id}) }}" class="btn btn-sm border-0 px-2 py-1 bg-white" title="Modifier"
+                                                   style="color: #F4B400; transition: none;">
+                                                    <i class="fas fa-pen fs-5"></i>
                                                 </a>
 
-                                                <a href="{{ path('delete-produit', {id: produit.id}) }}" class="btn btn-danger"
-                                                   onclick="return confirm('Êtes-vous sûr?');">
-                                                    <i class="fas fa-trash-alt"></i> Supprimer
+                                                <a href="{{ path('delete-produit', {id: produit.id}) }}" class="btn btn-sm border-0 px-2 py-1 bg-white" title="Supprimer"
+                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');"
+                                                   style="color: #E63946; transition: none;">
+                                                    <i class="fas fa-trash fs-5"></i>
                                                 </a>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
