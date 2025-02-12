@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.agriplanner-navbar {
+display: flex;
+    height: 60px;
+padding: 4px 0 8px 12px;
+    align-items: center;
+}
+
+.logo-agriplanner{
+    background-color: #ffffff;
+    height: 40px;
+}
+
+.nav-links{
+    display: flex;
+    align-items: center;
+    margin: 14px 10px 0 auto;
+}
+
+ul {
+    list-style: none;
+    padding: 10px;
+    display: flex;
+    margin: 0 24px 0 0;
+    gap: 24px;
+}
+
+ul li {
+    color: #000;
+    font-size: 18px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    margin-right: 10px;
+}
+
+.login-buttons{
+    background-color: #000;
+    width: 160px;
+    height: 46px;
+    border-radius: 10px;
+    margin: 0 14px 0 0;
+    font-size: 18px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.homepage-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6% 0 0 0;
+}
+
+.hero-text {
+    font-weight: 800;
+    font-size: 60px;
+    color: #000;
+    display: inline;
+    white-space: nowrap;
+}
+
+.hero-text span {
+    color: #7AAE49;
+}
+
+.app-description {
+    margin: 0 250px 0 240px;
+}
+
+.homepage-buttons
+{
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    margin: 40px 40px 0 0;
+    gap: 20px;
+}
+
+.about-button
+{
+height: 52px;
+    width: 280px;
+    background-color: #7AAE49;
+    border-radius: 10px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign-up-button
+{
+    height: 52px;
+    width: 280px;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #000;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+a{
+    text-decoration: none;
+    border:none;
+    color: #000;
+}
+
+
