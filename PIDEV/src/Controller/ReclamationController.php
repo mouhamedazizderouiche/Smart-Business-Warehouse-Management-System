@@ -25,6 +25,7 @@ class ReclamationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $reclamation->setDateReclamation(new \DateTime());
             $entityManager->persist($reclamation);
             $entityManager->flush();
 
@@ -42,7 +43,7 @@ class ReclamationController extends AbstractController
     {
         $repository = $em->getRepository(Reclamations::class);
     
-        $limit = 5;
+        $limit = 4;
         $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
         $criteria = ['statut' => StatutReclamation::EN_ATTENTE];
@@ -117,7 +118,7 @@ class ReclamationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $reclamation->setDateReclamation(new \DateTime());
             $reclamation->setStatut(StatutReclamation::AVIS);
 
             $entityManager->persist($reclamation);

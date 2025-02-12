@@ -91,15 +91,10 @@
 
 {% block body %}
 <div class="reclamation-container">
-    <h1>Submit a Reclamation</h1>
+    <h1>Submit a Review</h1>
     <p>We value your feedback. Please describe your concern below.</p>
 
     {{ form_start(form) }}
-
-    <div class="form-group">
-        <label for="{{ form.dateReclamation.vars.id }}">Date of Review:</label>
-        {{ form_widget(form.dateReclamation, {'attr': {'class': 'form-control'}}) }}
-    </div>
 
     <div class="form-group">
         <label for="{{ form.description.vars.id }}">Describe Your experience with us: <span class="required">*</span></label>
@@ -137,7 +132,6 @@
                 const value = this.getAttribute('data-value');
                 ratingInput.value = value;
 
-                // Update star appearance
                 stars.forEach(s => s.classList.remove('selected'));
                 this.classList.add('selected');
                 for (let i = 0; i < value; i++) {
