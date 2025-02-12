@@ -86,11 +86,6 @@
     {{ form_start(form) }}
 
     <div class="form-group">
-        <label for="{{ form.dateReclamation.vars.id }}">Date of Reclamation:</label>
-        {{ form_widget(form.dateReclamation, {'attr': {'class': 'form-control'}}) }}
-    </div>
-
-    <div class="form-group">
         <label for="{{ form.description.vars.id }}">Describe Your Reclamation: <span class="required">*</span></label>
         {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
         <p class="error-message">{{ form_errors(form.description) }}</p>

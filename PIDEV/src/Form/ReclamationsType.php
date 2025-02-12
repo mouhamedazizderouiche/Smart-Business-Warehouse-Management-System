@@ -16,9 +16,6 @@ class ReclamationsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('dateReclamation', DateTimeType::class, [
-                'widget' => 'single_text',
-            ])
             ->add('description', TextareaType::class)
             ->add('rate', HiddenType::class, [
                 'attr' => ['id' => 'rating-value'],
