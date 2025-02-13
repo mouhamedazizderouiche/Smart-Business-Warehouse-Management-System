@@ -11,6 +11,8 @@ class HomePageController extends AbstractController
     #[Route('/', name: 'home')]
     public function home(): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
 
         return $this->render('homepage/homepage.html.twig');
     }

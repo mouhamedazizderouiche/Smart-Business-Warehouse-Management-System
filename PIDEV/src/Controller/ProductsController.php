@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ProductsController extends AbstractController
 {
-    #[Route('/produit/ajout', name: 'ajout-produit')]
+    #[Route('/produit/ajout', name: 'ajout_produit')]
     public function home(Request $request, EntityManagerInterface $entityManager): Response
     {
         $produit = new Produit();
@@ -56,7 +56,7 @@ class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/produit', name: 'liste-produits')]
+    #[Route('/produit', name: 'liste_produits')]
     public function listeProduits(EntityManagerInterface $entityManager): Response
     {
         $produits = $entityManager->getRepository(Produit::class)->findAll();
@@ -66,7 +66,7 @@ class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/produit/edit/{id}', name: 'edit-produit')]
+    #[Route('/produit/edit/{id}', name: 'edit_produit')]
     public function editProduit(Request $request, EntityManagerInterface $entityManager, Produit $produit): Response
     {
         $form = $this->createForm(ProductType::class, $produit, [
@@ -85,7 +85,7 @@ class ProductsController extends AbstractController
         ]);
     }
 
-    #[Route('/produit/delete/{id}', name: 'delete-produit')]
+    #[Route('/produit/delete/{id}', name: 'delete_produit')]
     public function deleteProduit(EntityManagerInterface $entityManager, Produit $produit): Response
     {
         $entityManager->remove($produit);
