@@ -59,6 +59,7 @@ class ProductsController extends AbstractController
     #[Route('/produit', name: 'liste_produits')]
     public function listeProduits(EntityManagerInterface $entityManager): Response
     {
+        
         $produits = $entityManager->getRepository(Produit::class)->findAll();
 
         return $this->render('produit/produit.html.twig', [
