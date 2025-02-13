@@ -18,7 +18,7 @@ class Evenement
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private ?Uuid $id = null;
+    private ?int $id = null;
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 

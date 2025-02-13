@@ -1,194 +1,198 @@
 # config/routes.yaml
-controllers:
-    resource: '../src/Controller/'
-    type: attribute
-# home:
-#     path: /
-#     controller: App\Controller\HomePageController::home
+# controllers:
+#     resource: '../src/Controller/'
+#     type: attribute
+home:
+    path: /
+    controller: App\Controller\HomePageController::home
 
-# shop:
-#     path: /shop
-#     controller: App\Controller\HomePageController::shop
+shop:
+    path: /shop
+    controller: App\Controller\HomePageController::shop
 
-# shopdetails:
-#     path: /shop/details
-#     controller: App\Controller\HomePageController::details
+shopdetails:
+    path: /shop/details
+    controller: App\Controller\HomePageController::details
 
-# contact:
-#     path: /contact
-#     controller: App\Controller\HomePageController::contact
+contact:
+    path: /contact
+    controller: App\Controller\HomePageController::contact
 
-# cart:
-#     path: /cart
-#     controller: App\Controller\HomePageController::cart
+cart:
+    path: /cart
+    controller: App\Controller\HomePageController::cart
 
-# checkout:
-#     path: /checkout
-#     controller: App\Controller\HomePageController::checkout
+checkout:
+    path: /checkout
+    controller: App\Controller\HomePageController::checkout
 
-# testimonial:
-#     path: /testimonial
-#     controller: App\Controller\ReclamationController::testimonial
+testimonial:
+    path: /testimonial
+    controller: App\Controller\ReclamationController::testimonial
+
+message_reclamation_index:
+    path: /message-reclamation/view/{id}
+    controller: App\Controller\MessageReclamationController::index
+    methods: [GET, POST]
+
+reclamation_new:
+    path: /reclamation/new
+    controller: App\Controller\ReclamationController::new
+    methods: [GET, POST]
+
+reclamation_newReview:
+    path: /reclamation/newReview
+    controller: App\Controller\ReclamationController::newReview
+    methods: [GET, POST]
+
+reclamation_show:
+    path: /reclamation/
+    controller: App\Controller\ReclamationController::show
+    methods: GET
+
+reclamation_edit:
+    path: /reclamation/{id}/edit
+    controller: App\Controller\ReclamationController::edit
+    methods: [GET, POST]
+
+reclamation_delete:
+    path: /reclamation/{id}/delete
+    controller: App\Controller\ReclamationController::delete
+    methods: POST
 
 # message_reclamation_index:
-#     path: /message-reclamation/view/{id}
+#     path: /message-reclamation
 #     controller: App\Controller\MessageReclamationController::index
-#     methods: [GET, POST]
-
-# reclamation_new:
-#     path: /reclamation/new
-#     controller: App\Controller\ReclamationController::new
-#     methods: [GET, POST]
-
-# reclamation_newReview:
-#     path: /reclamation/newReview
-#     controller: App\Controller\ReclamationController::newReview
-#     methods: [GET, POST]
-
-# reclamation_show:
-#     path: /reclamation/
-#     controller: App\Controller\ReclamationController::show
 #     methods: GET
 
-# reclamation_edit:
-#     path: /reclamation/{id}/edit
-#     controller: App\Controller\ReclamationController::edit
-#     methods: [GET, POST]
-
-# reclamation_delete:
-#     path: /reclamation/{id}/delete
-#     controller: App\Controller\ReclamationController::delete
-#     methods: POST
-
-# # message_reclamation_index:
-# #     path: /message-reclamation
-# #     controller: App\Controller\MessageReclamationController::index
-# #     methods: GET
-
-# message_reclamation_new:
-#     path: /message-reclamation/{reclamationId}/new
-#     controller: App\Controller\MessageReclamationController::new
-#     methods: [GET, POST]
+message_reclamation_new:
+    path: /message-reclamation/{reclamationId}/new
+    controller: App\Controller\MessageReclamationController::new
+    methods: [GET, POST]
 
 
-# message_reclamation_show:
-#     path: /message-reclamation/{id}
-#     controller: App\Controller\MessageReclamationController::show
-#     methods: GET
+message_reclamation_show:
+    path: /message-reclamation/{id}
+    controller: App\Controller\MessageReclamationController::show
+    methods: GET
 
-# message_reclamation_edit:
-#     path: /message/{id}/edit
-#     controller: App\Controller\MessageReclamationController::editMessage
-#     methods: [GET, POST]
+message_reclamation_edit:
+    path: /message/{id}/edit
+    controller: App\Controller\MessageReclamationController::editMessage
+    methods: [GET, POST]
 
-# message_reclamation_delete:
-#     path: /message/{id}
-#     controller: App\Controller\MessageReclamationController::deleteMessage
-#     methods: [POST]
-
-
-# message_add:
-#     path: /message-reclamation/add
-#     controller: App\Controller\ReclamationController::add
-#     methods: [GET, POST]
-
-# ajout_produit:
-#     path: /produit/ajout
-#     controller: App\Controller\ProductsController::home
-
-# liste_produits:
-#     path: /produit
-#     controller: App\Controller\ProductsController::listeProduits
-
-# edit-produit:
-#     path: /produit/edit/{id}
-#     controller: App\Controller\ProductsController::editProduit
-
-# delete-produit:
-#     path: /produit/delete/{id}
-#     controller: App\Controller\ProductsController::deleteProduit
+message_reclamation_delete:
+    path: /message/{id}
+    controller: App\Controller\MessageReclamationController::deleteMessage
+    methods: [POST]
 
 
-# stock:
-#     resource: ../src/Controller/StockController.php
-#     type: annotation
+message_add:
+    path: /message-reclamation/add
+    controller: App\Controller\ReclamationController::add
+    methods: [GET, POST]
 
-# app_entrepot:
-#     path: /entrepot
-#     controller: App\Controller\EntrepotController::index
+ajout_produit:
+    path: /produit/ajout
+    controller: App\Controller\ProductsController::home
 
-# entrepot:
-#     resource: ../src/Controller/EntrepotController.php
-#     type: annotation
+liste_produits:
+    path: /produit
+    controller: App\Controller\ProductsController::listeProduits
 
-# #nesrine routes
-# app_evenement_liste:
-#     path: /evenements
-#     controller: App\Controller\EvenementController::liste
+edit_produit:
+    path: /produit/edit/{id}
+    controller: App\Controller\ProductsController::editProduit
 
-# app_evenement_ajout:
-#     path: /evenement/ajout
-#     controller: App\Controller\EvenementController::ajout
-
-# app_evenement:
-#     path: /evenement
-#     controller: App\Controller\EvenementController::index
-# app_evenement_voir:
-#     path: /evenement/{id}
-#     controller: App\Controller\EvenementController::voir
-
-# app_evenement_modifier:
-#     path: /evenement/modifier/{id}
-#     controller: App\Controller\EvenementController::modifier
-
-# app_evenement_supprimer:
-#     path: /evenement/supprimer/{id}
-#     controller: App\Controller\EvenementController::supprimer
+delete_produit:
+    path: /produit/delete/{id}
+    controller: App\Controller\ProductsController::deleteProduit
 
 
-# app_evenements_front:
-#     path: /public/evenements
-#     controller: App\Controller\EvenementController::afficherEvenementsFront
-#     methods: [GET]
+stock:
+    resource: ../src/Controller/StockController.php
+    type: annotation
 
-# app_dashboard:
-#     path: /dashboard
-#     controller: App\Controller\DashboardController::index
-#     methods: GET
+app_entrepot:
+    path: /entrepot
+    controller: App\Controller\EntrepotController::index
 
-# app_region:
-#     path: /region
-#     controller: App\Controller\RegionController::index
+entrepot:
+    resource: ../src/Controller/EntrepotController.php
+    type: annotation
 
-# app_region_ajouter:
-#     path: /region/ajouter
-#     controller: App\Controller\RegionController::ajouter
+#nesrine routes
+app_evenement_liste:
+    path: /evenements
+    controller: App\Controller\EvenementController::liste
 
-# app_region_voir:
-#     path: /region/{id}
-#     controller: App\Controller\RegionController::voir
+app_evenement_ajout:
+    path: /evenement/ajout
+    controller: App\Controller\EvenementController::ajout
 
-# app_region_modifier:
-#     path: /region/modifier/{id}
-#     controller: App\Controller\RegionController::modifier
+app_evenement:
+    path: /evenement
+    controller: App\Controller\EvenementController::index
+app_evenement_voir:
+    path: /evenement/{id}
+    controller: App\Controller\EvenementController::voir
 
-# app_region_supprimer:
-#     path: /region/supprimer/{id}
-#     controller: App\Controller\RegionController::supprimer
+app_evenement_modifier:
+    path: /evenement/modifier/{id}
+    controller: App\Controller\EvenementController::modifier
+
+app_evenement_supprimer:
+    path: /evenement/supprimer/{id}
+    controller: App\Controller\EvenementController::supprimer
 
 
-# app_register:
-#     path: /register
-#     controller: App\Controller\RegistrationController::register
+app_evenements_front:
+    path: /public/evenements
+    controller: App\Controller\EvenementController::afficherEvenementsFront
+    methods: [GET]
 
-# app_verify_email:
-#     path: /verify/email
-#     controller: App\Controller\RegistrationController::verifyUserEmail
+app_dashboard:
+    path: /dashboard
+    controller: App\Controller\DashboardController::index
+    methods: GET
 
-# # app_login:
-# #     path: /login
-# #     controller: App\Controller\LoginController::index
+app_region:
+    path: /region
+    controller: App\Controller\RegionController::index
 
-# # api_login:
-# #     path: /api/login
-# #     controller: App\Controller\ApiLoginController::index
+app_region_ajouter:
+    path: /region/ajouter
+    controller: App\Controller\RegionController::ajouter
+
+app_region_voir:
+    path: /region/{id}
+    controller: App\Controller\RegionController::voir
+
+app_region_modifier:
+    path: /region/modifier/{id}
+    controller: App\Controller\RegionController::modifier
+
+app_region_supprimer:
+    path: /region/supprimer/{id}
+    controller: App\Controller\RegionController::supprimer
+
+
+app_register:
+    path: /register
+    controller: App\Controller\RegistrationController::register
+
+app_verify_email:
+    path: /verify/email
+    controller: App\Controller\RegistrationController::verifyUserEmail
+
+app_login:
+    path: /login
+    controller: App\Controller\LoginController::index
+
+api_login:
+    path: /api/login
+    controller: App\Controller\ApiLoginController::index
+
+app_logout:
+    path: /logout
+    controller: App\Controller\SecurityController::logout
