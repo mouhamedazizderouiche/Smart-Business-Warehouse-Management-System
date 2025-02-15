@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container py-5">
+        <h1 class="mb-4">✅ Finalisation de la commande</h1>
+
+        <h3 class="text-center mb-4">💰 Total: {{ total | number_format(2, ',', ' ') }} DT</h3>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Prix Unitaire</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commande in commandes %}
+                    <tr>
+                        <td>{{ commande.produit.nom }}</td>
+                        <td>{{ commande.produit.prixUnitaire }} DT</td>
+                        <td>{{ commande.quantite }}</td>
+                        <td>{{ (commande.produit.prixUnitaire * commande.quantite) | number_format(2, ',', ' ') }} DT</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-center mt-4">
+            <a href="{{ path('mon_panier') }}" class="btn btn-secondary">🔙 Retour au panier</a>
+            <button class="btn btn-primary">💳 Procéder au paiement</button>
+        </div>
+    </div>
+{% endblock %}

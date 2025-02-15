@@ -21,7 +21,20 @@ class CommandeController extends AbstractController
             'commandes' => $commandes
         ]);
     }
-
+    #[Route('/commande/finaliser', name: 'finaliser_commande')]
+    public function finaliserCommande(CommandeRepository $commandeRepository): Response
+    {
+        $commandes = $commandeRepository->findAll();
+        $total = array_reduce($commandes, function ($acc, $commande) {
+            return $acc + ($commande->getProduit()->getPrixUnitaire() * $commande->getQuantite());
+        }, 0);
+    
+        return $this->render('commande/finalisation.html.twig', [
+            'commandes' => $commandes,
+            'total' => $total
+        ]);
+    }
+    
     #[Route('/produit/ajouter-au-panier/{id}/{quantite}', name: 'ajouter_commande')]
     public function ajouterAuPanier(Produit $produit, int $quantite, EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
     {
