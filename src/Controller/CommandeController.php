@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Entity\CommandeFinalisee;
 use App\Entity\Commande;
 use App\Entity\Produit;
 use App\Repository\CommandeRepository;
@@ -21,26 +21,43 @@ class CommandeController extends AbstractController
             'commandes' => $commandes
         ]);
     }
-    #[Route('/commande/finaliser', name: 'finaliser_commande')]
-public function finaliserCommande(EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
+
+    #[Route('/commande/historique', name: 'historique_commandes')]
+public function historiqueCommandes(EntityManagerInterface $entityManager): Response
 {
-    $commandes = $commandeRepository->findAll();
+    $historique = $entityManager->getRepository(CommandeFinalisee::class)->findBy([], ['dateCommande' => 'DESC']);
 
-    if (empty($commandes)) {
-        $this->addFlash('error', 'Votre panier est vide.');
-        return $this->redirectToRoute('mon_panier');
-    }
-
-    
-    foreach ($commandes as $commande) {
-        $entityManager->remove($commande);
-    }
-
-    $entityManager->flush();
-
-    $this->addFlash('success', 'Votre commande a été finalisée avec succès ! ✅');
-    return $this->redirectToRoute('confirmation_commande');
+    return $this->render('commande/historique_commandes.html.twig', [
+        'commandesFinalisees' => $historique
+    ]);
 }
+
+    #[Route('/commande/finaliser', name: 'finaliser_commande')]
+    public function finaliserCommande(EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
+    {
+        $commandes = $commandeRepository->findAll();
+    
+        if (empty($commandes)) {
+            $this->addFlash('error', 'Votre panier est vide.');
+            return $this->redirectToRoute('mon_panier');
+        }
+    
+        foreach ($commandes as $commande) {
+            $commandeFinalisee = new CommandeFinalisee();
+            $commandeFinalisee->setNomProduit($commande->getProduit()->getNom());
+            $commandeFinalisee->setQuantite($commande->getQuantite());
+            $commandeFinalisee->setPrixTotal($commande->getProduit()->getPrixUnitaire() * $commande->getQuantite());
+    
+            $entityManager->persist($commandeFinalisee);
+            $entityManager->remove($commande);
+        }
+    
+        $entityManager->flush();
+    
+        $this->addFlash('success', 'Votre commande a été finalisée avec succès ! ✅');
+        return $this->redirectToRoute('confirmation_commande');
+    }
+    
 #[Route('/commande/confirmation', name: 'confirmation_commande')]
 public function confirmationCommande(): Response
 {
