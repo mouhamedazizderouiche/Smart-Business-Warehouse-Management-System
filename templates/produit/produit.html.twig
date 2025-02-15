@@ -171,25 +171,30 @@
                                         <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">
                                             {{ produit.categorie.nom }}
                                         </div>
-                                        <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                                            <h4>{{ produit.nom }}</h4>
-                                            <p>{{ produit.description }}</p>
-                                            <p class="text-dark fs-5 fw-bold mb-0">{{ produit.prixUnitaire }} DT</p>
+                                     <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+    <h4>{{ produit.nom }}</h4>
+    <p>{{ produit.description }}</p>
+    <p class="text-dark fs-5 fw-bold mb-0">{{ produit.prixUnitaire }} DT</p>
 
-                                            <div class="d-flex justify-content-end gap-2 mt-3">
-                                                <a href="{{ path('edit_produit', {id: produit.id}) }}" class="btn btn-sm border-0 px-2 py-1 bg-white" title="Modifier"
-                                                   style="color: #F4B400; transition: none;">
-                                                    <i class="fas fa-pen fs-5"></i>
-                                                </a>
+    <!-- ✅ Nouveau bouton "Ajouter au panier" -->
+    <a href="{{ path('ajouter_commande', { id: produit.id, quantite: 1 }) }}" class="btn btn-sm btn-primary mt-2">
+        🛒 Ajouter au Panier
+    </a>
 
-                                                <a href="{{ path('delete_produit', {id: produit.id}) }}" class="btn btn-sm border-0 px-2 py-1 bg-white" title="Supprimer"
-                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');"
-                                                   style="color: #E63946; transition: none;">
-                                                    <i class="fas fa-trash fs-5"></i>
-                                                </a>
-                                            </div>
+    <div class="d-flex justify-content-end gap-2 mt-3">
+        <a href="{{ path('edit_produit', {id: produit.id}) }}" class="btn btn-sm border-0 px-2 py-1 bg-white" title="Modifier"
+           style="color: #F4B400; transition: none;">
+            <i class="fas fa-pen fs-5"></i>
+        </a>
 
-                                        </div>
+        <a href="{{ path('delete_produit', {id: produit.id}) }}" class="btn btn-sm border-0 px-2 py-1 bg-white" title="Supprimer"
+           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');"
+           style="color: #E63946; transition: none;">
+            <i class="fas fa-trash fs-5"></i>
+        </a>
+    </div>
+</div>
+
                                     </div>
                                 </div>
                             {% else %}
