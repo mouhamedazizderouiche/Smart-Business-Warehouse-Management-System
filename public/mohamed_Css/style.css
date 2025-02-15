@@ -1,0 +1,301 @@
+.search-box {
+    background-color: #FFFFFF;
+    border-radius: 100px;
+}
+
+.transparent {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.transparentbutton {
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 50px;
+}
+
+.search-button {
+    background-color: #828282;
+    border-radius: 30px;
+}
+
+
+.shadow {
+    -fx-effect: dropShadow(three-pass-box, rgba(0, 0, 0, 0.1), 10.0, 0.0, 0.0, 10.0);
+}
+
+.chosen-fruit-card {
+    background-color: #F16C31;
+    border-radius: 30px;
+}
+
+.comboBox {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+}
+
+.add-btn {
+    background-color: #FFFFFF;
+    border-radius: 30px;
+    border-width: 0;
+    padding: 10px;
+    font-size: 16px;
+    font-family: Cambria;
+    font-weight: bold;
+    text-fill: #59B91D;
+    effect: dropshadow(gaussian, #AAAAAA, 10, 0, 2, 2);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.add-btn:hover {
+    effect: dropshadow(gaussian, #AAAAAA, 10, 0, 4, 4);
+    translate-y: 4px;
+}
+
+.free-delivery-card {
+    background-color: #59B91D;
+    border-radius: 30px;
+}
+
+.shopping-online-card {
+    background-color: #BAEAC3;
+    border-radius: 30px;
+}
+
+.fruit-item {
+    background-color: #FFFFFF;
+    border-radius: 30px;
+}
+
+.delete-btn {
+    background-color: #FFFFFF;
+    border-radius: 30px;
+    border-width: 0;
+    padding: 10px;
+    font-size: 16px;
+    font-family: Cambria;
+    font-weight: bold;
+    text-fill: #FF0000;
+    effect: dropshadow(gaussian, #AAAAAA, 10, 0, 2, 2);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: #FFCCCC;
+    text-fill: #FF3333;
+}
+
+.update-btn {
+    background-color: #3498DB;
+    border-radius: 30px;
+    border-width: 0;
+    padding: 10px;
+    font-size: 16px;
+    font-family: Cambria;
+    font-weight: bold;
+    text-fill: #FFFFFF;
+    effect: dropshadow(gaussian, #AAAAAA, 10, 0, 2, 2);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.update-btn:hover {
+    background-color: #2980B9;
+}
+
+.add1-btn {
+    background-color: #59B91D;
+    border-radius: 30px;
+    border: none; /* Remplace border-width: 0; */
+    padding: 10px;
+    font-size: 16px;
+    font-family: Cambria;
+    font-weight: bold;
+    color: #FFFFFF; /* Remplace text-fill: #FFFFFF; */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Remplace effect: dropshadow(...) */
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.add1-btn:hover {
+    background-color: #4CAF50;
+}
+
+
+.delete2-btn {
+    background-color: #FF5733;
+    border-radius: 30px;
+    border-width: 0;
+    padding: 10px;
+    font-size: 16px;
+    font-family: Cambria;
+    font-weight: bold;
+    text-fill: #FFFFFF;
+    effect: dropshadow(gaussian, #AAAAAA, 10, 0, 2, 2);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.delete2-btn:hover {
+    background-color: #FF8C66;
+}
+
+.fa {
+    font-size: 16px;
+    font-family: Cambria;
+    font-weight: bold;
+    text-fill: #FFFFFF;
+    effect: dropshadow(gaussian, #AAAAAA, 10, 0, 2, 2);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* Facebook specific style */
+.fa-facebook {
+    background: #3B5998;
+    shape: "M10,20 L30,20 L35,10 L40,10 L40,5 L35,5 L35,2 L30,2 L30,0 L25,0 L25,2 L20,2 L20,5 L15,5 L15,10 L20,10 L20,20 L10,20 Z";
+    content-display: top;
+    padding: 10px;
+}
+
+
+/* Facebook share button style */
+.fb-share-button {
+    background-color: #3b5998;
+    border-radius: 3px;
+    font-weight: bold;
+    padding: 5px 8px;
+}
+
+/* Hover style for Facebook share button */
+.fb-share-button:hover {
+    background-color: #213a6f;
+}
+
+/* Icon style in Facebook share button */
+.fb-share-button .icon {
+    fill: white;
+}
+
+/* Text style in Facebook share button */
+.fb-share-button .text {
+    fill: white;
+    font-size: 14px;
+    padding: 0 3px;
+}
+
+/* Table style */
+.md-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.md-table tbody tr:hover,
+.md-table tbody tr:focus {
+    cursor: pointer;
+    background-color: rgba(63, 81, 181, 0.2);
+}
+
+.md-table-header {
+    border-bottom: 1px solid rgb(230, 230, 230);
+    color: rgb(130, 130, 130);
+    text-align: left;
+    font-size: 0.75em;
+    font-weight: 700;
+    padding: 16px 16px 16px 0;
+}
+
+.md-table-header a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.md-table-content {
+    white-space: nowrap;
+    font-size: 0.8em;
+    padding: 16px 16px 16px 0;
+    height: 72px;
+}
+
+.md-table-td-more {
+    max-width: 72px;
+    width: 72px;
+    padding: 16px;
+}
+
+.md-table-thumbs {
+    max-width: 104px;
+    width: 104px;
+    padding: 16px 32px;
+}
+
+.md-table-thumbs div {
+    overflow: hidden;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-size: cover;
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0 8px 10px rgba(0, 0, 0, 0.1);
+}
+
+.md-table-footer {
+    height: 40px;
+    padding-left: 32px;
+    padding-right: 32px;
+}
+
+.md-table-count-info {
+    line-height: 40px;
+    font-size: 0.75em;
+}
+
+.md-table-footer-item {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+}
+
+.md-table-active-page {
+    font-weight: 700;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.grey {
+    color: grey;
+}
+
+md-input-container.md-default-theme .md-input {
+    color: white;
+    border-color: white;
+    margin-top: 24px;
+}
+
+
+.button-33 {
+    background-color: #c2fbd7;
+    border-radius: 100px;
+    box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,rgba(44, 187, 99, .15) 0 1px 2px,rgba(44, 187, 99, .15) 0 2px 4px,rgba(44, 187, 99, .15) 0 4px 8px,rgba(44, 187, 99, .15) 0 8px 16px,rgba(44, 187, 99, .15) 0 16px 32px;
+    color: green;
+    cursor: pointer;
+    display: inline-block;
+    font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
+    padding: 7px 20px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 250ms;
+    border: 0;
+    font-size: 16px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.button-33:hover {
+    box-shadow: rgba(44,187,99,.35) 0 -25px 18px -14px inset,rgba(44,187,99,.25) 0 1px 2px,rgba(44,187,99,.25) 0 2px 4px,rgba(44,187,99,.25) 0 4px 8px,rgba(44,187,99,.25) 0 8px 16px,rgba(44,187,99,.25) 0 16px 32px;
+    transform: scale(1.05) rotate(-1deg);
+}
