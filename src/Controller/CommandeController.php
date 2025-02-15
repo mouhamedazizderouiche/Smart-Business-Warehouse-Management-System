@@ -21,7 +21,32 @@ class CommandeController extends AbstractController
             'commandes' => $commandes
         ]);
     }
-
+    #[Route('/paiement', name: 'paiement')]
+    public function paiement(Request $request): Response
+    {
+        return $this->render('commande/paiement.html.twig');
+    }
+    #[Route('/traiter-paiement', name: 'traiter_paiement', methods: ['POST'])]
+    public function traiterPaiement(Request $request): Response
+    {
+        $nom = $request->request->get('nom');
+        $numero = $request->request->get('numero');
+        $expiration = $request->request->get('expiration');
+        $cvv = $request->request->get('cvv');
+    
+        
+        if (!$nom || !$numero || !$expiration || !$cvv) {
+            $this->addFlash('error', 'Veuillez remplir tous les champs.');
+            return $this->redirectToRoute('paiement');
+        }
+    
+       
+        $this->addFlash('success', 'Paiement effectué avec succès ! ✅');
+    
+        
+        return $this->redirectToRoute('historique_commandes');
+    }
+        
     #[Route('/commande/historique', name: 'historique_commandes')]
 public function historiqueCommandes(EntityManagerInterface $entityManager): Response
 {
