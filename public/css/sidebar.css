@@ -1,23 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
 #sidebar {
+    font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
     width: 250px;
-    background-color: #f8f9fa;
-    padding-top: 20px;
-    text-align: left; /* Ensure text aligns to the left */}
+    background-color: rgba(29, 31, 34, 0.95);
+    background-image: url('../sidebar-2.jpg');
+    background-blend-mode: overlay;
+    background-size: cover;
+    background-position: center;
+    text-align: left;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+a,span{
+    color: #fff !important;
+}
 
 #sidebar .logo {
     width: 100%;
     margin-bottom: 20px;
-    text-align: left; /* Align the logo to the left */
+    text-align: left;
 }
 
 .nav.flex-column {
-    padding-top: 20px;
-    text-align: left; /* Ensure list items align left */
-    padding-left: 0; /* Reset default padding */
+    text-align: left;
+    padding: 10px 12px 0 12px;
 }
 
 .nav-item {
@@ -28,13 +38,29 @@
     display: flex;
     align-items: center;
     text-align: left;
-    padding-left: 5px; 
+    padding-left: 5px;
+    margin: 24px 0 0 0;
+    transition: background-color 0.4s ease;
+    cursor: pointer;
+}
+
+.nav-link.active {
+    background-color: #4caf50;
+    height: 45px !important;
+    border-radius: 4px;
+}
+
+
+img.sidebar-logo
+{
+    margin: 12px 0 0 12px;
+    width: 200px;
 }
 
 .nav-link i {
-    margin-right: 10px; 
+    margin: 0 8px 0 12px;
 }
 
 .content-page {
-    padding : 0 0 0 250px;
+    padding: 0 0 0 250px;
 }
