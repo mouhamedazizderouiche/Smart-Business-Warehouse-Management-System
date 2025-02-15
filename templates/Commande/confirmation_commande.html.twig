@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande Finalisée{% endblock %}
+
+{% block body %}
+<div class="container my-5 text-center">
+    <h2 class="mb-4">🎉 Merci pour votre commande !</h2>
+    <p>Votre commande a été enregistrée avec succès. Nous vous remercions pour votre achat !</p>
+    <a href="{{ path('liste_produits') }}" class="btn btn-primary mt-3">🛍️ Retourner au magasin</a>
+</div>
+{% endblock %}
