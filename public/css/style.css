@@ -228,7 +228,10 @@
 @media (min-width: 992px) {
     .hero-header,
     .page-header {
+<<<<<<< HEAD
         margin-top: 152px !important;
+=======
+>>>>>>> origin/master
     }
 }
 

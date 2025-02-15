@@ -1,0 +1,51 @@
+{% extends 'home.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+{% block footer %}{% endblock %}
+{% block body %}
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <header>
+        <img src="{{ asset('images/log.png') }}" alt="Logo" style="height: 50px;">
+    </header>
+
+    <div class="container mt-4">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-header">
+                <h5 class="card-title text-center">Connexion</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <div class="mb-3">
+                            Vous êtes connecté en tant que {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label">Email</label>
+                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" placeholder="Entrez votre email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPassword" class="form-label">Mot de passe</label>
+                        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" placeholder="Entrez votre mot de passe">
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <div class="mb-3">
+                        <div class="g-recaptcha" data-sitekey="6LfxDsEpAAAAAHLhK6H22Gj0zvfXCT2EgcPbpG7U"></div>
+                    </div>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">
+                        Se connecter
+                    </button>
+                </form>
+                <p class="mt-3">
+                    <a href="{{ path('app_forgot_password_request') }}">Mot de passe oublié ?</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
