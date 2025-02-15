@@ -22,18 +22,31 @@ class CommandeController extends AbstractController
         ]);
     }
     #[Route('/commande/finaliser', name: 'finaliser_commande')]
-    public function finaliserCommande(CommandeRepository $commandeRepository): Response
-    {
-        $commandes = $commandeRepository->findAll();
-        $total = array_reduce($commandes, function ($acc, $commande) {
-            return $acc + ($commande->getProduit()->getPrixUnitaire() * $commande->getQuantite());
-        }, 0);
-    
-        return $this->render('commande/finalisation.html.twig', [
-            'commandes' => $commandes,
-            'total' => $total
-        ]);
+public function finaliserCommande(EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
+{
+    $commandes = $commandeRepository->findAll();
+
+    if (empty($commandes)) {
+        $this->addFlash('error', 'Votre panier est vide.');
+        return $this->redirectToRoute('mon_panier');
     }
+
+    
+    foreach ($commandes as $commande) {
+        $entityManager->remove($commande);
+    }
+
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Votre commande a été finalisée avec succès ! ✅');
+    return $this->redirectToRoute('confirmation_commande');
+}
+#[Route('/commande/confirmation', name: 'confirmation_commande')]
+public function confirmationCommande(): Response
+{
+    return $this->render('commande/confirmation_commande.html.twig');
+}
+
     
     #[Route('/produit/ajouter-au-panier/{id}/{quantite}', name: 'ajouter_commande')]
     public function ajouterAuPanier(Produit $produit, int $quantite, EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
