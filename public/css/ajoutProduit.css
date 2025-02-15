@@ -6,11 +6,16 @@ body{
     font-family: 'Poppins', sans-serif;
 }
 
+.content-page
+{
+    padding: 0 0 0 300px;
+}
+
 .display-container
 {
     display: flex;
-    padding: 0 0 0 180px;
-    gap: 100px;
+    padding: 0 0 0 0;
+    gap: 40px;
 }
 
 .image-preview
@@ -20,7 +25,7 @@ body{
     justify-content: center;
     background-color: #f1f1f1;
     border-radius: 8px;
-    margin: 140px 0 0 0;
+    margin: 0 0 0 0;
     height: 500px;
     width: 500px;
     border:1px solid #bbbbbb;
@@ -34,8 +39,8 @@ body{
 
 .container-form{
     display: flex;
-    padding: 0 250px 0 0;
-    margin: 150px 0 0 0;
+    padding: 0 20px 0 0;
+    margin: 0 0 0 0;
 }
 
 .produit-form

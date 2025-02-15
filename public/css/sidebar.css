@@ -40,7 +40,7 @@ a,span{
     text-align: left;
     padding-left: 5px;
     margin: 24px 0 0 0;
-    transition: background-color 0.4s ease;
+    transition: background-color 0.3s ease;
     cursor: pointer;
 }
 
@@ -48,6 +48,7 @@ a,span{
     background-color: #4caf50;
     height: 45px !important;
     border-radius: 4px;
+    z-index: 1;
 }
 
 
@@ -62,5 +63,5 @@ img.sidebar-logo
 }
 
 .content-page {
-    padding: 0 0 0 250px;
+    padding: 0 0 0 320px;
 }

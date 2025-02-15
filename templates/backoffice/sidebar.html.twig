@@ -93,7 +93,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-target="gestion-produit">
+                    <a class="nav-link" href="{{ path('ajout_produit') }}" data-target="gestion-produit">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Gestion Produit</span>
                     </a>
@@ -123,10 +123,7 @@
 
         navLinks.forEach(link => {
             link.addEventListener('click', function (e) {
-                e.preventDefault();
-
                 navLinks.forEach(el => el.classList.remove('active'));
-
                 this.classList.add('active');
             });
         });
