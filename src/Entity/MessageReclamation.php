@@ -16,13 +16,17 @@ class MessageReclamation
     #[ORM\Column(type: "uuid")]
     private ?Uuid $id = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "The content cannot be empty.")]
     #[Assert\Length(
             min: 10, 
             max: 500, 
-            minMessage: "The description must be at least {{ limit }} characters long.",
-            maxMessage: "The description cannot be longer than {{ limit }} characters."
+            minMessage: "The Reply must be at least {{ limit }} characters long.",
+            maxMessage: "The Reply cannot be longer than {{ limit }} characters."
         )]
     private ?string $contenu = null;
 
@@ -31,6 +35,18 @@ class MessageReclamation
 
     #[ORM\ManyToOne(inversedBy: 'reclamations')]
     private ?Reclamations $reclamation = null;
+
+
+    public function getUser(): ?User
+        {
+            return $this->user;
+        }
+
+        public function setUser(?User $user): static
+        {
+            $this->user = $user;
+            return $this;
+        }
 
     public function getId(): ?Uuid
     {

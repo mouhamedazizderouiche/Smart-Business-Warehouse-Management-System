@@ -29,7 +29,7 @@ class Reclamations
         #[Assert\NotBlank(message: "The title cannot be empty.")]
         #[Assert\Length(
             min: 5, 
-            max: 255, 
+            max: 55, 
             minMessage: "The title must be at least {{ limit }} characters long.",
             maxMessage: "The title cannot be longer than {{ limit }} characters."
         )]
@@ -43,7 +43,7 @@ class Reclamations
         #[Assert\NotBlank(message: "The description cannot be empty.")]
         #[Assert\Length(
             min: 10, 
-            max: 100, 
+            max: 300, 
             minMessage: "The description must be at least {{ limit }} characters long.",
             maxMessage: "The description cannot be longer than {{ limit }} characters."
         )]

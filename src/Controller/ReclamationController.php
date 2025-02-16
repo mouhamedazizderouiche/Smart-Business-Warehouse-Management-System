@@ -69,7 +69,7 @@ class ReclamationController extends AbstractController
     {
         $repository = $em->getRepository(Reclamations::class);
     
-        $limit = 4;
+        $limit = 3;
         $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
         $criteria = ['statut' => StatutReclamation::EN_ATTENTE];

@@ -8,12 +8,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class HomePageController extends AbstractController
 {
-    #[Route('/', name: 'home')]
-    public function home(): Response
-    {
+    // #[Route('/', name: 'home')]
+    // public function home(): Response
+    // {
 
-        return $this->render('homepage/homepage.html.twig');
-    }
+    //     return $this->render('homepage/homepage.html.twig');
+    // }
     
     #[Route('/shop', name: 'shop')]
     public function shop(): Response

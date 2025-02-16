@@ -15,6 +15,23 @@ use App\Entity\Reclamations;
 
 class MessageReclamationController extends AbstractController
 {
+    #[Route('/message/{id}/edit', name: 'message_reclamation_edit', methods: ['GET', 'POST'])]
+    public function editMessage(Request $request, MessageReclamation $message, EntityManagerInterface $entityManager): Response
+    {
+        $form = $this->createForm(MessageReclamationType::class, $message);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+            // Redirect back to the messages view for the associated reclamation
+            return $this->redirectToRoute('message_reclamation_index', ['id' => $message->getReclamation()->getId()]);
+        }
+
+        return $this->render('message_reclamation/edit.html.twig', [
+            'message' => $message,
+            'form' => $form->createView(),
+        ]);
+    }
      #[Route('/view/{id?}', name: 'message_reclamation_index', methods: ['GET', 'POST'])]
     public function index(Request $request, EntityManagerInterface $em, ?string $id = null): Response
     {
@@ -37,6 +54,10 @@ class MessageReclamationController extends AbstractController
         $form = $this->createForm(MessageReclamationType::class, $messageReclamation);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+                if ($user) {
+                    $messageReclamation->setUser($user);
+                }
             $em->persist($messageReclamation);
             $em->flush();
             return $this->redirectToRoute('message_reclamation_index', ['id' => $selectedReclamation->getId()]);
@@ -50,23 +71,7 @@ class MessageReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/message/{id}/edit', name: 'message_reclamation_edit', methods: ['GET', 'POST'])]
-    public function editMessage(Request $request, MessageReclamation $message, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(MessageReclamationType::class, $message);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-            // Redirect back to the messages view for the associated reclamation
-            return $this->redirectToRoute('message_reclamation_index', ['id' => $message->getReclamation()->getId()]);
-        }
-
-        return $this->render('message_reclamation/edit.html.twig', [
-            'message' => $message,
-            'form' => $form->createView(),
-        ]);
-    }
+    
 
 
     #[Route('/message/{id}', name: 'message_reclamation_delete', methods: ['POST'])]
