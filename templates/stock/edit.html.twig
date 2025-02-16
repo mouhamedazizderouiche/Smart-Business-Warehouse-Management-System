@@ -1,0 +1,19 @@
+{# templates/stock/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Stock{% endblock %}
+
+{% block body %}
+<div class="main-content">
+    <div class="container-fluid p-4">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark py-3">
+                <h5 class="m-0"><i class="fas fa-edit mr-2"></i>Modification de Stock</h5>
+            </div>
+            <div class="card-body">
+                {{ include('stock/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

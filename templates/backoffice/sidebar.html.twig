@@ -105,11 +105,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-target="gestion-stocks">
-                        <i class="fas fa-box"></i>
-                        <span>Gestion Stocks</span>
-                    </a>
-                </li>
+                  <a class="nav-link" href="{{ path('app_stock_index') }}" data-target="gestion-stocks">
+                      <i class="fas fa-box"></i>
+                      <span>Gestion Stocks</span>
+                  </a>
+              </li>
             </ul>
         </div>
     </nav>
@@ -131,6 +131,19 @@
             });
         });
     });
+    document.addEventListener('DOMContentLoaded', function () {
+      const navLinks = document.querySelectorAll('.nav-link');
+  
+      navLinks.forEach(link => {
+          link.addEventListener('click', function (e) {
+              e.preventDefault(); // Cela empêche la navigation
+  
+              navLinks.forEach(el => el.classList.remove('active'));
+  
+              this.classList.add('active');
+          });
+      });
+  });
 </script>
 </body>
 

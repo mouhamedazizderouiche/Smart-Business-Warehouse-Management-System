@@ -3,3 +3,28 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+app_stock_index:
+    path: /stock
+    controller: App\Controller\StockController::index
+    methods: GET
+
+app_stock_new:
+    path: /stock/new
+    controller: App\Controller\StockController::new
+    methods: [GET, POST]
+
+app_stock_show:
+    path: /stock/{id}
+    controller: App\Controller\StockController::show
+    methods: GET
+
+app_stock_edit:
+    path: /stock/{id}/edit
+    controller: App\Controller\StockController::edit
+    methods: [GET, POST]
+
+app_stock_delete:
+    path: /stock/{id}
+    controller: App\Controller\StockController::delete
+    methods: POST
