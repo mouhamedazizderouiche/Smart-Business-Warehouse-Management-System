@@ -38,25 +38,54 @@ class CommandeController extends AbstractController
         $expiration = $request->request->get('expiration');
         $cvv = $request->request->get('cvv');
     
-        
+        // Vérifications des conditions de saisie
         if (!$nom || !$numero || !$expiration || !$cvv) {
-            $this->addFlash('error', 'Veuillez remplir tous les champs.');
+            $this->addFlash('error', '⚠️ Tous les champs sont obligatoires.');
             return $this->redirectToRoute('paiement');
         }
     
-        
+        // Vérification du numéro de carte (16 chiffres)
+        if (!preg_match('/^\d{16}$/', $numero)) {
+            $this->addFlash('error', '⚠️ Le numéro de carte doit contenir exactement 16 chiffres.');
+            return $this->redirectToRoute('paiement');
+        }
+    
+        // Vérification de la date d'expiration (MM/YY format et date future)
+        if (!preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $expiration)) {
+            $this->addFlash('error', '⚠️ La date d\'expiration doit être au format MM/YY.');
+            return $this->redirectToRoute('paiement');
+        }
+    
+        // Vérifier si la carte n'est pas expirée
+        [$mois, $annee] = explode('/', $expiration);
+        $annee = '20' . $annee; // Convertir YY en YYYY
+        $dateExpiration = \DateTime::createFromFormat('Y-m', "$annee-$mois");
+        $dateActuelle = new \DateTime();
+    
+        if ($dateExpiration < $dateActuelle) {
+            $this->addFlash('error', '⚠️ La carte est expirée.');
+            return $this->redirectToRoute('paiement');
+        }
+    
+        // Vérification du CVV (3 chiffres)
+        if (!preg_match('/^\d{3}$/', $cvv)) {
+            $this->addFlash('error', '⚠️ Le CVV doit contenir exactement 3 chiffres.');
+            return $this->redirectToRoute('paiement');
+        }
+    
+        // Si toutes les conditions sont respectées -> Finalisation de la commande
+        $this->addFlash('success', '✅ Paiement effectué avec succès !');
+    
+        // On vide le panier après le paiement
         $commandes = $commandeRepository->findAll();
         foreach ($commandes as $commande) {
             $entityManager->remove($commande);
         }
         $entityManager->flush();
     
-     
-        $this->addFlash('success', 'Paiement effectué avec succès ! ✅');
-    
-        
         return $this->redirectToRoute('historique_commandes');
     }
+    
     
         
     #[Route('/commande/historique', name: 'historique_commandes')]
