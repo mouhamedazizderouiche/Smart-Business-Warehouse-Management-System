@@ -20,15 +20,16 @@ class ReclamationController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $reclamation = new Reclamations();
-        
+        $user = $this->getUser();
+        if ($user) {
+            $reclamation->setUser($user);
+        }
         $form = $this->createForm(ReclamationsType::class, $reclamation);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $reclamation->setDateReclamation(new \DateTime());
             $entityManager->persist($reclamation);
             $entityManager->flush();
-
             return $this->redirectToRoute('reclamation_show');
         }
 
@@ -41,14 +42,16 @@ class ReclamationController extends AbstractController
     public function newReview(Request $request, EntityManagerInterface $entityManager): Response
     {
         $reclamation = new Reclamations();
-        
+        $user = $this->getUser();
+        if ($user) {
+            $reclamation->setUser($user);
+        }
         $form = $this->createForm(ReclamationsType::class, $reclamation);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $reclamation->setDateReclamation(new \DateTime());
             $reclamation->setStatut(StatutReclamation::AVIS);
-
             $entityManager->persist($reclamation);
             $entityManager->flush();
 
