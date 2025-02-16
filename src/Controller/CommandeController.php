@@ -21,13 +21,14 @@ class CommandeController extends AbstractController
             'commandes' => $commandes
         ]);
     }
+    
     #[Route('/paiement', name: 'paiement')]
     public function paiement(Request $request): Response
     {
         return $this->render('commande/paiement.html.twig');
     }
     #[Route('/traiter-paiement', name: 'traiter_paiement', methods: ['POST'])]
-    public function traiterPaiement(Request $request): Response
+    public function traiterPaiement(Request $request, EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
     {
         $nom = $request->request->get('nom');
         $numero = $request->request->get('numero');
@@ -40,12 +41,20 @@ class CommandeController extends AbstractController
             return $this->redirectToRoute('paiement');
         }
     
-       
+        
+        $commandes = $commandeRepository->findAll();
+        foreach ($commandes as $commande) {
+            $entityManager->remove($commande);
+        }
+        $entityManager->flush();
+    
+     
         $this->addFlash('success', 'Paiement effectué avec succès ! ✅');
     
         
         return $this->redirectToRoute('historique_commandes');
     }
+    
         
     #[Route('/commande/historique', name: 'historique_commandes')]
 public function historiqueCommandes(EntityManagerInterface $entityManager): Response
