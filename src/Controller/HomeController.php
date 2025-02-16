@@ -1,20 +1,26 @@
 <?php
 
 namespace App\Controller;
-
+use App\Entity\Reclamations;
+use Doctrine\ORM\EntityManagerInterface;
+use StatutReclamation; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 final class HomeController extends AbstractController
 {
     
     #[Route('/home', name: 'app_home')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
+        $reclamations = $entityManager->getRepository(Reclamations::class)->findBy([
+            'statut' => StatutReclamation::AVIS
+        ]);
+
+        return $this->render('homepage/homepage.html.twig', [
+            'reclamations' => $reclamations,
         ]);
     }
     

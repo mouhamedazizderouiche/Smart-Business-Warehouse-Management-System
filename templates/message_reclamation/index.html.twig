@@ -1,0 +1,367 @@
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+    <style>
+        
+        body {
+            background-color: #ffffff;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .page-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 50px auto;
+            max-width: 900px;
+        }
+       
+        .main-container {
+            width: 60%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Right-side panel updated to match the main container */
+        .side-panel {
+            width: 35%;
+            margin-left: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #333;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #7AAE49;
+        }
+        .description {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #7AAE49;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            margin-bottom: 15px;
+        }
+        .button:hover {
+            background: #6E9C41;
+        }
+        /* Message container */
+        .message {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+        }
+        .message small {
+            font-size: 0.8em;
+            color: #999;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            padding: 5px;
+            margin: 15px 0;
+        }
+        .search-bar input {
+            width: 100%;
+            border: none;
+            background: none;
+            color: #333;
+            padding: 5px;
+            outline: none;
+        }
+        .search-bar button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #7AAE49;
+        }
+        .side-panel .section {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+        .side-panel a {
+            color: rgb(7, 7, 7);
+            text-decoration: none;
+            display: block;
+            padding: 5px 0;
+        }
+        .side-panel a:hover {
+            text-decoration: underline;
+        }
+        
+        .discussion-link {
+            cursor: pointer;
+            display: block;
+            padding: 5px 0;
+            color: #333;
+            text-decoration: none;
+        }
+        .discussion-link:hover {
+            text-decoration: underline;
+        }
+        .reply-container {
+                background-color: #ffffff; /* White background like other boxes */
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #dcdcdc;
+                margin-top: 15px;
+                box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .reply-header {
+                color: #6C983B; /* Green text */
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+            }
+
+            .reply-box {
+                display: flex;
+                align-items: center;
+                background-color: #f8f8f8; /* Light background for input area */
+                border: 1px solid #dcdcdc; /* Subtle border */
+                border-radius: 6px;
+                padding: 8px;
+            }
+
+            .reply-box img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%; /* Rounded avatar */
+                margin-right: 10px;
+                border: 2px solid #7AAE49; /* Green border */
+            }
+
+            .reply-box textarea {
+                background: transparent;
+                border: none;
+                color: #333; /* Dark text */
+                width: 100%;
+                height: 42px;
+                resize: none;
+                outline: none;
+                font-size: 14px;
+                padding: 5px;
+            }
+
+            .reply-box textarea::placeholder {
+                color: #777; /* Subtle placeholder */
+                opacity: 0.7;
+            }
+
+            .reply-submit {
+                background-color: #6C983B; /* Green button to match others */
+                color: white;
+                font-weight: bold;
+                border: none;
+                padding: 8px 14px;
+                border-radius: 6px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+            .reply-submit:hover {
+                background-color: #7AAE49; /* Slightly lighter green on hover */
+            }
+            .message {
+                position: relative;
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .message-buttons {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            .edit-btn, .delete-btn {
+                background: none;
+                border: none;
+                font-size: 18px;
+                cursor: pointer;
+                margin-left: 5px;
+                text-decoration: none;
+            }
+
+            .edit-btn {
+                color: #4CAF50;
+            }
+
+            .edit-btn:hover {
+                color: #2E7D32;
+            }
+
+            .delete-btn {
+                color: #ff5555;
+            }
+
+            .delete-btn:hover {
+                color: #cc0000;
+            }
+                </style>
+        
+{% endblock %}
+
+{% block body %}
+    {% include 'homepage/newNav.html.twig' %}
+
+    <div class="page-wrapper">
+        <div class="main-container">
+            <div class="header">{{ selectedReclamation.title }}</div>
+            <div class="description">
+                {{ selectedReclamation.description }}
+            </div>
+            
+            {% if selectedReclamation is not null %}
+                <button id="toggleMessages" class="button">Show Messages</button>
+                <div id="messagesContainer" style="display: none; margin-top: 20px;">
+                        {% set messages = reclamationMessages[(selectedReclamation.id ~ '')]|default([]) %}
+                        {% if messages is empty %}
+                            <p style="text-align: center;">Aucun message pour cette réclamation.</p>
+                        {% else %}
+                            {% for message in messages %}
+                                <div class="message" style="position: relative; padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <small>{{ message.dateMessage|date('Y-m-d H:i') }}</small>: {{ message.contenu }}
+                                    <span class="message-buttons">
+                                        <!-- Edit Message Button -->
+                                        <a href="{{ path('message_reclamation_edit', {'id': message.id}) }}" 
+                                        class="edit-btn" 
+                                        title="Edit Message">✏️</a>
+                                        <!-- Delete Message Button -->
+                                        <form action="{{ path('message_reclamation_delete', {'id': message.id}) }}" method="POST" style="display: inline;">
+                                            <button type="submit" 
+                                                    class="delete-btn" 
+                                                    onclick="return confirm('Are you sure you want to delete this message?');" 
+                                                    title="Delete Message">🗑️</button>
+                                        </form>
+                                    </span>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                <div class="reply-container">
+                <div class="reply-header">Reply</div>
+                <div class="reply-box">
+                    <img src="{{ asset('images/1.jpg') }}" alt="User Avatar"> {# Replace dynamically #}
+
+                    {{ form_start(messageForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                    
+                    <div class="form-group">
+                        <label for="{{ messageForm.contenu.vars.id }}">Your Reply:</label>
+                        {{ form_widget(messageForm.contenu, {'attr': {'placeholder': 'Type your reply...', 'rows': '1'}}) }}
+                        
+                        <!-- Display error message for the reply field -->
+                        <div class="error-message">
+                            {{ form_errors(messageForm.contenu) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
+                    </div>
+
+                    {{ form_end(messageForm) }}
+                </div>
+            </div>
+
+
+            {% else %}
+                <p style="text-align: center;">
+                    Aucune réclamation sélectionnée. Sélectionnez une réclamation pour voir les messages.
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="side-panel">
+            <div style="font-size: 1.2em; font-weight: bold;">
+                Date Posted: {{ selectedReclamation.dateReclamation|date('d M @ H:i') }}
+            </div>
+            <div>Posts: {{ messages|length }}</div>
+             <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_new') }}'">
+                    Créer une réclamation
+                </button>
+                <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_show') }}'">
+                    Back to List
+                </button>
+            <div class="search-bar">
+                <input type="text" placeholder="Search this topic">
+                <button>🔍</button>
+            </div>
+
+            <div class="section">
+                <strong>Discussions Rules and Guidelines</strong>
+            </div>
+
+            <div class="section">
+                <strong>Your Forum Account</strong>
+                <a href="#">Post History</a>
+            </div>
+
+            <div class="section">
+                <strong>More discussions</strong>
+                {% set otherReclamations = [] %}
+                {% for rec in reclamations %}
+                    {% if selectedReclamation is null or rec.id != selectedReclamation.id %}
+                        {% set otherReclamations = otherReclamations|merge([rec]) %}
+                    {% endif %}
+                {% endfor %}
+                {% set randomDiscussions = otherReclamations|shuffle|slice(0, 3) %}
+                {% for discussion in randomDiscussions %}
+                    <a href="{{ path('message_reclamation_index', {'id': discussion.id}) }}" class="discussion-link">
+                        {{ discussion.description|length > 40 ? discussion.description|slice(0, 40) ~ '...' : discussion.description }}
+                        <span style="float:right;">💬 {{ reclamationMessages[(discussion.id ~ '')]|length }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var toggleBtn = document.getElementById('toggleMessages');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                var container = document.getElementById('messagesContainer');
+                if (container.style.display === 'none') {
+                    container.style.display = 'block';
+                    this.textContent = 'Hide Messages';
+                } else {
+                    container.style.display = 'none';
+                    this.textContent = 'Show Messages';
+                }
+            });
+        }
+    </script>
+{% endblock %}
