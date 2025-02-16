@@ -29,7 +29,9 @@ class ProductType extends AbstractType
             ])
             ->add('urlImageProduit', FileType::class, [
                 'label' => 'URL de l\'image',
+                'mapped' => false,
                 'attr' => ['accept' => 'image/*'],
+                'required' => !$options['is_edit'],
             ])
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,

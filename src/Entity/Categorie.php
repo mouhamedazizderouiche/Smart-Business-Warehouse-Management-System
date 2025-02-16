@@ -11,7 +11,6 @@ use Symfony\Component\Uid\Uuid;
 class Categorie
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
     #[ORM\Column(type: "uuid", unique: true)]
     private ?Uuid $id = null;
 
@@ -26,7 +25,7 @@ class Categorie
 
     public function __construct()
     {
-        $this->produits = new ArrayCollection();
+        $this->id = Uuid::v4();
     }
 
     public function getId(): ?Uuid

@@ -89,17 +89,17 @@
 
         .add-btn
         {
-            height: 45px;
-            width: 180px;
-            margin: 0 0 12px auto;
-            border-radius: 4px ;
-            border: 1px solid #bbbbbb;
+            font-size: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #000;
-            font-size: 13px;
+            background-color: #81c408;
+            height: 45px !important;
+            width: 180px !important;
+            border-radius: 4px;
+            color:#fff;
             cursor: pointer;
+            margin: 0 12px 20px auto;
         }
 
         row.g-4.justify-content-center
@@ -124,9 +124,7 @@
 
         .d-flex gap-2
         {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
+           display: flex;
         }
 
     </style>
@@ -173,7 +171,6 @@
 
 
                 <!-- Product Table -->
-                <div class="col-lg-9">
                     <table class="table table-bordered table-striped">
                         <thead>
                         <tr>
@@ -196,7 +193,7 @@
                                 <td class="image-containter">
                                     <img src="{{ asset(produit.urlImageProduit) }}" class="img-fluid" alt="Image produit" style="width: 100px;">
                                 </td>
-                                <td>
+                                <td class="action-container">
                                     <div class="d-flex gap-2">
 
                                         <a href="{{ path('edit_produit', {id: produit.id}) }}" class="btn btn-sm btn-warning" title="Modifier">
@@ -217,7 +214,6 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                </div>
                 <!-- End Product Table -->
             </div>
         </div>

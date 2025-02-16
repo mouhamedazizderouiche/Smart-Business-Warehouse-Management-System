@@ -1,7 +1,23 @@
 <head>
-
+<link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 <link href="{{ asset('css/style.css')}}" rel="stylesheet">
 <link href="{{ asset('css/sidebar.css')}}" rel="stylesheet">
+
+
+        <style>
+
+        .add-categorie-button {
+                font-size: 14px;
+                display:flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #81c408;
+                height: 45px !important;
+                width: 180px !important;
+                border-radius: 4px;
+        }
+
+        </style>
 </head>
 
 
@@ -10,9 +26,6 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
         <h1>Liste des catégories</h1>
-
-        <a href="{{ path('ajout_categorie') }}" class="btn btn-primary mb-3">Ajouter une catégorie</a>
-
         <table class="table table-bordered table-striped">
                 <thead>
                 <tr>
@@ -28,11 +41,12 @@
                         </tr>
                 {% else %}
                         <tr>
-                                <td colspan="2" class="text-center">Aucune catégorie trouvée</td>
+                <td colspan="2" class="text-center">Aucune catégorie trouvée</td>
                         </tr>
                 {% endfor %}
                 </tbody>
         </table>
-{% endblock %}
+        <a href="{{ path('ajout_categorie') }}" class="add-categorie-button">Ajouter une catégorie</a>
+                {% endblock %}
 
         </main>
