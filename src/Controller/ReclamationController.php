@@ -37,6 +37,29 @@ class ReclamationController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    #[Route('/newReview', name: 'reclamation_newReview', methods: ['GET', 'POST'])]
+    public function newReview(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $reclamation = new Reclamations();
+        
+        $form = $this->createForm(ReclamationsType::class, $reclamation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $reclamation->setDateReclamation(new \DateTime());
+            $reclamation->setStatut(StatutReclamation::AVIS);
+
+            $entityManager->persist($reclamation);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('testimonial');
+        }
+        return $this->render('reclamation/newReview.html.twig', [
+            'reclamation' => $reclamation,
+            'form' => $form->createView(),
+        ]);
+    }
+
 
     #[Route('/', name: 'reclamation_show', methods: ['GET'])]
     public function show(Request $request, EntityManagerInterface $em): Response
@@ -88,7 +111,7 @@ class ReclamationController extends AbstractController
     }
 
     #[Route('/{id}', name: 'reclamation_delete', methods: ['POST'])]
-    public function delete(Request $request, Reclamations $reclamation, EntityManagerInterface $entityManager): Response
+    public function delete(Reclamations $reclamation, EntityManagerInterface $entityManager): Response
     {
         
         $entityManager->remove($reclamation);
@@ -109,29 +132,7 @@ class ReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/newReview', name: 'reclamation_newReview', methods: ['GET', 'POST'])]
-    public function newReview(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $reclamation = new Reclamations();
-        
-        $form = $this->createForm(ReclamationsType::class, $reclamation);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $reclamation->setDateReclamation(new \DateTime());
-            $reclamation->setStatut(StatutReclamation::AVIS);
-
-            $entityManager->persist($reclamation);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('testimonial');
-        }
-        return $this->render('reclamation/newReview.html.twig', [
-            'reclamation' => $reclamation,
-            'form' => $form->createView(),
-        ]);
-    }
-
+    
 
      
 

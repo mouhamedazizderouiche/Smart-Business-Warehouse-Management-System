@@ -72,7 +72,23 @@
                 padding: 15px;
             }
         }
+        .title-input {
+        font-size: 18px;
+        font-weight: bold;
+        border: 2px solid #28a745; /* Green accent to match the button */
+        padding: 12px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .title-input:focus {
+        border-color: #218838;
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    }
+    
     </style>
+
 </head>
 
 {% include 'homepage/newNav.html.twig' %}
@@ -83,13 +99,26 @@
     <h1>Submit a Reclamation</h1>
     <p>We value your feedback. Please describe your concern below.</p>
 
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-    <div class="form-group">
-        <label for="{{ form.description.vars.id }}">Describe Your Reclamation: <span class="required">*</span></label>
-        {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
-        <p class="error-message">{{ form_errors(form.description) }}</p>
+   <div class="form-group">
+    <label for="{{ form.title.vars.id }}">Title:</label>
+    {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
+    <!-- Wrap the errors in a container with .error-message class -->
+    <div class="error-message">
+        {{ form_errors(form.title) }}
     </div>
+</div>
+
+<div class="form-group">
+    <label for="{{ form.description.vars.id }}">Describe Your Reclamation:</label>
+    {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
+    <!-- Wrap the errors in a container with .error-message class -->
+    <div class="error-message">
+        {{ form_errors(form.description) }}
+    </div>
+</div>
+
 
     <div class="form-group">
         {{ form_widget(form.save, {'attr': {'class': 'submit-button'}}) }}

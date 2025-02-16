@@ -26,13 +26,31 @@ class Reclamations
     private ?int $rate = 1;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "The content cannot be empty.")]
-    #[Assert\Regex(
-        pattern: "/^\S+\s+\S+.*$/",
-        message: "The content must contain at least two words."
-    )]
-    private ?string $description = null;
+        #[Assert\NotBlank(message: "The title cannot be empty.")]
+        #[Assert\Length(
+            min: 5, 
+            max: 255, 
+            minMessage: "The title must be at least {{ limit }} characters long.",
+            maxMessage: "The title cannot be longer than {{ limit }} characters."
+        )]
+        #[Assert\Regex(
+            pattern: "/^\S+\s+\S+.*$/",
+            message: "The title must contain at least two words."
+        )]
+        private ?string $title = null;
 
+        #[ORM\Column(length: 255)]
+        #[Assert\NotBlank(message: "The description cannot be empty.")]
+        #[Assert\Length(
+            min: 10, 
+            max: 100, 
+            minMessage: "The description must be at least {{ limit }} characters long.",
+            maxMessage: "The description cannot be longer than {{ limit }} characters."
+        )]
+        private ?string $description = null;
+        #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reclamations')]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?User $user = null;
     #[ORM\Column(enumType: StatutReclamation::class)]
     private StatutReclamation $statut;
     
@@ -67,6 +85,16 @@ class Reclamations
         $this->id = $id;
         return $this;
     }
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+        return $this;
+    }
 
     public function getDateReclamation(): ?\DateTimeInterface
     {
@@ -98,6 +126,17 @@ class Reclamations
     public function setStatut(StatutReclamation $statut): void
     {
         $this->statut = $statut;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->title = $title;
+        return $this;
     }
 
     public function getReclamations(): Collection

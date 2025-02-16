@@ -239,7 +239,7 @@
 
     <div class="page-wrapper">
         <div class="main-container">
-            <div class="header">Messages</div>
+            <div class="header">{{ selectedReclamation.title }}</div>
             <div class="description">
                 {{ selectedReclamation.description }}
             </div>
@@ -276,13 +276,27 @@
                 <div class="reply-header">Reply</div>
                 <div class="reply-box">
                     <img src="{{ asset('images/1.jpg') }}" alt="User Avatar"> {# Replace dynamically #}
-                    {{ form_start(messageForm) }}
+
+                    {{ form_start(messageForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                    
+                    <div class="form-group">
+                        <label for="{{ messageForm.contenu.vars.id }}">Your Reply:</label>
                         {{ form_widget(messageForm.contenu, {'attr': {'placeholder': 'Type your reply...', 'rows': '1'}}) }}
+                        
+                        <!-- Display error message for the reply field -->
+                        <div class="error-message">
+                            {{ form_errors(messageForm.contenu) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
+                    </div>
 
                     {{ form_end(messageForm) }}
                 </div>
             </div>
+
 
             {% else %}
                 <p style="text-align: center;">

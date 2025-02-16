@@ -15,7 +15,8 @@
                             
                             <a href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}" class="reclamation-content">
                                 <div class="reclamation-content">
-                                    <p class="reclamation-text">{{ reclamation.description }}</p>
+                                    <p class="reclamation-text">{{ reclamation.title }}</p>
+                                    <p style="color: #555;">{{ reclamation.description }}</p>
                                     <p class="reclamation-date">Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</p>
                                 </div>
                                 <!-- Right: Edit and Delete Buttons -->

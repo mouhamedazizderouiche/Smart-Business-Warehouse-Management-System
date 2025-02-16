@@ -84,6 +84,20 @@
         .star-rating .star:hover {
             color: #ffcc00;
         }
+        .title-input {
+        font-size: 18px;
+        font-weight: bold;
+        border: 2px solid #28a745; /* Green accent to match the button */
+        padding: 12px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        transition: all 0.3s ease;
+    }
+
+    .title-input:focus {
+        border-color: #218838;
+        box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    }
     </style>
 </head>
 
@@ -94,8 +108,12 @@
     <h1>Submit a Review</h1>
     <p>We value your feedback. Please describe your concern below.</p>
 
-    {{ form_start(form) }}
-
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+<div class="form-group">
+        <label for="{{ form.title.vars.id }}">Title: <span class="required">*</span></label>
+        {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
+        <p class="error-message">{{ form_errors(form.title) }}</p>
+    </div>
     <div class="form-group">
         <label for="{{ form.description.vars.id }}">Describe Your experience with us: <span class="required">*</span></label>
         {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}

@@ -18,6 +18,12 @@ class MessageReclamation
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "The content cannot be empty.")]
+    #[Assert\Length(
+            min: 10, 
+            max: 500, 
+            minMessage: "The description must be at least {{ limit }} characters long.",
+            maxMessage: "The description cannot be longer than {{ limit }} characters."
+        )]
     private ?string $contenu = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
