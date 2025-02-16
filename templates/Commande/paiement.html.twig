@@ -22,7 +22,9 @@
 
         <div class="mb-3">
             <label for="numero" class="form-label">Numéro de Carte</label>
-            <input type="text" class="form-control" id="numero" name="numero" maxlength="16" pattern="\d{16}" required>
+            <input type="tel" class="form-control" id="numero" name="numero" maxlength="16" pattern="[0-9]{16}" required
+       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+       placeholder="•••• •••• •••• ••••">
         </div>
 
         <div class="row">
@@ -32,7 +34,9 @@
             </div>
             <div class="col-md-6">
                 <label for="cvv" class="form-label">CVV</label>
-                <input type="text" class="form-control" id="cvv" name="cvv" maxlength="3" pattern="\d{3}" required>
+                <input type="tel" class="form-control" id="cvv" name="cvv" maxlength="3" pattern="\d{3}" required
+       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+       placeholder="•••">
             </div>
         </div>
 

@@ -9,6 +9,8 @@
     {% if commandes is empty %}
         <p class="text-center text-muted">Votre panier est vide.</p>
     {% else %}
+        {% set totalPanier = 0 %} {# Initialisation du total du panier #}
+
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="thead-dark">
@@ -24,6 +26,9 @@
                 <tbody>
                     {% for commande in commandes %}
                         {% set produit = commande.produit %}
+                        {% set totalProduit = produit.prixUnitaire * commande.quantite %}
+                        {% set totalPanier = totalPanier + totalProduit %} {# Ajout au total général #}
+
                         <tr>
                             <td>{{ produit.nom }}</td>
                             <td>
@@ -36,14 +41,19 @@
                                 </form>
                             </td>
                             <td>{{ produit.prixUnitaire }} DT</td>
-                            <td>{{ produit.prixUnitaire * commande.quantite }} DT</td>
+                            <td>{{ totalProduit }} DT</td>
                             <td>
-                                <a href="{{ path('supprimer_commande', {id: commande.id}) }}" class="btn btn-danger">❌</a>
+                                <a href="{{ path('supprimer_commande', {id: commande.id}) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">❌</a>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <!-- ✅ Affichage du Total Général du Panier -->
+        <div class="text-end mt-3">
+            <h4>Total du panier: <strong>{{ totalPanier }} DT</strong></h4>
         </div>
     {% endif %}
 

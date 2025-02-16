@@ -25,12 +25,59 @@
     <!-- Global Stylesheets -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+<style>
+    .flash-messages {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        width: 300px; 
+        max-width: 90%;
+        z-index: 1050;
+        text-align: center;
+    }
+
+    .flash-message {
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: 14px;
+        margin-bottom: 5px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+        animation: fadeOut 4s ease-in-out forwards;
+    }
+
+    .flash-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .flash-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    @keyframes fadeOut {
+        0% { opacity: 1; }
+        70% { opacity: 1; }
+        100% { opacity: 0; display: none; }
+    }
+</style>
 
     {% block styles %}{% endblock %}
 </head>
 
 <body>
     {% include 'backoffice/sidebar.html.twig' %}
+{% for label, messages in app.flashes %}
+    <div class="flash-messages">
+        {% for message in messages %}
+            <div class="flash-message flash-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
 
     <div class="container-fluid">
         <div class="container py-5">

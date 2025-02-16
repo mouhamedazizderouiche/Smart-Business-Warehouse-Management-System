@@ -38,27 +38,24 @@ class CommandeController extends AbstractController
         $expiration = $request->request->get('expiration');
         $cvv = $request->request->get('cvv');
     
-        // Vérifications des conditions de saisie
+        
         if (!$nom || !$numero || !$expiration || !$cvv) {
             $this->addFlash('error', '⚠️ Tous les champs sont obligatoires.');
             return $this->redirectToRoute('paiement');
         }
     
-        // Vérification du numéro de carte (16 chiffres)
-        if (!preg_match('/^\d{16}$/', $numero)) {
+        if (!is_numeric($numero) || strlen((string) $numero) !== 16) {
             $this->addFlash('error', '⚠️ Le numéro de carte doit contenir exactement 16 chiffres.');
             return $this->redirectToRoute('paiement');
         }
     
-        // Vérification de la date d'expiration (MM/YY format et date future)
         if (!preg_match('/^(0[1-9]|1[0-2])\/\d{2}$/', $expiration)) {
             $this->addFlash('error', '⚠️ La date d\'expiration doit être au format MM/YY.');
             return $this->redirectToRoute('paiement');
         }
     
-        // Vérifier si la carte n'est pas expirée
         [$mois, $annee] = explode('/', $expiration);
-        $annee = '20' . $annee; // Convertir YY en YYYY
+        $annee = '20' . $annee; 
         $dateExpiration = \DateTime::createFromFormat('Y-m', "$annee-$mois");
         $dateActuelle = new \DateTime();
     
@@ -67,24 +64,37 @@ class CommandeController extends AbstractController
             return $this->redirectToRoute('paiement');
         }
     
-        // Vérification du CVV (3 chiffres)
-        if (!preg_match('/^\d{3}$/', $cvv)) {
+        if (!is_numeric($cvv) || strlen((string) $cvv) !== 3) {
             $this->addFlash('error', '⚠️ Le CVV doit contenir exactement 3 chiffres.');
             return $this->redirectToRoute('paiement');
         }
     
-        // Si toutes les conditions sont respectées -> Finalisation de la commande
-        $this->addFlash('success', '✅ Paiement effectué avec succès !');
-    
-        // On vide le panier après le paiement
+       
         $commandes = $commandeRepository->findAll();
+        
+        if (empty($commandes)) {
+            $this->addFlash('error', '⚠️ Votre panier est vide.');
+            return $this->redirectToRoute('mon_panier');
+        }
+    
         foreach ($commandes as $commande) {
+            $commandeFinalisee = new CommandeFinalisee();
+            $commandeFinalisee->setNomProduit($commande->getProduit()->getNom());
+            $commandeFinalisee->setQuantite($commande->getQuantite());
+            $commandeFinalisee->setPrixTotal($commande->getProduit()->getPrixUnitaire() * $commande->getQuantite());
+    
+            
+            $entityManager->persist($commandeFinalisee);
             $entityManager->remove($commande);
         }
+    
         $entityManager->flush();
+    
+        $this->addFlash('success', '✅ Paiement effectué avec succès ! Commande enregistrée dans l\'historique.');
     
         return $this->redirectToRoute('historique_commandes');
     }
+    
     
     
         
@@ -175,4 +185,14 @@ public function confirmationCommande(): Response
 
         return $this->redirectToRoute('mon_panier');
     }
+    #[Route('/commande/historique/supprimer/{id}', name: 'supprimer_commande_historique')]
+public function supprimerCommandeHistorique(EntityManagerInterface $entityManager, CommandeFinalisee $commandeFinalisee): Response
+{
+    $entityManager->remove($commandeFinalisee);
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Commande supprimée de l’historique ✅');
+    return $this->redirectToRoute('historique_commandes');
+}
+
 }

@@ -3,34 +3,52 @@
 {% block title %}Historique des Commandes{% endblock %}
 
 {% block body %}
-<div class="container my-5">
+<div class="container my-5" style="margin-left: 180px; max-width: 1200px;"> 
     <h2 class="text-center mb-4">📜 Historique des Commandes</h2>
 
     {% if commandesFinalisees is empty %}
         <p class="text-center text-muted">Aucune commande finalisée pour l'instant.</p>
     {% else %}
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered text-center small-table">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Date</th>
-                        <th>Produit</th>
-                        <th>Quantité</th>
-                        <th>Prix Total</th>
+                        <th style="width: 20%;">Date</th>
+                        <th style="width: 30%;">Produit</th>
+                        <th style="width: 15%;">Qté</th>
+                        <th style="width: 20%;">Total (DT)</th>
+                        <th style="width: 15%;">Actions</th> {# Nouvelle colonne pour suppression #}
                     </tr>
                 </thead>
                 <tbody>
                     {% for commande in commandesFinalisees %}
                         <tr>
-                            <td>{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
-                            <td>{{ commande.nomProduit }}</td>
-                            <td>{{ commande.quantite }}</td>
-                            <td>{{ commande.prixTotal }} DT</td>
+                            <td style="font-size: 13px;">{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+                            <td style="font-size: 13px;">{{ commande.nomProduit }}</td>
+                            <td style="font-size: 13px;">{{ commande.quantite }}</td>
+                            <td style="font-size: 13px;">{{ commande.prixTotal }} DT</td>
+                            <td>
+                                <a href="{{ path('supprimer_commande_historique', { id: commande.id }) }}" 
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette commande de l’historique ?');">
+                                    ❌ Supprimer
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{{ path('mon_panier') }}" class="btn btn-primary btn-sm">🛒 Retour au panier</a>
+    </div>
 </div>
+
+<style>
+    .small-table th, .small-table td {
+        padding: 5px; /* Réduit l'espace dans chaque case */
+    }
+</style>
 {% endblock %}
