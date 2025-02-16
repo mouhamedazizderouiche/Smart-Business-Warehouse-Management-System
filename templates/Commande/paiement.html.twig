@@ -1,0 +1,76 @@
+{% extends 'Commande/commande_base.html.twig' %}
+
+{% block title %}Paiement{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">💳 Informations de Paiement</h2>
+
+    <!-- Affichage des messages flash uniquement liés au paiement -->
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger text-center">{{ message }}</div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success text-center">{{ message }}</div>
+    {% endfor %}
+
+    <form action="{{ path('traiter_paiement') }}" method="POST" class="col-md-6 mx-auto">
+        <div class="mb-3">
+            <label for="nom" class="form-label">Nom sur la carte</label>
+            <input type="text" class="form-control" id="nom" name="nom" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="numero" class="form-label">Numéro de Carte</label>
+            <input type="text" class="form-control" id="numero" name="numero" maxlength="16" pattern="\d{16}" required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <label for="expiration" class="form-label">Date d'expiration</label>
+                <input type="text" class="form-control" id="expiration" name="expiration" placeholder="MM/YY" pattern="(0[1-9]|1[0-2])\/\d{2}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="text" class="form-control" id="cvv" name="cvv" maxlength="3" pattern="\d{3}" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-4">🛒 Payer</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.querySelector("form");
+        form.addEventListener("submit", function(event) {
+            const numero = document.getElementById("numero").value;
+            const expiration = document.getElementById("expiration").value;
+            const cvv = document.getElementById("cvv").value;
+
+            let errors = [];
+
+            // Vérification du numéro de carte (16 chiffres)
+            if (!/^\d{16}$/.test(numero)) {
+                errors.push("⚠️ Le numéro de carte doit contenir exactement 16 chiffres.");
+            }
+
+            // Vérification de la date d'expiration (MM/YY)
+            if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiration)) {
+                errors.push("⚠️ La date d'expiration doit être au format MM/YY.");
+            }
+
+            // Vérification du CVV (3 chiffres)
+            if (!/^\d{3}$/.test(cvv)) {
+                errors.push("⚠️ Le CVV doit contenir exactement 3 chiffres.");
+            }
+
+            if (errors.length > 0) {
+                event.preventDefault();
+                alert(errors.join("\n"));
+            }
+        });
+    });
+</script>
+
+{% endblock %}
