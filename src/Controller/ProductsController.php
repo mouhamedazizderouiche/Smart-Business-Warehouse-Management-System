@@ -62,7 +62,7 @@ class ProductsController extends AbstractController
         
         $produits = $entityManager->getRepository(Produit::class)->findAll();
 
-        return $this->render('produit/produit.html.twig', [
+        return $this->render('produit/listeproduitdashboard.html.twig', [
             'produits' => $produits
         ]);
     }

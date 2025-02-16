@@ -32,7 +32,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+{# <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#" style="margin-left: 250px;">Dashboard</a>
 
@@ -61,7 +61,7 @@
         </div>
     </div>
 </nav>
-
+#}
 <!-- Sidebar -->
 <div class="container-fluid">
     <nav id="sidebar">
@@ -69,7 +69,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="Logo" class="sidebar-logo">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#" data-target="dashboard">
+                    <a class="nav-link active" href="{{ path('app_dashboard') }}" data-target="dashboard">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Tableau de bord</span>
                     </a>
@@ -96,6 +96,12 @@
                     <a class="nav-link" href="{{ path('liste_produits') }}" data-target="gestion-produit">
                         <i class="fas fa-shopping-cart"></i>
                         <span>Gestion Produit</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"  href="{{ path('liste_categories') }}" data-target="categories">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Categorie</span>
                     </a>
                 </li>
                <li class="nav-item">

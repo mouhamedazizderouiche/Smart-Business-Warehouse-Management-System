@@ -16,7 +16,7 @@ class Commande
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne(targetEntity: Produit::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false,onDelete: "CASCADE")]
     private ?Produit $produit = null;
 
     #[ORM\Column(type: "integer")]

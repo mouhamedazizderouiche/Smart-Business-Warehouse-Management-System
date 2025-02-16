@@ -42,6 +42,9 @@ class Produit
     #[Assert\NotNull(message: "La catégorie du produit est obligatoire.")]
     private ?Categorie $categorie = null;
 
+
+
+
     public function __construct()
     {
         $this->id = Uuid::v4();
