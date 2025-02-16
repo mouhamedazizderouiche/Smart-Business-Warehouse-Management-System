@@ -49,7 +49,7 @@ class Reclamations
         )]
         private ?string $description = null;
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reclamations')]
-        #[ORM\JoinColumn(nullable: false)]
+        #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
         private ?User $user = null;
     #[ORM\Column(enumType: StatutReclamation::class)]
     private StatutReclamation $statut;
@@ -58,7 +58,7 @@ class Reclamations
     /**
      * @var Collection<int, MessageReclamation>
      */
-    #[ORM\OneToMany(targetEntity: MessageReclamation::class, mappedBy: 'reclamation')]
+    #[ORM\OneToMany(targetEntity: MessageReclamation::class, mappedBy: 'reclamation', cascade: ['remove'])]
     private Collection $reclamations;
 
     public function __construct()

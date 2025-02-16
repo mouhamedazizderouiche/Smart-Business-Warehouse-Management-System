@@ -11,7 +11,7 @@
             {% else %}
                 <div class="reclamations-container">
                     {% for reclamation in reclamations %}
-                       <div class="reclamation-item">
+                        <div class="reclamation-item">
                             <a href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}" class="reclamation-content">
                                 <div class="reclamation-row">
                                     
@@ -29,7 +29,6 @@
                                         <!-- Title and Username -->
                                         <div class="reclamation-title-container">
                                             <p class="reclamation-title">{{ reclamation.title }}</p>
-                                            
                                         </div>
                                     </div>
 
@@ -37,11 +36,14 @@
                                     <p class="reclamation-description">{{ reclamation.description }}</p>
                                     
                                     <p class="reclamation-date">
-                                        <span>Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</span> <span class="username">by {{ reclamation.user.Prenom }}</span>
+                                        <span>Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</span> 
+                                        <span class="username">by {{ reclamation.user.Prenom }}</span>
                                     </p>
                                 </div>
+                            </a>
 
-                                <!-- Edit and Delete Buttons -->
+                            <!-- Edit and Delete Buttons only for the owner -->
+                            {% if reclamation.user and app.user and reclamation.user.id == app.user.id %}
                                 <div class="buttons-container">
                                     <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="edit-btn">✏️</a>
                                     <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
@@ -50,7 +52,7 @@
                                         </button>
                                     </form>
                                 </div>
-                            </a>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>

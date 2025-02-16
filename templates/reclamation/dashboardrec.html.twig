@@ -1,0 +1,259 @@
+{# templates/dashboard/index.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body style="background:rgb(214, 221, 218)">
+{% include 'backoffice/sidebar.html.twig' %}
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="page-wrapper">
+        <div class="content-container">
+            <!-- Main Content -->
+            <div class="main-container">
+                <h2 class="header">Gestion Reclamations</h2>
+                <br>
+
+                {% if reclamations is empty %}
+                    <p class="no-reclamations">No reclamations available.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table custom-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Posted On</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reclamation in reclamations %}
+                                    <tr>
+                                        <td>
+                                            <div class="profile-img-container">
+                                                {% if reclamation.user and reclamation.user.photoUrl %}
+                                                    <img src="{{ asset('uploads/photos/' ~ reclamation.user.photoUrl) }}" alt="User Photo" class="profile-img">
+                                                {% else %}
+                                                    <img src="{{ asset('uploads/photos/default.png') }}" alt="Default User Photo" class="profile-img">
+                                                {% endif %}
+                                                {{ reclamation.user.Prenom }}
+                                            </div>
+                                        </td>
+
+                                        <td>{{ reclamation.title }}</td>
+                                        
+                                        <td>{{ reclamation.description }}</td>
+
+                                        <td>{{ reclamation.dateReclamation|date('d M Y H:i') }}</td>
+
+                                        <td>
+                                            <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="btn btn-sm btn-warning" title="Edit Reclamation">✏️</a>
+                                            <!-- Message Icon with Count -->
+                                            <a href="#" class="btn btn-sm btn-info" title="View Messages">
+                                                ✉️ <span class="badge bg-danger">{{ reclamation.reclamations|length }}</span>
+                                            </a>
+                                            <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete Reclamation" onclick="return confirm('Are you sure you want to delete this reclamation?');">
+                                                    🗑️
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <div class="pagination">
+                        {% if currentPage > 1 %}
+                            <a href="{{ path('recAdmin', {'page': currentPage - 1}) }}" class="pagination-btn pagination-prev">⬅️ Previous</a>
+                        {% endif %}
+
+                        <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+
+                        {% if currentPage < totalPages %}
+                            <a href="{{ path('recAdmin', {'page': currentPage + 1}) }}" class="pagination-btn pagination-next">Next ➡️</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Add the CSS to style the table -->
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    .pagination-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 0 10px;
+        background-color: #218838;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .pagination-btn:hover {
+        background-color:rgb(81, 173, 101);
+        transform: translateY(-2px);
+    }
+
+    .pagination-btn:disabled {
+        background-color: #e0e0e0;
+        cursor: not-allowed;
+    }
+
+    .pagination-prev,
+    .pagination-next {
+        font-weight: bold;
+    }
+
+    .pagination-info {
+        font-size: 1rem;
+        color: #555;
+        margin: 0 15px;
+        text-align: center;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .custom-table thead {
+        background-color: rgb(81, 173, 101);
+        color: white;
+    }
+
+    .custom-table th,
+    .custom-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .custom-table th {
+        font-weight: 600;
+    }
+
+    .custom-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .profile-img-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .btn {
+        padding: 6px 10px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-sm {
+        font-size: 0.85rem;
+        padding: 4px 8px;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-info {
+        background-color: #17a2b8;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #138496;
+    }
+
+    .header {
+        color:rgb(81, 173, 101);
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .no-reclamations {
+        text-align: center;
+        color: #555;
+        font-size: 1.2rem;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.25em 0.5em;
+        border-radius: 10px;
+    }
+</style>
+</body>
+</html>
