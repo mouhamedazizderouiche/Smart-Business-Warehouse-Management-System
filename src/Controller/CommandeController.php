@@ -27,6 +27,9 @@ class CommandeController extends AbstractController
     {
         return $this->render('commande/paiement.html.twig');
     }
+ 
+    
+
     #[Route('/traiter-paiement', name: 'traiter_paiement', methods: ['POST'])]
     public function traiterPaiement(Request $request, EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
     {
