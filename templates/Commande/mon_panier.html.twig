@@ -59,7 +59,7 @@
 
     <!-- Boutons d'action -->
     <div class="text-center mt-4 d-flex justify-content-center gap-3">
-        <a href="{{ path('liste_produits') }}" class="btn btn-primary">🛍️ Continuer mes achats</a>
+        <a href="{{ path('shop') }}" class="btn btn-primary">🛍️ Continuer mes achats</a>
         {% if commandes is not empty %}
             <a href="{{ path('paiement') }}" class="btn btn-success">💳 Finaliser la commande</a>
         {% endif %}
