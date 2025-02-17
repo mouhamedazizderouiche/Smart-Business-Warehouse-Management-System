@@ -12,9 +12,9 @@
                 <div class="reclamations-container">
                     {% for reclamation in reclamations %}
                         <div class="reclamation-item 
-                            {% if reclamation.statut.value == 'fermee' %}closed-reclamation{% elseif reclamation.statut.value == 'resolue' %} resolved-reclamation{% endif %}"
-                            data-href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}"
-                        >
+    {% if reclamation.statut.value == 'fermee' %} closed-reclamation unclickable {% elseif reclamation.statut.value == 'resolue' %} resolved-reclamation{% endif %}"
+    data-href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}"
+>
                             <div class="reclamation-header">
                                 <div class="profile-img-container">
                                     {% if reclamation.user and reclamation.user.photoUrl %}
@@ -89,15 +89,16 @@
 </div>
 
 <script>
-    // Make the entire container clickable.
-    document.querySelectorAll('.reclamation-item').forEach(function(item) {
+   document.querySelectorAll('.reclamation-item').forEach(function(item) {
+    if (!item.classList.contains('unclickable')) {
         item.addEventListener('click', function() {
             const href = this.getAttribute('data-href');
             if (href) {
                 window.location.href = href;
             }
         });
-    });
+    }
+});
 </script>
 
 <style>
@@ -300,6 +301,11 @@
     cursor: pointer;
     font-size: 14px;
     text-decoration: none;
+}
+.unclickable {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.6; /* Optional: Makes it visually distinct */
 }
 
 .subscribe-btn {
