@@ -1,14 +1,15 @@
 <?php
-namespace App\Controller;
+namespace App\Controller\produit;
 
+use App\Entity\Categorie;
+use App\Entity\Produit;
+use App\Form\ProductType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\ProductType;
-use App\Entity\Produit;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ProductsController extends AbstractController
 {
@@ -94,6 +95,22 @@ class ProductsController extends AbstractController
 
         return $this->redirectToRoute('liste_produits');
     }
+
+
+    #[Route('/produit/shop', name: 'shop_produits')]
+    public function shopProduits(EntityManagerInterface $entityManager): Response
+    {
+        $produits = $entityManager->getRepository(Produit::class)->findAll();
+        $categories = $entityManager->getRepository(Categorie::class)->findAll();
+
+        return $this->render('homepage/shop.html.twig', [
+            'produits' => $produits,
+            'categories' => $categories
+        ]);
+    }
+
+
+
 
 
 }
