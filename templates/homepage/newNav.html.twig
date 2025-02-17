@@ -30,7 +30,7 @@
         
             <div class="container px-0">
                 <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                    <a href="{{ path('home') }}" class="navbar-brand">
+                    <a href="{{ path('app_home') }}" class="navbar-brand">
                     <img src="{{ asset('images/logofront.png') }}" alt="Logo">
                         
                     </a>
@@ -40,7 +40,7 @@
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav mx-auto">
                             <!-- Main navigation links -->
-                            <a href="{{ path('home') }}" class="nav-item nav-link active">Home</a>
+                            <a href="{{ path('app_home') }}" class="nav-item nav-link active">Home</a>
                             <a href="{{ path('shop_produits') }}" class="nav-item nav-link">Shop</a>
                             <a href="{{ path('shopdetails') }}" class="nav-item nav-link">Shop Detail</a>
                             
@@ -72,6 +72,9 @@
 
                             <a href="#" class="my-auto">
                                 <i class="fas fa-user fa-2x"></i>
+                            </a>
+                            <a class="nav-link" href="{{ path('app_logout') }}">
+                                <i class="fas fa-sign-out-alt  fa-2x"></i>
                             </a>
                         </div>
                     </div>

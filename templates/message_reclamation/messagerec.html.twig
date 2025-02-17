@@ -1,0 +1,323 @@
+{# templates/dashboard/index.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #333;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        
+        .page-wrapper {
+                display: flex;
+                justify-content: flex-end; /* Pushes all children to the right */
+                align-items: flex-start;
+                width: 100%;
+                max-width: 1200px;
+                margin: 50px auto;
+                padding: 0 20px;
+            }
+
+        .main-container {
+            width: 65%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .reply-container {
+            width: 100%; 
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #dcdcdc;
+            margin-top: 15px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .side-panel {
+            width: 33%;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #333;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            margin-left: 10px;
+        }
+        
+        .header {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #7AAE49;
+        }
+        .description {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        
+        .button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #7AAE49;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            margin-bottom: 15px;
+        }
+        .button:hover {
+            background: #6E9C41;
+        }
+        
+        /* Message container */
+        .message {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+            color: #333;
+            position: relative;
+        }
+        .message small {
+            font-size: 0.8em;
+            color: #999;
+        }
+        
+        .reply-header {
+            color: #6C983B;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .reply-box {
+            display: flex;
+            align-items: center;
+            background-color: #f8f8f8;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .reply-box img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #7AAE49;
+            margin-right: 10px;
+            order: -1;
+        }
+
+        .reply-box textarea {
+            flex-grow: 1;
+            border: none;
+            background: none;
+            color: #333;
+            font-size: 14px;
+            padding: 10px;
+            outline: none;
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .reply-box textarea::placeholder {
+            color: #777;
+            opacity: 0.7;
+        }
+
+        .reply-submit {
+            background-color: #6C983B;
+            color: white;
+            font-weight: bold;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .reply-submit:hover {
+            background-color: #7AAE49;
+        }
+
+        .message-buttons {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .edit-btn, .delete-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 5px;
+            text-decoration: none;
+        }
+
+        .edit-btn {
+            color: #4CAF50;
+        }
+
+        .edit-btn:hover {
+            color: #2E7D32;
+        }
+
+        .delete-btn {
+            color: #ff5555;
+        }
+
+        .delete-btn:hover {
+            color: #cc0000;
+        }
+    </style>
+</head>
+<body style="background: rgb(214, 221, 218);">
+    {% include 'backoffice/sidebar.html.twig' %}
+        <div class="page-wrapper">
+            <div class="main-container">
+                <div class="header">{{ selectedReclamation.title }}</div>
+                <div class="description">
+                    {{ selectedReclamation.description }}
+                </div>
+                
+                {% if selectedReclamation is not null %}
+                    <button id="toggleMessages" class="button">Show Messages</button>
+                    <div id="messagesContainer" style="display: none; margin-top: 20px;">
+                        {% set messages = reclamationMessages[(selectedReclamation.id ~ '')]|default([]) %}
+                        {% if messages is empty %}
+                            <p style="text-align: center;">Aucun message pour cette réclamation.</p>
+                        {% else %}
+                            {% for message in messages %}
+                                <div class="message" style="display: flex; align-items: flex-start; padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <div style="margin-right: 10px;">
+                                        {% if message.user and message.user.photoUrl %}
+                                            <img src="{{ asset('uploads/photos/' ~ message.user.photoUrl) }}" 
+                                                 alt="{{ message.user.Prenom }}" 
+                                                 style="width: 50px; height: 50px; border-radius: 50%;">
+                                        {% else %}
+                                            <img src="{{ asset('images/admin.jpg') }}" 
+                                                 alt="Default User" 
+                                                 style="width: 80px; height: 80px; border-radius: 50%;">
+                                        {% endif %}
+                                    </div>
+
+                                    <div style="flex-grow: 1;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                            <strong>{{ message.user ? message.user.Nom : 'Unknown User' }} {{ message.user ? message.user.Prenom : 'Unknown User' }}</strong>
+                                            <small style="color: gray;">{{ message.dateMessage|date('d M Y H:i') }}</small>
+                                        </div>
+                                        <p style="margin: 5px 0;">{{ message.contenu }}</p>
+
+                                        
+                                            <span class="message-buttons">
+                                                <a href="{{ path('message_reclamation_edit', {'id': message.id}) }}" class="edit-btn" title="Edit Message">✏️</a>
+                                                <form action="{{ path('message_reclamation_delete', {'id': message.id}) }}" method="POST" style="display: inline;">
+                                                    <button type="submit" class="delete-btn" onclick="return confirm('Are you sure?');" title="Delete">🗑️</button>
+                                                </form>
+                                            </span>
+                                        
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="reply-container">
+                        <div class="reply-header">Reply</div>
+                        {{ form_start(messageForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                        <div class="reply-box">
+                            {% if app.user and app.user.photoUrl %}
+                                <img src="{{ asset('uploads/photos/' ~ app.user.photoUrl) }}" alt="{{ app.user.Prenom }}">
+                            {% else %}
+                                <img src="{{ asset('images/admin.jpg') }}" alt="Default User"
+                                style="width: 50px; height: 50px; border-radius: 50%;">
+                            {% endif %}
+                            <div style="flex: 1;">
+                                {{ form_widget(messageForm.contenu, {
+                                    'attr': {
+                                        'placeholder': 'Type your reply...',
+                                        'rows': '1',
+                                        'style': 'width: 100%;'
+                                    }
+                                }) }}
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 10px;">
+                            {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
+                        </div>
+                        <div class="error-message">
+                            {{ form_errors(messageForm.contenu) }}
+                        </div>
+                        {{ form_end(messageForm) }}
+                    </div>
+                {% else %}
+                    <p style="text-align: center;">
+                        Aucune réclamation sélectionnée. Sélectionnez une réclamation pour voir les messages.
+                    </p>
+                {% endif %}
+            </div>
+
+           
+        </div>
+    <script>
+        var toggleBtn = document.getElementById('toggleMessages');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                var container = document.getElementById('messagesContainer');
+                if (container.style.display === 'none') {
+                    container.style.display = 'block';
+                    this.textContent = 'Hide Messages';
+                } else {
+                    container.style.display = 'none';
+                    this.textContent = 'Show Messages';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

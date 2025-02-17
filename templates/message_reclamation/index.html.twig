@@ -8,34 +8,47 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            width: 100%;  
         }
         
         .page-wrapper {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: flex-start;
+            width: 100%;
+            max-width: 1200px;
             margin: 50px auto;
-            max-width: 900px;
+            padding: 0 20px;
         }
        
         .main-container {
-            width: 60%;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-        /* Right-side panel updated to match the main container */
-        .side-panel {
-            width: 35%;
-            margin-left: 20px;
-            padding: 20px;
-            background-color: #ffffff;
-            color: #333;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-        }
+    width: 65%;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.reply-container {
+    width: 100%; 
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #dcdcdc;
+    margin-top: 15px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.side-panel {
+    width: 33%;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-left: 10px;
+}
         
         .header {
             text-align: center;
@@ -128,14 +141,7 @@
         .discussion-link:hover {
             text-decoration: underline;
         }
-        .reply-container {
-                background-color: #ffffff; /* White background like other boxes */
-                padding: 15px;
-                border-radius: 8px;
-                border: 1px solid #dcdcdc;
-                margin-top: 15px;
-                box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-            }
+        
 
             .reply-header {
                 color: #6C983B; /* Green text */
@@ -145,34 +151,37 @@
                 text-transform: uppercase;
             }
 
-            .reply-box {
-                display: flex;
-                align-items: center;
-                background-color: #f8f8f8; /* Light background for input area */
-                border: 1px solid #dcdcdc; /* Subtle border */
-                border-radius: 6px;
-                padding: 8px;
-            }
+           .reply-box {
+    display: flex;
+    align-items: center;
+    background-color: #f8f8f8;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    width: 100%;
+    padding: 10px;
+}
 
-            .reply-box img {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%; /* Rounded avatar */
-                margin-right: 10px;
-                border: 2px solid #7AAE49; /* Green border */
-            }
+.reply-box img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #7AAE49;
+    margin-right: 10px; /* Space between image and input */
+    order: -1; /* Move image to the left */
+}
 
-            .reply-box textarea {
-                background: transparent;
-                border: none;
-                color: #333; /* Dark text */
-                width: 100%;
-                height: 42px;
-                resize: none;
-                outline: none;
-                font-size: 14px;
-                padding: 5px;
-            }
+.reply-box textarea {
+    flex-grow: 1;
+    border: none;
+    background: none;
+    color: #333;
+    font-size: 14px;
+    padding: 10px;
+    outline: none;
+    resize: vertical;
+    min-height: 50px;
+}
+
 
             .reply-box textarea::placeholder {
                 color: #777; /* Subtle placeholder */
@@ -252,50 +261,76 @@
                             <p style="text-align: center;">Aucun message pour cette réclamation.</p>
                         {% else %}
                             {% for message in messages %}
-                                <div class="message" style="position: relative; padding: 10px; border-bottom: 1px solid #ddd;">
-                                    <small>{{ message.dateMessage|date('Y-m-d H:i') }}</small>: {{ message.contenu }}
-                                    <span class="message-buttons">
-                                        <!-- Edit Message Button -->
-                                        <a href="{{ path('message_reclamation_edit', {'id': message.id}) }}" 
-                                        class="edit-btn" 
-                                        title="Edit Message">✏️</a>
-                                        <!-- Delete Message Button -->
-                                        <form action="{{ path('message_reclamation_delete', {'id': message.id}) }}" method="POST" style="display: inline;">
-                                            <button type="submit" 
-                                                    class="delete-btn" 
-                                                    onclick="return confirm('Are you sure you want to delete this message?');" 
-                                                    title="Delete Message">🗑️</button>
-                                        </form>
-                                    </span>
+                        <div class="message" style="display: flex; align-items: flex-start; padding: 10px; border-bottom: 1px solid #ddd;">
+                            <!-- User Image on the Left -->
+                            <div style="margin-right: 10px;">
+                                {% if message.user and message.user.photoUrl %}
+                                    <img src="{{ asset('uploads/photos/' ~ message.user.photoUrl) }}" 
+                                        alt="{{ message.user.Prenom }}" 
+                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                {% else %}
+                                    <img src="{{ asset('uploads/photos/default.png') }}" 
+                                        class="img-fluid rounded" 
+                                        alt="Default User" 
+                                        style="width: 50px; height: 50px; border-radius: 50%;">
+                                {% endif %}
+                            </div>
+
+                            <!-- Message Content on the Right -->
+                            <div style="flex-grow: 1;">
+                                <!-- Name and Date in One Line Above the Message -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                    <strong>{{ message.user ? message.user.Nom : 'Unknown User' }} {{ message.user ? message.user.Prenom : 'Unknown User' }}</strong>
+                                    <small style="color: gray;">{{ message.dateMessage|date('d M Y H:i') }}</small>
                                 </div>
-                            {% endfor %}
+
+                                <!-- Message Content -->
+                                <p style="margin: 5px 0;">{{ message.contenu }}</p>
+
+                                <!-- Action Buttons -->
+                              {% if message.user and app.user and message.user.id == app.user.id %}
+                                <span class="message-buttons">
+                                    <a href="{{ path('message_reclamation_edit', {'id': message.id}) }}" class="edit-btn" title="Edit Message">✏️</a>
+                                    <form action="{{ path('message_reclamation_delete', {'id': message.id}) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure?');" title="Delete">🗑️</button>
+                                    </form>
+                                </span>
+                            {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
                         {% endif %}
                     </div>
 
-                <div class="reply-container">
+             <div class="reply-container">
                 <div class="reply-header">Reply</div>
-                <div class="reply-box">
-                    <img src="{{ asset('images/1.jpg') }}" alt="User Avatar"> {# Replace dynamically #}
-
-                    {{ form_start(messageForm, {'attr': {'novalidate': 'novalidate'}}) }}
-                    
-                    <div class="form-group">
-                        <label for="{{ messageForm.contenu.vars.id }}">Your Reply:</label>
-                        {{ form_widget(messageForm.contenu, {'attr': {'placeholder': 'Type your reply...', 'rows': '1'}}) }}
-                        
-                        <!-- Display error message for the reply field -->
-                        <div class="error-message">
-                            {{ form_errors(messageForm.contenu) }}
-                        </div>
+                {{ form_start(messageForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                <div class="reply-box" style="display: flex; align-items: center;">
+                    {% if app.user and app.user.photoUrl %}
+                        <img src="{{ asset('uploads/photos/' ~ app.user.photoUrl) }}" alt="{{ app.user.Prenom }}">
+                    {% else %}
+                        <img src="{{ asset('uploads/photos/default.png') }}" class="img-fluid rounded" alt="Default User">
+                    {% endif %}
+                    <div style="flex: 1;">
+                        {{ form_widget(messageForm.contenu, {
+                            'attr': {
+                                'placeholder': 'Type your reply...',
+                                'rows': '1',
+                                'style': 'width: 100%;'
+                            }
+                        }) }}
                     </div>
-
-                    <div class="form-group">
-                        {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
-                    </div>
-
-                    {{ form_end(messageForm) }}
                 </div>
+                <div class="form-group" style="margin-top: 10px;">
+                    {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
+                </div>
+                <div class="error-message">
+                    {{ form_errors(messageForm.contenu) }}
+                </div>
+                {{ form_end(messageForm) }}
             </div>
+            
 
 
             {% else %}

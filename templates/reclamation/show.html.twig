@@ -13,29 +13,37 @@
                     {% for reclamation in reclamations %}
                         <div class="reclamation-item">
                             <a href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}" class="reclamation-content">
-                                
                                 <div class="reclamation-row">
-                                    <!-- Profile Image -->
-                                    <div class="profile-img-container">
-                                        {% if reclamation.user and reclamation.user.photoUrl %}
-                                            <img src="{{ asset('uploads/photos/' ~ reclamation.user.photoUrl) }}" alt="User Photo" class="profile-img">
-                                        {% else %}
-                                            <img src="{{ asset('uploads/photos/default.png') }}" alt="Default User Photo" class="profile-img">
-                                        {% endif %}
-                                    </div>
-                                    <!-- Text Content -->
-                                    <div class="reclamation-text-content">
-                                        <p class="reclamation-text">{{ reclamation.title }}</p>
-                                        <p style="color: #555;">{{ reclamation.description }}</p>
+                                    
+                                    <!-- Title & Profile Image Row -->
+                                    <div class="reclamation-header">
+                                        <!-- Profile Image -->
+                                        <div class="profile-img-container">
+                                            {% if reclamation.user and reclamation.user.photoUrl %}
+                                                <img src="{{ asset('uploads/photos/' ~ reclamation.user.photoUrl) }}" alt="User Photo" class="profile-img">
+                                            {% else %}
+                                                <img src="{{ asset('uploads/photos/default.png') }}" alt="Default User Photo" class="profile-img">
+                                            {% endif %}
+                                        </div>
                                         
-                                        <p class="reclamation-date">
-                                            <span>Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</span> 
-                                            <span class="username">by {{ reclamation.user.Prenom }}</span>
-                                        </p>
+                                        <!-- Title and Username -->
+                                        <div class="reclamation-title-container">
+                                            <p class="reclamation-title">{{ reclamation.title }}</p>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <!-- Right: Edit and Delete Buttons -->
+                                    <!-- Description -->
+                                    <p class="reclamation-description">{{ reclamation.description }}</p>
+                                    
+                                    <p class="reclamation-date">
+                                        <span>Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</span> 
+                                        <span class="username">by {{ reclamation.user.Prenom }}</span>
+                                    </p>
+                                </div>
+                            </a>
+
+                            <!-- Edit and Delete Buttons only for the owner -->
+                            {% if reclamation.user and app.user and reclamation.user.id == app.user.id %}
                                 <div class="buttons-container">
                                     <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="edit-btn">✏️</a>
                                     <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
@@ -44,7 +52,7 @@
                                         </button>
                                     </form>
                                 </div>
-                            </a>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>
@@ -85,7 +93,33 @@
 </div>
 
 <style>
+.reclamation-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
 
+/* Title & Username */
+.reclamation-title-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Title Styling */
+.reclamation-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+/* Description Styling */
+.reclamation-description {
+    color: #555;
+    font-size: 14px;
+    margin: 5px 0;
+} 
 .user-profile {
     display: flex;
     align-items: center;

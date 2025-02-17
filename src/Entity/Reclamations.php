@@ -29,7 +29,7 @@ class Reclamations
         #[Assert\NotBlank(message: "The title cannot be empty.")]
         #[Assert\Length(
             min: 5, 
-            max: 255, 
+            max: 55, 
             minMessage: "The title must be at least {{ limit }} characters long.",
             maxMessage: "The title cannot be longer than {{ limit }} characters."
         )]
@@ -43,13 +43,13 @@ class Reclamations
         #[Assert\NotBlank(message: "The description cannot be empty.")]
         #[Assert\Length(
             min: 10, 
-            max: 100, 
+            max: 300, 
             minMessage: "The description must be at least {{ limit }} characters long.",
             maxMessage: "The description cannot be longer than {{ limit }} characters."
         )]
         private ?string $description = null;
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reclamations')]
-        #[ORM\JoinColumn(nullable: false)]
+        #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
         private ?User $user = null;
     #[ORM\Column(enumType: StatutReclamation::class)]
     private StatutReclamation $statut;
@@ -58,13 +58,13 @@ class Reclamations
     /**
      * @var Collection<int, MessageReclamation>
      */
-    #[ORM\OneToMany(targetEntity: MessageReclamation::class, mappedBy: 'reclamation')]
+    #[ORM\OneToMany(targetEntity: MessageReclamation::class, mappedBy: 'reclamation', cascade: ['remove'])]
     private Collection $reclamations;
 
     public function __construct()
     {
         $this->reclamations = new ArrayCollection();
-        $this->statut = StatutReclamation::EN_ATTENTE;
+        $this->statut = StatutReclamation::EN_COURS;
     }
 
     #[ORM\PrePersist] 
