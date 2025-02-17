@@ -61,5 +61,49 @@
 
     <!-- Template Javascript -->
     <script src="{{ asset('js/main.js') }}"></script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("🚀 Chargement global du panier");
+
+    function updateCartCount() {
+        fetch("/api/cart/count")
+        .then(response => response.json())
+        .then(data => {
+            const cartCountElement = document.getElementById("cart-count");
+            if (cartCountElement) {
+                cartCountElement.textContent = data.count;
+                cartCountElement.style.display = data.count > 0 ? "inline-block" : "none"; // Cacher si 0
+            }
+        })
+        .catch(error => console.error("❌ Erreur mise à jour panier :", error));
+    }
+
+    // 🚀 Mettre à jour le compteur au chargement de chaque page
+    updateCartCount();
+
+    // 🛒 Ajouter au panier et mettre à jour dynamiquement
+    document.querySelectorAll(".add-to-cart").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            const productId = this.getAttribute("data-id");
+            const quantite = this.getAttribute("data-quantite");
+
+            fetch(`/produit/ajouter-au-panier/${productId}/${quantite}`, {
+                method: "POST",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Produit ajouté :", data);
+
+                // 🚀 Mettre à jour le compteur du panier après ajout
+                updateCartCount();
+            })
+            .catch(error => console.error("❌ Erreur AJAX :", error));
+        });
+    });
+});
+</script>
+
 </body>
 </html>

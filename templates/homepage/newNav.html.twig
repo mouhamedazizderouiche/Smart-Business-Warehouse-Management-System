@@ -66,10 +66,13 @@
                                     data-bs-toggle="modal" data-bs-target="#searchModal">
                                 <i class="fas fa-search text-primary"></i>
                             </button>
-                        <a href="{{ path('mon_panier') }}" class="nav-link">
+                       <a href="{{ path('mon_panier') }}" class="nav-link position-relative">
     <i class="fa fa-shopping-cart"></i>
-    <span id="cart-count" class="badge bg-danger">0</span>
+    <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        0
+    </span>
 </a>
+
 
                             <a class="nav-link" href="{{ path('app_logout') }}">
                                 <i class="fas fa-sign-out-alt  fa-2x"></i>
