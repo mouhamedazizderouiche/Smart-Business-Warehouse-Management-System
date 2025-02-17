@@ -66,7 +66,7 @@
                                                 {% if reclamation.user and reclamation.user.photoUrl %}
                                                     <img src="{{ asset('uploads/photos/' ~ reclamation.user.photoUrl) }}" alt="User Photo" class="profile-img">
                                                 {% else %}
-                                                    <img src="{{ asset('uploads/photos/default.png') }}" alt="Default User Photo" class="profile-img">
+                                                    <img src="{{ asset('images/admin.jpg')}}" alt="Default User Photo" class="profile-img">
                                                 {% endif %}
                                                 {{ reclamation.user.Prenom }}
                                             </div>
@@ -106,13 +106,13 @@
                     <!-- Pagination Controls -->
                     <div class="pagination">
                         {% if currentPage > 1 %}
-                            <a href="{{ path('recAdmin', {'page': currentPage - 1}) }}" class="pagination-btn pagination-prev">⬅️ Previous</a>
+                            <a href="{{ path('reclamation_show', {'page': currentPage - 1}) }}" class="pagination-btn pagination-prev">⬅️ Previous</a>
                         {% endif %}
 
                         <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
 
                         {% if currentPage < totalPages %}
-                            <a href="{{ path('recAdmin', {'page': currentPage + 1}) }}" class="pagination-btn pagination-next">Next ➡️</a>
+                            <a href="{{ path('reclamation_show', {'page': currentPage + 1}) }}" class="pagination-btn pagination-next">Next ➡️</a>
                         {% endif %}
                     </div>
                 {% endif %}
@@ -142,7 +142,7 @@
                                     {% if testimonial.user and testimonial.user.photoUrl %}
                                         <img src="{{ asset('uploads/photos/' ~ testimonial.user.photoUrl) }}" alt="User Photo" class="profile-img">
                                     {% else %}
-                                        <img src="{{ asset('uploads/photos/default.png') }}" alt="Default User Photo" class="profile-img">
+                                        <img src="{{ asset('images/admin.jpg') }}" alt="Default User Photo" class="profile-img" width="40" height="40">
                                     {% endif %}
                                     {{ testimonial.user.Prenom }}
                                 </div>
