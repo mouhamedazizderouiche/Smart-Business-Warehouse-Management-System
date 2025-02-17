@@ -35,7 +35,6 @@ class EntrepotController extends AbstractController
         $form->handleRequest($request);
     
         if ($form->isSubmitted() && $form->isValid()) {
-            // Les données sont valides, on peut les enregistrer
             $entityManager->persist($entrepot);
             $entityManager->flush();
     
@@ -43,13 +42,18 @@ class EntrepotController extends AbstractController
             return $this->redirectToRoute('app_entrepot_index');
         }
     
-        // Si le formulaire n'est pas valide, on affiche les erreurs
+        // Récupérer les erreurs de validation
+        $errors = [];
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+    
         return $this->render('entrepot/new.html.twig', [
             'form' => $form->createView(),
+            'errors' => $errors, // Transmettre les erreurs au template
         ]);
     }
-    // Affiche les détails d'un entrepôt spécifique
-    #[Route('/{id}', name: 'app_entrepot_show', methods: ['GET'])]
+          #[Route('/{id}', name: 'app_entrepot_show', methods: ['GET'])]
     public function show(Entrepot $entrepot): Response
     {
         return $this->render('entrepot/show.html.twig', [

@@ -6,6 +6,7 @@ use App\Repository\EntrepotRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EntrepotRepository::class)]
 #[UniqueEntity(fields: ['nom'], message: 'Un entrepôt avec ce nom existe déjà.')]
@@ -18,20 +19,42 @@ class Entrepot
     private ?Uuid $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: 'Le nom de l\'entrepôt ne peut pas être vide.')]
+    #[Assert\Length(
+        min: 2,
+        max: 100,
+        minMessage: 'Le nom doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'adresse ne peut pas être vide.')]
+    #[Assert\Length(
+        min: 5,
+        max: 255,
+        minMessage: 'L\'adresse doit contenir au moins {{ limit }} caractères.',
+        maxMessage: 'L\'adresse ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: 'La ville ne peut pas dépasser {{ limit }} caractères.'
+    )]
     private ?string $ville = null;
+
+    #[ORM\Column]
+    #[Assert\NotBlank(message: 'L\'espace ne peut pas être vide.')]
+    #[Assert\Positive(message: 'L\'espace doit être un nombre positif.')]
+    private ?float $espace = null;
+
 
     #[ORM\ManyToOne(targetEntity: Stock::class, inversedBy: 'entrepots')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Stock $stock = null;
 
-    #[ORM\Column]
-    private ?float $espace = null;
 
     public function getId(): ?string
     {

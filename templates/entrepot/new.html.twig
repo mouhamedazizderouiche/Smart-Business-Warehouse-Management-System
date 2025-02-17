@@ -80,4 +80,42 @@
         </div>
     </div>
 </div>
+
+{% block javascripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector('form.needs-validation');
+
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault(); // Empêche la soumission du formulaire
+                event.stopPropagation();
+
+                // Récupérer tous les champs invalides
+                const invalidFields = form.querySelectorAll(':invalid');
+
+                // Afficher une boîte de dialogue avec les erreurs
+                let errorMessage = "Veuillez corriger les erreurs suivantes :\n";
+                invalidFields.forEach(field => {
+                    errorMessage += `- ${field.getAttribute('name')}: ${field.validationMessage}\n`;
+                });
+
+                alert(errorMessage); // Affiche la boîte de dialogue
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+
+        // Afficher les erreurs côté serveur dans une boîte de dialogue
+        {% if errors is defined and errors|length > 0 %}
+            let serverErrorMessage = "Erreurs de validation :\n";
+            {% for error in errors %}
+                serverErrorMessage += `- {{ error }}\n`;
+            {% endfor %}
+            alert(serverErrorMessage);
+        {% endif %}
+    });
+</script>
+{% endblock %}
+
 {% endblock %}
