@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CommandeController extends AbstractController
 {
@@ -213,6 +214,16 @@ public function supprimerCommandeHistorique(EntityManagerInterface $entityManage
 
     $this->addFlash('success', 'Commande supprimée de l’historique ✅');
     return $this->redirectToRoute('historique_commandes');
+}
+#[Route('/api/cart/count', name: 'cart_count', methods: ['GET'])]
+public function getCartCount(CommandeRepository $commandeRepository): JsonResponse
+{
+    $commandes = $commandeRepository->findAll();
+    $totalProduits = array_reduce($commandes, function ($sum, $commande) {
+        return $sum + $commande->getQuantite();
+    }, 0);
+
+    return new JsonResponse(['count' => $totalProduits]);
 }
 
 }

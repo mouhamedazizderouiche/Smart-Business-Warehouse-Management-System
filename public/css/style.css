@@ -520,3 +520,11 @@
      height: 220px;
      object-fit: cover;
  }
+ /* 🛒 Style pour la notification Toast */
+.toast-container {
+    z-index: 9999 !important; /* S'assure que la notification est TOUJOURS au-dessus */
+    position: fixed;
+    top: 80px; /* Ajuste pour éviter d'être caché par la navbar */
+    right: 20px;
+}
+

@@ -33,12 +33,21 @@
     <div id="cart-toast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
             <div class="toast-body">
-                ✅ Produit ajouté au panier avec succès !
             </div>
             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
 </div>
+<style>
+.toast-container {
+    z-index: 9999 !important; /* Valeur très haute pour forcer l'affichage au-dessus */
+    position: fixed;
+    top: 80px; /* Ajuste pour éviter d'être caché par la navbar */
+    right: 20px;
+}
+</style>
+
+
 
     <body>
 
@@ -411,31 +420,50 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("🚀 Script chargé !");
+    console.log("🚀 Chargement du script pour mettre à jour le panier");
 
-    const addToCartButtons = document.querySelectorAll(".add-to-cart");
+    function updateCartCount() {
+        fetch("/api/cart/count")
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("cart-count").textContent = data.count;
+        })
+        .catch(error => console.error("❌ Erreur mise à jour panier :", error));
+    }
 
-    addToCartButtons.forEach(button => {
+    // 🚀 Mettre à jour au chargement de la page
+    updateCartCount();
+// ✅ Vérifier si une notification existe dans sessionStorage et l'afficher
+    if (sessionStorage.getItem("cartNotification")) {
+        const toastEl = document.getElementById("cart-toast");
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        
+        // ❌ Supprimer la notification après affichage pour éviter qu'elle reste après un refresh
+        sessionStorage.removeItem("cartNotification");
+    }
+    // 🛒 Ajouter au panier avec mise à jour du compteur et affichage de la notification
+    document.querySelectorAll(".add-to-cart").forEach(button => {
         button.addEventListener("click", function (event) {
-            event.preventDefault(); // Empêche la redirection
-
+            event.preventDefault();
             const productId = this.getAttribute("data-id");
             const quantite = this.getAttribute("data-quantite");
 
-            console.log(`🛒 Produit ID: ${productId}, Quantité: ${quantite}`);
-
             fetch(`/produit/ajouter-au-panier/${productId}/${quantite}`, {
                 method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
+                headers: { "X-Requested-With": "XMLHttpRequest" }
             })
             .then(response => response.json())
             .then(data => {
-                console.log("✅ Réponse AJAX :", data);
+                console.log("✅ Produit ajouté :", data);
 
-                // ✅ Afficher la notification avec Bootstrap Toast
+                // ✅ Mettre à jour le compteur du panier après ajout
+                updateCartCount();
+
+                // ✅ Afficher la notification Bootstrap Toast
                 const toastEl = document.getElementById("cart-toast");
+                document.querySelector("#cart-toast .toast-body").textContent = "✅ Produit ajouté au panier !";
+                
                 const toast = new bootstrap.Toast(toastEl);
                 toast.show();
             })
@@ -444,6 +472,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
+
 
     </body>
 
