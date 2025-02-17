@@ -5,8 +5,10 @@ namespace App\Entity;
 use App\Repository\EntrepotRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: EntrepotRepository::class)]
+#[UniqueEntity(fields: ['nom'], message: 'Un entrepôt avec ce nom existe déjà.')]
 class Entrepot
 {
     #[ORM\Id]
@@ -15,7 +17,7 @@ class Entrepot
     #[ORM\CustomIdGenerator(class: 'Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator')]
     private ?Uuid $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
@@ -25,8 +27,11 @@ class Entrepot
     private ?string $ville = null;
 
     #[ORM\ManyToOne(targetEntity: Stock::class, inversedBy: 'entrepots')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Stock $stock = null;
+
+    #[ORM\Column]
+    private ?float $espace = null;
 
     public function getId(): ?string
     {
@@ -74,6 +79,18 @@ class Entrepot
     public function setStock(?Stock $stock): static
     {
         $this->stock = $stock;
+        return $this;
+    }
+
+    public function getEspace(): ?float
+    {
+        return $this->espace;
+    }
+
+    public function setEspace(float $espace): static
+    {
+        $this->espace = $espace;
+
         return $this;
     }
 }

@@ -41,6 +41,20 @@
                                 {{ form_widget(form.dateSortie) }}
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.fournisseurs) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                                {{ form_widget(form.fournisseurs) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.entrepots) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
+                                {{ form_widget(form.entrepots) }}
+                            </div>
+                        </div>
                         <div class="col-12 text-end">
                             <button type="submit" class="btn btn-primary shadow-sm">
                                 <i class="fas fa-save mr-2"></i>Enregistrer

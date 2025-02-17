@@ -31,13 +31,13 @@ class StockController extends AbstractController
     {
         $stock = new Stock();
         $form = $this->createForm(StockType::class, $stock);
-        $form->handleRequest($request);
 
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($stock);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Stock créé avec succès.');
+            $this->addFlash('success', 'Le stock a été créé avec succès.');
             return $this->redirectToRoute('app_stock_index');
         }
 

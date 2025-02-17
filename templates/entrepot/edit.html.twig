@@ -1,0 +1,58 @@
+{# templates/entrepot/edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un Entrepôt{% endblock %}
+
+{% block body %}
+<div class="main-content">
+    <div class="container-fluid p-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="m-0"><i class="fas fa-edit mr-2"></i>Modifier un Entrepôt</h5>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form_label(form.nom) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
+                                {{ form_widget(form.nom) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.adresse) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                {{ form_widget(form.adresse) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_label(form.ville) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-city"></i></span>
+                                {{ form_widget(form.ville) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                          {{ form_label(form.espace) }}
+                          <div class="input-group">
+                              <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                              {{ form_widget(form.espace, {'attr': {'class': 'form-control'}}) }}
+                          </div>
+                          <div class="invalid-feedback">
+                              {{ form_errors(form.espace) }}
+                          </div>
+                      </div>
+                        <div class="col-12 text-end">
+                            <button type="submit" class="btn btn-primary shadow-sm">
+                                <i class="fas fa-save mr-2"></i>Enregistrer
+                            </button>
+                        </div>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

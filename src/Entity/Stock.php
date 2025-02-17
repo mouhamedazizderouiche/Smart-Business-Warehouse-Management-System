@@ -120,6 +120,24 @@ class Stock
         return $this->entrepots;
     }
 
+    public function addEntrepot(Entrepot $entrepot): self
+{
+    if (!$this->entrepots->contains($entrepot)) {
+        $this->entrepots->add($entrepot);
+        $entrepot->setStock($this);
+    }
+    return $this;
+}
+
+public function removeEntrepot(Entrepot $entrepot): self
+{
+    if ($this->entrepots->removeElement($entrepot)) {
+        $entrepot->setStock(null);
+    }
+    return $this;
+}
+
+
     public function getPrixProduit(): float
 {
     return $this->produit ? $this->produit->getPrixUnitaire() : 0;

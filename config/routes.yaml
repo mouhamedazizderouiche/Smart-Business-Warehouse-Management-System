@@ -28,3 +28,28 @@ app_stock_delete:
     path: /stock/{id}
     controller: App\Controller\StockController::delete
     methods: POST
+
+app_entrepot_index:
+    path: /entrepot
+    controller: App\Controller\EntrepotController::index
+    methods: GET
+
+app_entrepot_new:
+    path: /entrepot/new
+    controller: App\Controller\EntrepotController::new
+    methods: [GET, POST]
+
+app_entrepot_show:
+    path: /entrepot/{id}
+    controller: App\Controller\EntrepotController::show
+    methods: GET
+
+app_entrepot_edit:
+    path: /entrepot/{id}/edit
+    controller: App\Controller\EntrepotController::edit
+    methods: [GET, POST]
+
+app_entrepot_delete:
+    path: /entrepot/{id}
+    controller: App\Controller\EntrepotController::delete
+    methods: POST

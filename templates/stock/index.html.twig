@@ -4,8 +4,9 @@
 
 {% block body %}
 <div class="main-content">
+  <div style="display: grid; height: 10vh; align-items: end;">
     <h1 class="text-3xl font-bold mb-6">Gestion des Stocks</h1>
-
+</div>
     <!-- Bouton pour ajouter un stock -->
     <a href="{{ path('app_stock_new') }}" class="btn btn-primary mb-4">
         <i class="fas fa-plus mr-2"></i>Ajouter un stock
@@ -29,6 +30,7 @@
                     <th>Quantité</th>
                     <th>Date Entrée</th>
                     <th>Date Sortie</th>
+                    <th>Nom d'entrepot</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -43,6 +45,11 @@
                     <td>{{ stock.quantite }}</td>
                     <td>{{ stock.dateEntree|date('d/m/Y H:i') }}</td>
                     <td>{{ stock.dateSortie ? stock.dateSortie|date('d/m/Y H:i') : 'N/A' }}</td>
+                    <td>
+                        {% for entrepot in stock.entrepots %}
+                            {{ entrepot.nom }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
                     <td>
                         <a href="{{ path('app_stock_edit', { id: stock.id }) }}" class="btn btn-sm btn-warning">
                             <i class="fas fa-edit"></i> Modifier
@@ -71,7 +78,7 @@
     $(document).ready(function() {
         $('#stock-table').DataTable({
             paging: false, // Désactive la pagination de DataTables
-            searching: false, // Active la barre de recherche
+            searching: false, 
             ordering: true, // Active le tri
             info: false, // Désactive l'affichage des informations
             responsive: true, // Active la responsivité
