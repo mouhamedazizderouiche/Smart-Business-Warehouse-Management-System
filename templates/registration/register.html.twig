@@ -3,6 +3,50 @@
 {% block title %}Inscription{% endblock %}
 {% block footer %}{% endblock %}
 {% block body %}
+    <style>
+        /* Background Image */
+        body {
+            background-image: url('images/backg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Semi-transparent form container */
+        .card {
+            background: rgba(255, 255, 255, 0.3); /* White with 30% transparency */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+            backdrop-filter: blur(5px); /* Blur effect for a frosted glass look */
+        }
+
+        /* Semi-transparent input fields */
+        .form-control {
+            background: rgba(255, 255, 255, 0.4); /* White with 40% transparency */
+            border: 1px solid rgba(255, 255, 255, 0.6); /* Light border */
+            color: #000; /* Text color */
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.6); /* Slightly less transparent on focus */
+            border-color: #007bff; /* Highlighted border */
+        }
+
+        .form-control::placeholder {
+            color: rgba(0, 0, 0, 0.6); /* Darker placeholder for readability */
+        }
+
+        /* Button styling */
+        .btn-primary {
+            background: rgba(0, 123, 255, 0.8); /* Slight transparency */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: rgba(0, 123, 255, 1); /* Solid color on hover */
+        }
+    </style>
+
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     {% for flash_error in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
