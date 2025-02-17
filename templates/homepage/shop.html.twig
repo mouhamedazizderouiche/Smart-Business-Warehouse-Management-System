@@ -245,7 +245,11 @@
                                                 <p>{{ produit.description }}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">{{ produit.prixUnitaire }}DT/ kg</p>
-                                                    <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                    <a href="{{ path('ajouter_commande', {'id': produit.id, 'quantite': 1}) }}" 
+   class="btn border border-secondary rounded-pill px-3 text-primary">
+    <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+</a>
+
                                                 </div>
                                             </div>
                                         </div>
