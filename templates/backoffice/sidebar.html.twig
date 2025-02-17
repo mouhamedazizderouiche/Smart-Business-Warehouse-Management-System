@@ -69,7 +69,7 @@
             <img src="{{ asset('images/logo.png') }}" alt="Logo" class="sidebar-logo">
             <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link active" href="{{ path('app_dashboard') }}" data-target="dashboard">
+                    <a class="nav-link" href="{{ path('app_dashboard') }}" data-target="dashboard">
                         <i class="fas fa-tachometer-alt"></i>
                         <span>Tableau de bord</span>
                     </a>
@@ -127,9 +127,16 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const navLinks = document.querySelectorAll('.nav-link');
+        const currentUrl = window.location.href;
 
         navLinks.forEach(link => {
-            link.addEventListener('click', function (e) {
+            if (link.href === currentUrl) {
+                link.classList.add('active');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function () {
                 navLinks.forEach(el => el.classList.remove('active'));
                 this.classList.add('active');
             });
