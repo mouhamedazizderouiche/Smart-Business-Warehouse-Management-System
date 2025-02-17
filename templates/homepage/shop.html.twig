@@ -28,6 +28,17 @@
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
     </head>
+<!-- 🛒 Notification Bootstrap Toast -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+    <div id="cart-toast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                ✅ Produit ajouté au panier avec succès !
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
 
     <body>
 
@@ -245,10 +256,12 @@
                                                 <p>{{ produit.description }}</p>
                                                 <div class="d-flex justify-content-between flex-lg-wrap">
                                                     <p class="text-dark fs-5 fw-bold mb-0">{{ produit.prixUnitaire }}DT/ kg</p>
-                                                    <a href="{{ path('ajouter_commande', {'id': produit.id, 'quantite': 1}) }}" 
-   class="btn border border-secondary rounded-pill px-3 text-primary">
+                                       <button class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart" 
+        data-id="{{ produit.id }}" 
+        data-quantite="1">
     <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
-</a>
+</button>
+
 
                                                 </div>
                                             </div>
@@ -393,6 +406,45 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("🚀 Script chargé !");
+
+    const addToCartButtons = document.querySelectorAll(".add-to-cart");
+
+    addToCartButtons.forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault(); // Empêche la redirection
+
+            const productId = this.getAttribute("data-id");
+            const quantite = this.getAttribute("data-quantite");
+
+            console.log(`🛒 Produit ID: ${productId}, Quantité: ${quantite}`);
+
+            fetch(`/produit/ajouter-au-panier/${productId}/${quantite}`, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Réponse AJAX :", data);
+
+                // ✅ Afficher la notification avec Bootstrap Toast
+                const toastEl = document.getElementById("cart-toast");
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            })
+            .catch(error => console.error("❌ Erreur AJAX :", error));
+        });
+    });
+});
+</script>
+
     </body>
 
 </html>

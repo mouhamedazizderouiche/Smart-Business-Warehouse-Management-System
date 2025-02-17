@@ -141,9 +141,21 @@ public function confirmationCommande(): Response
 }
 
     
-    #[Route('/produit/ajouter-au-panier/{id}/{quantite}', name: 'ajouter_commande')]
-    public function ajouterAuPanier(Produit $produit, int $quantite, EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
-    {
+#[Route('/produit/ajouter-au-panier/{id}/{quantite}', name: 'ajouter_commande', methods: ['POST'])]
+public function ajouterAuPanier(Produit $produit, int $quantite, EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): JsonResponse
+{
+    try {
+        // Vérifier si le produit existe
+        if (!$produit) {
+            return new JsonResponse(["message" => "❌ Produit non trouvé"], Response::HTTP_NOT_FOUND);
+        }
+
+        // Vérifier si la quantité est valide
+        if ($quantite < 1) {
+            return new JsonResponse(["message" => "❌ Quantité invalide"], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Vérifier si la commande existe déjà
         $commandeExistante = $commandeRepository->findOneBy(['produit' => $produit]);
 
         if ($commandeExistante) {
@@ -156,9 +168,17 @@ public function confirmationCommande(): Response
         }
 
         $entityManager->flush();
-        $this->addFlash('success', 'Produit ajouté au panier avec succès ✅');
-        return $this->redirectToRoute('mon_panier');
+
+        return new JsonResponse(["message" => "✅ Produit ajouté au panier"], Response::HTTP_OK);
+
+    } catch (\Exception $e) {
+        return new JsonResponse([
+            "message" => "❌ Erreur : " . $e->getMessage()
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
+}
+
+
 
     #[Route('/commande/supprimer/{id}', name: 'supprimer_commande')]
     public function supprimerCommande(EntityManagerInterface $entityManager, Commande $commande): Response
