@@ -20,7 +20,7 @@ final class HomeController extends AbstractController
         ]);
 
         return $this->render('homepage/homepage.html.twig', [
-            'reclamations' => $reclamations,
+            'reclamationsAvis' => $reclamations
         ]);
     }
     

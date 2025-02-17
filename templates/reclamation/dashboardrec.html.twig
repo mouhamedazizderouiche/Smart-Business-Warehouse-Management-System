@@ -54,6 +54,7 @@
                                     <th scope="col">Title</th>
                                     <th scope="col">Description</th>
                                     <th scope="col">Posted On</th>
+                                    <th scope="col">Statut</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -76,17 +77,25 @@
                                         <td>{{ reclamation.description }}</td>
 
                                         <td>{{ reclamation.dateReclamation|date('d M Y H:i') }}</td>
+                                         <td>
+                                            <select class="status-dropdown" data-reclamation-id="{{ reclamation.id }}">
+                                                <option value="en_cours" {% if reclamation.statut.value == 'en_cours' %}selected{% endif %}>En cours</option>
+                                                <option value="resolue" {% if reclamation.statut.value == 'resolue' %}selected{% endif %}>Résolue</option>
+                                                <option value="fermee" {% if reclamation.statut.value == 'fermee' %}selected{% endif %}>Fermée</option>
+                                            </select>
+                                        </td>
 
                                         <td>
-                                            <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="btn btn-sm btn-warning" title="Edit Reclamation">✏️</a>
+                                            <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}"  title="Edit Reclamation">✏️</a>
                                             <!-- Message Icon with Count -->
-                                            <a href="#" class="btn btn-sm btn-info" title="View Messages">
+                                           
+                                            <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
+                                                <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this reclamation?');">
+                                            🗑️
+                                        </button>
+                                         <a href="{{ path('message_reclamation_index',  {'id': reclamation.id})}}" class="btn btn-sm btn-info" title="View Messages">
                                                 ✉️ <span class="badge bg-danger">{{ reclamation.reclamations|length }}</span>
                                             </a>
-                                            <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
-                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete Reclamation" onclick="return confirm('Are you sure you want to delete this reclamation?');">
-                                                    🗑️
-                                                </button>
                                             </form>
                                         </td>
                                     </tr>
@@ -108,12 +117,132 @@
                     </div>
                 {% endif %}
             </div>
+            <div class="container mt-5">
+    <h2 class="header">Testimonials</h2>
+    <br>
+    {% if reclamationsAvis is empty %}
+        <p class="no-reclamations">No testimonials available.</p>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table custom-table">
+                <thead>
+                    <tr>
+                        <th scope="col">User</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Review</th>
+                        <th scope="col">Rating</th>
+                        <th scope="col">Posted On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for testimonial in reclamationsAvis %}
+                        <tr>
+                            <td>
+                                <div class="profile-img-container">
+                                    {% if testimonial.user and testimonial.user.photoUrl %}
+                                        <img src="{{ asset('uploads/photos/' ~ testimonial.user.photoUrl) }}" alt="User Photo" class="profile-img">
+                                    {% else %}
+                                        <img src="{{ asset('uploads/photos/default.png') }}" alt="Default User Photo" class="profile-img">
+                                    {% endif %}
+                                    {{ testimonial.user.Prenom }}
+                                </div>
+                            </td>
+                            <td>{{ testimonial.title }}</td>
+                            <td>{{ testimonial.description }}</td>
+                            <td>
+                            {{ testimonial.rate }}⭐
+
+                            </td>
+                            <td>{{ testimonial.dateReclamation|date('d M Y H:i') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+</div>
+
+
         </div>
     </div>
 </main>
+<script>
+    document.querySelectorAll('.status-dropdown').forEach(function(dropdown) {
+        dropdown.addEventListener('change', function() {
+            const newStatus = this.value;
+            const reclamationId = this.getAttribute('data-reclamation-id');
 
+            fetch('{{ path("reclamation_update_status", {"id": "REPLACEME"}) }}'.replace('REPLACEME', reclamationId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'status=' + encodeURIComponent(newStatus)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Status updated successfully');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            });
+        });
+    });
+</script>
 <!-- Add the CSS to style the table -->
 <style>
+.status-dropdown {
+  /* Remove default styling */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Custom background with arrow icon */
+  background: #e0f7e9 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M3.204 5h9.592L8 10.481 3.204 5z'/%3E%3C/svg%3E")
+    no-repeat right 10px center;
+  background-size: 10px;
+  
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 36px 8px 12px;
+  font-size: 0.9rem;
+  color: #333;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.status-dropdown:focus {
+  outline: none;
+  border-color: #218838;
+  background-color: #fff;
+}
+
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+}
+.edit-btn {
+    color: #4CAF50;
+}
+.edit-btn:hover {
+    color: #2E7D32;
+}
+.delete-btn {
+    color: #ff5555;
+}
+.delete-btn:hover {
+    color: #cc0000;
+}
     .pagination {
         display: flex;
         justify-content: center;

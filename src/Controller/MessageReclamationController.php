@@ -35,6 +35,9 @@ class MessageReclamationController extends AbstractController
      #[Route('/view/{id?}', name: 'message_reclamation_index', methods: ['GET', 'POST'])]
     public function index(Request $request, EntityManagerInterface $em, ?string $id = null): Response
     {
+
+        $user = $this->getUser();
+        $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
         $reclamations = $em->getRepository(Reclamations::class)->findAll();
         $reclamationMessages = [];
         foreach ($reclamations as $reclamation) {
@@ -63,12 +66,23 @@ class MessageReclamationController extends AbstractController
             return $this->redirectToRoute('message_reclamation_index', ['id' => $selectedReclamation->getId()]);
         }
 
-        return $this->render('message_reclamation/index.html.twig', [
-            'reclamations'         => $reclamations,
-            'reclamationMessages'    => $reclamationMessages,
-            'selectedReclamation'    => $selectedReclamation,
-            'messageForm'            => $form->createView(),
-        ]);
+        if ($isAdmin) {
+            return $this->render('message_reclamation/messagerec.html.twig', [
+                'reclamations'         => $reclamations,
+                'reclamationMessages'    => $reclamationMessages,
+                'selectedReclamation'    => $selectedReclamation,
+                'messageForm'            => $form->createView(),
+            ]);
+        }
+        else {
+            return $this->render('message_reclamation/index.html.twig', [
+                'reclamations'         => $reclamations,
+                'reclamationMessages'    => $reclamationMessages,
+                'selectedReclamation'    => $selectedReclamation,
+                'messageForm'            => $form->createView(),
+            ]);
+        }
+       
     }
 
     

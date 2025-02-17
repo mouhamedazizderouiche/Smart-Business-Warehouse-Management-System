@@ -64,7 +64,7 @@ class Reclamations
     public function __construct()
     {
         $this->reclamations = new ArrayCollection();
-        $this->statut = StatutReclamation::EN_ATTENTE;
+        $this->statut = StatutReclamation::EN_COURS;
     }
 
     #[ORM\PrePersist] 

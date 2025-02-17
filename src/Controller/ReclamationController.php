@@ -69,13 +69,15 @@ class ReclamationController extends AbstractController
     {
         $user = $this->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
-    
+        
         $repository = $em->getRepository(Reclamations::class);
-    
+        $avis = $em->getRepository(Reclamations::class)->findBy([
+            'statut' => StatutReclamation::AVIS
+        ]);
         $limit = 3;
         $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
-        $criteria = ['statut' => StatutReclamation::EN_ATTENTE];
+        $criteria = ['statut' => [StatutReclamation::EN_COURS, StatutReclamation::RESOLUE, StatutReclamation::FERMEE]];
         $totalReclamations = $repository->count($criteria);
         $totalPages = (int) ceil($totalReclamations / $limit);
     
@@ -91,12 +93,14 @@ class ReclamationController extends AbstractController
         );
         if ($isAdmin) {
             return $this->render('reclamation/dashboardrec.html.twig', [
+                'reclamationsAvis' => $avis,
                 'reclamations' => $reclamations,
                 'currentPage'  => $page,
                 'totalPages'   => $totalPages
             ]);
         } else {
             return $this->render('reclamation/show.html.twig', [
+                'reclamationsAvis' => $avis,
                 'reclamations' => $reclamations,
                 'currentPage'  => $page,
                 'totalPages'   => $totalPages
@@ -144,56 +148,55 @@ class ReclamationController extends AbstractController
         $entityManager->flush();
         return $this->redirectToRoute('reclamation_show');
     }
+
     #[Route('/testimonial', name: 'testimonial')]
     public function testimonial(EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+        $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
         $reclamations = $entityManager->getRepository(Reclamations::class)->findBy([
             'statut' => StatutReclamation::AVIS
         ]);
     
-        return $this->render('homepage/testimonial.html.twig', [
-            'reclamations' => $reclamations
-        ]);
+        if ($isAdmin) {
+            return $this->render('reclamation/dashboardrec.html.twig', [
+                'reclamationsAvis' => $reclamations
+            ]);
+        } else {
+            return $this->render('homepage/testimonial.html.twig', [
+                'reclamationsAvis' => $reclamations
+            ]);
+           
+        }
     }
+    #[Route('/{id}/update-status', name: 'reclamation_update_status', methods: ['POST'])]
+public function updateStatus(Request $request, Reclamations $reclamation, EntityManagerInterface $entityManager): Response
+{
+    $newStatus = $request->request->get('status');
 
-    // #[Route('/recAdmin', name: 'recAdmin', methods: ['GET'])]
-    // public function recAdmin(Request $request, EntityManagerInterface $em): Response
-    // {
-    //     $repository = $em->getRepository(Reclamations::class);
-        
-    //     $limit = 3; 
-    //     $page = max(1, (int) $request->query->get('page', 1));
-    //     $offset = ($page - 1) * $limit;
-    //     $criteria = ['statut' => StatutReclamation::EN_ATTENTE];
-    //     $totalReclamations = $repository->count($criteria);
-    //     $totalPages = (int) ceil($totalReclamations / $limit);
-    
-    //     if ($page > $totalPages && $totalPages > 0) {
-    //         throw $this->createNotFoundException("Page not found");
-    //     }
-    
-    //     $reclamations = $repository->findBy(
-    //         $criteria,
-    //         ['dateReclamation' => 'DESC'],
-    //         $limit,
-    //         $offset
-    //     );
-    
-    //     return $this->render('reclamation/dashboardrec.html.twig', [
-    //         'reclamations' => $reclamations,
-    //         'currentPage'  => $page,
-    //         'totalPages'   => $totalPages
-    //     ]);
-    // }
+    // Allowed status values
+    $allowedStatuses = [
+        StatutReclamation::EN_COURS->value,
+        StatutReclamation::RESOLUE->value,
+        StatutReclamation::FERMEE->value,
+        StatutReclamation::AVIS->value,
+    ];
 
+    if (!in_array($newStatus, $allowedStatuses, true)) {
+        return new Response(
+            json_encode(['error' => 'Invalid status']),
+            400,
+            ['Content-Type' => 'application/json']
+        );
+    }
+    $reclamation->setStatut(StatutReclamation::from($newStatus));
+    $entityManager->flush();
 
-    
-    
+    return new Response(
+        json_encode(['success' => true, 'newStatus' => $newStatus]),
+        200,
+        ['Content-Type' => 'application/json']
+    );
+}
 
-
-    
-
-     
-
-    
 }

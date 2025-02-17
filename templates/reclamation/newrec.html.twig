@@ -1,3 +1,5 @@
+
+
 {# templates/dashboard/index.html.twig #}
 <!DOCTYPE html>
 <html lang="en">
@@ -122,33 +124,37 @@
     {% include 'backoffice/sidebar.html.twig' %}
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <div class="page-wrapper">
-            <div class="content-container">
-                <!-- Main Content -->
-                <div class="main-container">
-                    <div class="reclamation-container">
-                        <h1>Edit Reclamation</h1>
-                        <p>Please update your reclamation details below.</p>
+<div class="reclamation-container">
+    <h1>Submit a Reclamation</h1>
+    <p>We value your feedback. Please describe your concern below.</p>
 
-                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-                        <div class="form-group">
-                            <label for="{{ form.title.vars.id }}">Title: <span class="required">*</span></label>
-                            {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
-                            <div class="error-message">{{ form_errors(form.title) }}</div>
-                        </div>
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-                        <div class="form-group">
-                            <label for="{{ form.description.vars.id }}">Describe Your Reclamation: <span class="required">*</span></label>
-                            {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
-                            <div class="error-message">{{ form_errors(form.description) }}</div>
-                        </div>
+   <div class="form-group">
+    <label for="{{ form.title.vars.id }}">Title:</label>
+    {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
+    <!-- Wrap the errors in a container with .error-message class -->
+    <div class="error-message">
+        {{ form_errors(form.title) }}
+    </div>
+</div>
 
-                        <div class="form-group">
-                            {{ form_widget(form.save, {'attr': {'class': 'submit-button'}}) }}
-                        </div>
+<div class="form-group">
+    <label for="{{ form.description.vars.id }}">Describe Your Reclamation:</label>
+    {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
+    <!-- Wrap the errors in a container with .error-message class -->
+    <div class="error-message">
+        {{ form_errors(form.description) }}
+    </div>
+</div>
 
-                        {{ form_end(form) }}
-                    </div>
+
+    <div class="form-group">
+        {{ form_widget(form.save, {'attr': {'class': 'submit-button'}}) }}
+    </div>
+
+    {{ form_end(form) }}
+   </div>
                 </div>
             </div>
         </div>
