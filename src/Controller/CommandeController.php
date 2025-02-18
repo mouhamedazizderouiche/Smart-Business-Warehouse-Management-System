@@ -16,13 +16,21 @@ use Symfony\Bundle\SecurityBundle\Security;
 class CommandeController extends AbstractController
 {
     #[Route('/mon-panier', name: 'mon_panier')]
-    public function voirPanier(CommandeRepository $commandeRepository): Response
-    {
-        $commandes = $commandeRepository->findAll();
-        return $this->render('commande/mon_panier.html.twig', [
-            'commandes' => $commandes
-        ]);
+public function voirPanier(CommandeRepository $commandeRepository, Security $security): Response
+{
+    $user = $security->getUser();
+
+    if ($user && in_array('ROLE_ADMIN', $user->getRoles())) {
+        return $this->redirectToRoute('admin_commandes'); // 🔥 Redirection vers la gestion des commandes
     }
+
+    $commandes = $commandeRepository->findBy(['user' => $user]);
+
+    return $this->render('commande/mon_panier.html.twig', [
+        'commandes' => $commandes
+    ]);
+}
+
     
     #[Route('/paiement', name: 'paiement')]
     public function paiement(Request $request): Response
@@ -126,14 +134,17 @@ public function traiterPaiement(
 #[Route('/commande/historique', name: 'historique_commandes')]
 public function historiqueCommandes(EntityManagerInterface $entityManager, Security $security): Response
 {
-    $user = $security->getUser(); // 🔥 Récupérer l'utilisateur connecté
+    $user = $security->getUser();
 
     if (!$user) {
         $this->addFlash('error', '⚠️ Vous devez être connecté pour voir votre historique.');
-        return $this->redirectToRoute('app_login'); // 🔄 Rediriger vers la page de connexion si non connecté
+        return $this->redirectToRoute('app_login');
     }
 
-    // 🔥 Récupérer uniquement les commandes finalisées de l'utilisateur
+    if (in_array('ROLE_ADMIN', $user->getRoles())) {
+        return $this->redirectToRoute('admin_commandes'); // 🔥 Rediriger l'admin vers la page des commandes
+    }
+
     $historique = $entityManager->getRepository(CommandeFinalisee::class)->findBy(
         ['user' => $user], 
         ['dateCommande' => 'DESC']
