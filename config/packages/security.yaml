@@ -38,10 +38,23 @@ security:
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_USER]  # ADMIN a tous les droits
     access_control:
-        #- { path: ^/admin, roles: ROLE_ADMIN }
-        #- { path: ^/profile, roles: ROLE_USER }
-        #- { path: ^/home, roles: ROLE_USER }
+        # Admin a accès à /admin
+        - { path: ^/admin, roles: ROLE_ADMIN }
+
+    # Empêcher l'accès à /dashboard sauf pour l'organisateur
+        - { path: ^/dashboard, roles: IS_AUTHENTICATED_FULLY, allow_if: "user.getTravail() == 'organisateur'" }
+
+    # Empêcher l'accès à /home sauf pour agriculteur et fournisseur
+        - { path: ^/home, roles: IS_AUTHENTICATED_FULLY, allow_if: "user.getTravail() in ['agriculteur', 'fournisseur']" }
+
+    # Bloquer l'accès à /dashboard pour agriculteur et fournisseur (optionnel si la première règle est bien respectée)
+        - { path: ^/dashboard, roles: IS_AUTHENTICATED_FULLY, allow_if: "user.getTravail() not in ['agriculteur', 'fournisseur']" }
+
+    # Admin a accès à /admin
+        - { path: ^/admin, roles: ROLE_ADMIN }
 
 
 when@test:

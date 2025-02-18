@@ -53,7 +53,7 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('travail', ChoiceType::class, [
                 'choices' => [
-                    'Client' => 'client',
+                    'Agriculteur' => 'agriculteur',
                     'Fournisseur' => 'fournisseur',
                     'Organisateur' => 'organisateur',
                 ],

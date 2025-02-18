@@ -15,6 +15,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use App\Entity\User;
 
 class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
@@ -29,7 +30,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function authenticate(Request $request): Passport
     {
         $email = $request->getPayload()->getString('email');
-
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
 
         return new Passport(
@@ -43,21 +43,28 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-    {
-        
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath);
-        }
-    
-        // Check user role and redirect accordingly
-        $roles = $token->getRoleNames();
-        if (in_array('ROLE_ADMIN', $roles)) {
-            return new RedirectResponse($this->urlGenerator->generate('app_admin_user_index')); // admin route
-        }
-    
-        return new RedirectResponse($this->urlGenerator->generate('app_dashboard')); // user route
+{
+    $user = $token->getUser();
+    $roles = $token->getRoleNames();
+
+    // Forcer la redirection pour les admins
+    if (in_array('ROLE_ADMIN', $roles)) {
+        return new RedirectResponse($this->urlGenerator->generate('app_admin_user_index'));
     }
-    
+
+    $travail = method_exists($user, 'getTravail') ? $user->getTravail() : null;
+
+    if ($travail === 'organisateur') {
+        return new RedirectResponse($this->urlGenerator->generate('app_dashboard'));
+    }
+
+    if ($travail === 'fournisseur' || $travail === 'agriculteur') {
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
+    }
+
+    // Ne jamais aller à /home par défaut
+    return null;
+}
 
     protected function getLoginUrl(Request $request): string
     {
