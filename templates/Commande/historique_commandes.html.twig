@@ -3,35 +3,35 @@
 {% block title %}Historique des Commandes{% endblock %}
 
 {% block body %}
-<div class="container my-5" style="margin-left: 50px; max-width: 3000px;"> 
+<div class="container my-5">
     <h2 class="text-center mb-4">📜 Historique des Commandes</h2>
 
     {% if commandesFinalisees is empty %}
-        <p class="text-center text-muted">Aucune commande finalisée pour l'instant.</p>
+        <div class="alert alert-info text-center">Aucune commande finalisée pour l'instant.</div>
     {% else %}
         <div class="table-responsive">
-            <table class="table table-bordered text-center small-table">
+            <table class="table table-hover table-bordered text-center big-table">
                 <thead class="thead-dark">
                     <tr>
-                        <th style="width: 20%;">Date</th>
-                        <th style="width: 30%;">Produit</th>
-                        <th style="width: 15%;">Qté</th>
-                        <th style="width: 20%;">Total (DT)</th>
-                        <th style="width: 15%;">Actions</th> {# Nouvelle colonne pour suppression #}
+                        <th class="text-white bg-dark">📅 Date</th>
+                        <th class="text-white bg-dark">🛍 Produit</th>
+                        <th class="text-white bg-dark">🔢 Qté</th>
+                        <th class="text-white bg-dark">💰 Total (DT)</th>
+                        <th class="text-white bg-dark">🛑 Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for commande in commandesFinalisees %}
                         <tr>
-                            <td style="font-size: 13px;">{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
-                            <td style="font-size: 13px;">{{ commande.nomProduit }}</td>
-                            <td style="font-size: 13px;">{{ commande.quantite }}</td>
-                            <td style="font-size: 13px;">{{ commande.prixTotal }} DT</td>
+                            <td style="font-size: 15px; font-weight: 500;">{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+                            <td style="font-size: 15px;">{{ commande.nomProduit }}</td>
+                            <td style="font-size: 15px;">{{ commande.quantite }}</td>
+                            <td style="font-size: 15px; color: green; font-weight: bold;">{{ commande.prixTotal }} DT</td>
                             <td>
                                 <a href="{{ path('supprimer_commande_historique', { id: commande.id }) }}" 
                                    class="btn btn-danger btn-sm"
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette commande de l’historique ?');">
-                                    ❌ Supprimer
+                                    🗑 Supprimer
                                 </a>
                             </td>
                         </tr>
@@ -42,13 +42,28 @@
     {% endif %}
 
     <div class="text-center mt-4">
-        <a href="{{ path('mon_panier') }}" class="btn btn-primary btn-sm">🛒 Retour au panier</a>
+        <a href="{{ path('mon_panier') }}" class="btn btn-primary btn-lg">🛒 Retour au panier</a>
     </div>
 </div>
 
 <style>
-    .small-table th, .small-table td {
-        padding: 5px; /* Réduit l'espace dans chaque case */
+    .big-table th, .big-table td {
+        padding: 15px; /* Plus d'espace pour la lisibilité */
+        font-size: 16px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1); /* Effet hover léger */
+    }
+
+    .table thead th {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background-color: #343a40 !important;
+    }
+
+    .container {
+        max-width: 90%; /* Largeur max pour plus de confort */
     }
 </style>
 {% endblock %}
