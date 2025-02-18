@@ -123,15 +123,27 @@ public function traiterPaiement(
     
     
         
-    #[Route('/commande/historique', name: 'historique_commandes')]
-public function historiqueCommandes(EntityManagerInterface $entityManager): Response
+#[Route('/commande/historique', name: 'historique_commandes')]
+public function historiqueCommandes(EntityManagerInterface $entityManager, Security $security): Response
 {
-    $historique = $entityManager->getRepository(CommandeFinalisee::class)->findBy([], ['dateCommande' => 'DESC']);
+    $user = $security->getUser(); // 🔥 Récupérer l'utilisateur connecté
+
+    if (!$user) {
+        $this->addFlash('error', '⚠️ Vous devez être connecté pour voir votre historique.');
+        return $this->redirectToRoute('app_login'); // 🔄 Rediriger vers la page de connexion si non connecté
+    }
+
+    // 🔥 Récupérer uniquement les commandes finalisées de l'utilisateur
+    $historique = $entityManager->getRepository(CommandeFinalisee::class)->findBy(
+        ['user' => $user], 
+        ['dateCommande' => 'DESC']
+    );
 
     return $this->render('commande/historique_commandes.html.twig', [
         'commandesFinalisees' => $historique
     ]);
 }
+
 
     #[Route('/commande/finaliser', name: 'finaliser_commande')]
     public function finaliserCommande(EntityManagerInterface $entityManager, CommandeRepository $commandeRepository): Response
