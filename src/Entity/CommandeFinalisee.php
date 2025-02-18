@@ -24,6 +24,15 @@ class CommandeFinalisee
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateCommande;
 
+    #[ORM\ManyToOne(targetEntity: Commande::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    private ?Commande $commande = null; // 🔥 Ajout de la relation avec Commande
+
+        // ✅ AJOUT DE LA RELATION USER
+        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?User $user = null;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -38,4 +47,8 @@ class CommandeFinalisee
     public function getPrixTotal(): float { return $this->prixTotal; }
     public function setPrixTotal(float $prixTotal): self { $this->prixTotal = $prixTotal; return $this; }
     public function getDateCommande(): \DateTimeInterface { return $this->dateCommande; }
+    public function getCommande(): ?Commande { return $this->commande; }
+    public function setCommande(?Commande $commande): self { $this->commande = $commande; return $this; }
+    public function getUser(): ?User { return $this->user; }
+    public function setUser(?User $user): self { $this->user = $user; return $this; }
 }

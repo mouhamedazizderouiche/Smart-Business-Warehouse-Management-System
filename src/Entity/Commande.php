@@ -25,6 +25,10 @@ class Commande
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateCommande;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+#[ORM\JoinColumn(nullable: false)]
+private ?User $user = null;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
@@ -62,4 +66,14 @@ class Commande
     {
         return $this->dateCommande;
     }
+    public function getUser(): ?User
+{
+    return $this->user;
+}
+
+public function setUser(?User $user): self
+{
+    $this->user = $user;
+    return $this;
+}
 }
