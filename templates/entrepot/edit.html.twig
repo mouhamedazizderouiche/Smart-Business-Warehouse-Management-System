@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard - Gestion des Stocks</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta content="" name="keywords">
+  <meta content="" name="description">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+  <!-- Icon Font Stylesheet -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Libraries Stylesheet -->
+  <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+  <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+
+
+</head>
+    {% block stylesheets %}
+    <style>
+        
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #eeeeee !important; /* Couleur de la navbar */
+            color: #d1d1d1; /* Texte gris */
+            z-index: 3;
+        }
+
+        .main-content i {
+          color: black !important;
+      }
+
+        .navbar-toggler-icon {
+            background-color: #d1d1d1; /* Icône de menu en gris */
+        }
+
+        .navbar-nav .nav-link {
+            color: #d1d1d1; /* Couleur des liens en gris */
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #000000; /* Changement de couleur au survol */
+        }
+
+        .navbar .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-item i {
+            margin-right: 10px;
+            color: #d1d1d1; /* Couleur gris pour les icônes */
+        }
+
+        .navbar .nav-item:hover i {
+            color: #000000; /* Changement de couleur au survol */
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            overflow: hidden;
+            text-align: center;
+            background-color: #2c3e50; /* Couleur de fond de la sidebar */
+        }
+
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.istockphoto.com/id/1547533623/fr/photo/vue-a%C3%A9rienne-dun-paysage-rural.jpg?s=612x612&w=0&k=20&c=Bz9alSGdhWXekHzN4FpJc5vdqEOIUE7PojOItcn6FGY=');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(3px);
+            z-index: 1;
+        }
+
+        .sidebar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .sidebar a {
+            position: relative;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #d1d1d1;
+            display: block;
+            z-index: 3;
+            text-align: left;
+        }
+
+        .sidebar a:hover, .sidebar a.selected {
+            color: #ffffff;
+            background-color: #a0a0a0;
+        }
+
+        .sidebar a.active {
+            background-color: #50aa54;
+            color: #ffffff;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            background-color: #eeeeee;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-item i {
+            margin-right: 10px;
+        }
+
+        /* Styles pour DataTables */
+        .dataTables_wrapper {
+            margin-top: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            margin: 10px 0;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+    </style>
+    {% endblock %}
+{% include 'backoffice/sidebar.html.twig' %}
+<main>
+<div class="main-content">
+    <div class="container-fluid p-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="m-0"><i class="fas fa-edit mr-2"></i>Modifier un Entrepôt</h5>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+                {# Affichage des erreurs globales du formulaire #}
+                {% if form.vars.errors|length > 0 %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row g-3">
+                    {# Champ Nom #}
+                    <div class="col-md-6">
+                        {{ form_label(form.nom, 'Nom de l\'entrepôt', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
+                            {{ form_widget(form.nom, {'attr': {'class': 'form-control' ~ (form.nom.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.nom) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champ Adresse #}
+                    <div class="col-md-6">
+                        {{ form_label(form.adresse, 'Adresse', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            {{ form_widget(form.adresse, {'attr': {'class': 'form-control' ~ (form.adresse.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.adresse) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champ Ville #}
+                    <div class="col-md-6">
+                        {{ form_label(form.ville, 'Ville', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-city"></i></span>
+                            {{ form_widget(form.ville, {'attr': {'class': 'form-control' ~ (form.ville.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.ville) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champ Espace #}
+                    <div class="col-md-6">
+                        {{ form_label(form.espace, 'Espace (en m²)', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-ruler-combined"></i></span>
+                            {{ form_widget(form.espace, {'attr': {'class': 'form-control' ~ (form.espace.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.espace) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Bouton de soumission #}
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary shadow-sm">
+                            <i class="fas fa-save mr-2"></i>Enregistrer
+                        </button>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+</main>

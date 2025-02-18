@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Produit;
+use App\Entity\Entrepot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Produit>
+ * @extends ServiceEntityRepository<Entrepot>
  */
-class ProduitRepository extends ServiceEntityRepository
+class EntrepotRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Produit::class);
+        parent::__construct($registry, Entrepot::class);
     }
 
     //    /**
-    //     * @return Produit[] Returns an array of Produit objects
+    //     * @return Entrepot[] Returns an array of Entrepot objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('e')
+    //            ->andWhere('e.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
+    //            ->orderBy('e.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Produit
+    //    public function findOneBySomeField($value): ?Entrepot
     //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
+    //        return $this->createQueryBuilder('e')
+    //            ->andWhere('e.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

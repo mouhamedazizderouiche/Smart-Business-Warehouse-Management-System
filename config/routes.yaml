@@ -3,3 +3,53 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+app_stock_index:
+    path: /stock
+    controller: App\Controller\StockController::index
+    methods: GET
+
+app_stock_new:
+    path: /stock/new
+    controller: App\Controller\StockController::new
+    methods: [GET, POST]
+
+app_stock_show:
+    path: /stock/{id}
+    controller: App\Controller\StockController::show
+    methods: GET
+
+app_stock_edit:
+    path: /stock/{id}/edit
+    controller: App\Controller\StockController::edit
+    methods: [GET, POST]
+
+app_stock_delete:
+    path: /stock/{id}
+    controller: App\Controller\StockController::delete
+    methods: POST
+
+app_entrepot_index:
+    path: /entrepot
+    controller: App\Controller\EntrepotController::index
+    methods: GET
+
+app_entrepot_new:
+    path: /entrepot/new
+    controller: App\Controller\EntrepotController::new
+    methods: [GET, POST]
+
+app_entrepot_show:
+    path: /entrepot/{id}
+    controller: App\Controller\EntrepotController::show
+    methods: GET
+
+app_entrepot_edit:
+    path: /entrepot/{id}/edit
+    controller: App\Controller\EntrepotController::edit
+    methods: [GET, POST]
+
+app_entrepot_delete:
+    path: /entrepot/{id}
+    controller: App\Controller\EntrepotController::delete
+    methods: POST

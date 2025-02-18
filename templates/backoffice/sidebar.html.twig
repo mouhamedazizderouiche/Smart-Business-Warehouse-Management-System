@@ -39,49 +39,58 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
-  <body>
-    {#
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="margin-left: 250px"
-          >Dashboard</a
-        >
+<body>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#" id="theme-toggle">
-                <i class="fas fa-moon"></i> Thème sombre
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#"
-                ><i class="fas fa-bell"></i>
-                <span class="badge bg-danger">3</span></a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#"
-                ><i class="fas fa-user"></i> Profil</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{{ path('app_logout') }}">
-                <i class="fas fa-sign-out-alt"></i> logout
-              </a>
-            </li>
-          </ul>
+
+<!-- Sidebar -->
+<div class="container-fluid">
+    <nav id="sidebar">
+        <div class="position-sticky pt-3">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="sidebar-logo">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-target="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_admin_user_index') }}" data-target="gestion-utilisateur">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Gestion Utilisateur</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-target="gestion-reclamation">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Gestion Reclamation</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-target="gestion-evenement">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Gestion Evenement</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-target="gestion-produit">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Gestion Produit</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-target="gestion-commande">
+                        <i class="fas fa-receipt"></i>
+                        <span>Gestion Commande</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ path('app_stock_index') }}" data-target="gestion-stocks">
+                      <i class="fas fa-box"></i>
+                      <span>Gestion Stocks</span>
+                  </a>
+              </li>
+            </ul>
         </div>
       </div>
     </nav>
