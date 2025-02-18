@@ -120,4 +120,8 @@ class Produit
     {
         return "Produit: {$this->nom}, Prix: {$this->prixUnitaire} TND";
     }
+    public function __toString(): string
+    {
+        return $this->nom;
+    } 
 }
