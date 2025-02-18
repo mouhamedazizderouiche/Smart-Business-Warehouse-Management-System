@@ -1,4 +1,3 @@
-
 {% block head %}
     <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
     <style>
@@ -70,6 +69,7 @@
         }
     </style>
 {% endblock %}
+
 {% block body %}
     {% include 'homepage/newNav.html.twig' %}
 
@@ -79,12 +79,12 @@
 
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
-        
-
         <div class="form-group">
             <label for="{{ form.contenu.vars.id }}">Edit Your Reply: <span class="required">*</span></label>
             {{ form_widget(form.contenu, {'attr': {'class': 'textarea'}}) }}
-            <p class="error-message">{{ form_errors(form.contenu) }}</p>
+            {% for error in form.contenu.vars.errors %}
+                <div class="error-message">{{ error.message }}</div>
+            {% endfor %}
         </div>
 
         <div class="form-group">

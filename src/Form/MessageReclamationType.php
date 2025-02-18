@@ -12,12 +12,16 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 class MessageReclamationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('contenu', TextareaType::class)
+            ->add('contenu', TextareaType::class, [
+                'empty_data'  => '',
+                
+            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Send Message',
             ]);

@@ -16,8 +16,12 @@ class ReclamationsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('description', TextareaType::class)
+            ->add('title', null, [
+                'empty_data' => '',
+            ])
+            ->add('description', TextareaType::class, [
+                'empty_data' => '',
+            ])
             ->add('rate', HiddenType::class, [
                 'attr' => ['id' => 'rating-value'],
             ])

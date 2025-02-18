@@ -256,82 +256,97 @@
             {% if selectedReclamation is not null %}
                 <button id="toggleMessages" class="button">Show Messages</button>
                 <div id="messagesContainer" style="display: none; margin-top: 20px;">
-                        {% set messages = reclamationMessages[(selectedReclamation.id ~ '')]|default([]) %}
-                        {% if messages is empty %}
-                            <p style="text-align: center;">Aucun message pour cette réclamation.</p>
-                        {% else %}
-                            {% for message in messages %}
-                        <div class="message" style="display: flex; align-items: flex-start; padding: 10px; border-bottom: 1px solid #ddd;">
-                            <!-- User Image on the Left -->
-                            <div style="margin-right: 10px;">
-                                {% if message.user and message.user.photoUrl %}
-                                    <img src="{{ asset('uploads/photos/' ~ message.user.photoUrl) }}" 
-                                        alt="{{ message.user.Prenom }}" 
-                                        style="width: 50px; height: 50px; border-radius: 50%;">
-                                {% else %}
-                                    <img src="{{ asset('uploads/photos/default.png') }}" 
-                                        class="img-fluid rounded" 
-                                        alt="Default User" 
-                                        style="width: 50px; height: 50px; border-radius: 50%;">
-                                {% endif %}
-                            </div>
-
-                            <!-- Message Content on the Right -->
-                            <div style="flex-grow: 1;">
-                                <!-- Name and Date in One Line Above the Message -->
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                                    <strong>{{ message.user ? message.user.Nom : 'Unknown User' }} {{ message.user ? message.user.Prenom : 'Unknown User' }}</strong>
-                                    <small style="color: gray;">{{ message.dateMessage|date('d M Y H:i') }}</small>
-                                </div>
-
-                                <!-- Message Content -->
-                                <p style="margin: 5px 0;">{{ message.contenu }}</p>
-
-                                <!-- Action Buttons -->
-                              {% if message.user and app.user and message.user.id == app.user.id %}
-                                <span class="message-buttons">
-                                    <a href="{{ path('message_reclamation_edit', {'id': message.id}) }}" class="edit-btn" title="Edit Message">✏️</a>
-                                    <form action="{{ path('message_reclamation_delete', {'id': message.id}) }}" method="POST" style="display: inline;">
-                                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure?');" title="Delete">🗑️</button>
-                                    </form>
-                                </span>
-                            {% endif %}
-                            </div>
-                        </div>
+                    {% set messages = reclamationMessages[(selectedReclamation.id ~ '')]|default([]) %}
+                    
+                    {% set adminReplied = false %}
+                    {% for message in messages %}
+                        {% if message.user and message.user.roles is defined and 'ROLE_ADMIN' in message.user.roles %}
+                            {% set adminReplied = true %}
+                        {% endif %}
                     {% endfor %}
 
-                        {% endif %}
-                    </div>
-
-             <div class="reply-container">
-                <div class="reply-header">Reply</div>
-                {{ form_start(messageForm, {'attr': {'novalidate': 'novalidate'}}) }}
-                <div class="reply-box" style="display: flex; align-items: center;">
-                    {% if app.user and app.user.photoUrl %}
-                        <img src="{{ asset('uploads/photos/' ~ app.user.photoUrl) }}" alt="{{ app.user.Prenom }}">
+                    {% if messages is empty %}
+                        <p style="text-align: center;">Aucun message pour cette réclamation.</p>
                     {% else %}
-                        <img src="{{ asset('uploads/photos/default.png') }}" class="img-fluid rounded" alt="Default User">
-                    {% endif %}
-                    <div style="flex: 1;">
-                        {{ form_widget(messageForm.contenu, {
-                            'attr': {
-                                'placeholder': 'Type your reply...',
-                                'rows': '1',
-                                'style': 'width: 100%;'
-                            }
-                        }) }}
-                    </div>
-                </div>
-                <div class="form-group" style="margin-top: 10px;">
-                    {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
-                </div>
-                <div class="error-message">
-                    {{ form_errors(messageForm.contenu) }}
-                </div>
-                {{ form_end(messageForm) }}
-            </div>
-            
+                        {% for message in messages %}
+                            <div class="message" style="display: flex; align-items: flex-start; padding: 10px; border-bottom: 1px solid #ddd;">
+                                <!-- User Image on the Left -->
+                                <div style="margin-right: 10px;">
+                                    {% if message.user and message.user.photoUrl %}
+                                        <img src="{{ asset('uploads/photos/' ~ message.user.photoUrl) }}" 
+                                            alt="{{ message.user.Prenom }}" 
+                                            style="width: 50px; height: 50px; border-radius: 50%;">
+                                    {% else %}
+                                        <img src="{{ asset('images/admin.jpg') }}" 
+                                            class="img-fluid rounded" 
+                                            alt="Default User" 
+                                            style="width: 50px; height: 50px; border-radius: 50%;">
+                                    {% endif %}
+                                </div>
 
+                                <!-- Message Content on the Right -->
+                                <div style="flex-grow: 1;">
+                                    <!-- Name and Date in One Line Above the Message -->
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                        <strong>
+                                            {% if message.user and message.user.roles is defined and 'ROLE_ADMIN' in message.user.roles %}
+                                                <span title="Admin" style="margin-right: 5px;">👑</span>
+                                            {% endif %}
+                                            {{ message.user ? message.user.Nom : 'Unknown User' }} {{ message.user ? message.user.Prenom : 'Unknown User' }}
+                                        </strong>
+                                        <small style="color: gray;">{{ message.dateMessage|date('d M Y H:i') }}</small>
+                                    </div>
+
+                                    <!-- Message Content -->
+                                    <p style="margin: 5px 0;">{{ message.contenu }}</p>
+
+                                    <!-- Action Buttons for the user’s own messages -->
+                                    {% if message.user and app.user and message.user.id == app.user.id %}
+                                        <span class="message-buttons">
+                                            <a href="{{ path('message_reclamation_edit', {'id': message.id}) }}" class="edit-btn" title="Edit Message">✏️</a>
+                                            <form action="{{ path('message_reclamation_delete', {'id': message.id}) }}" method="POST" style="display: inline;">
+                                                <button type="submit" class="delete-btn" onclick="return confirm('Are you sure?');" title="Delete">🗑️</button>
+                                            </form>
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                {# Reply form: if an admin already replied, disable further replies #}
+                <div class="reply-container">
+                    <div class="reply-header">Reply</div>
+                    {% if adminReplied %}
+                        <p style="color: #ff5555;">An admin has already replied. Further responses are disabled.</p>
+                    {% else %}
+                        {{ form_start(messageForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                        <div class="reply-box" style="display: flex; align-items: center;">
+                            {% if app.user and app.user.photoUrl %}
+                                <img src="{{ asset('uploads/photos/' ~ app.user.photoUrl) }}" alt="{{ app.user.Prenom }}">
+                            {% else %}
+                                <img src="{{ asset('images/admin.jpg') }}" class="img-fluid rounded" alt="Default User">
+                            {% endif %}
+                            <div style="flex: 1;">
+                                {{ form_widget(messageForm.contenu, {
+                                    'attr': {
+                                        'placeholder': 'Type your reply...',
+                                        'rows': '1',
+                                        'style': 'width: 100%;'
+                                    }
+                                }) }}
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 10px;">
+                            {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
+                        </div>
+                        <div class="error-message">
+                            {{ form_errors(messageForm.contenu) }}
+                        </div>
+                        {{ form_end(messageForm) }}
+                    {% endif %}
+                </div>
 
             {% else %}
                 <p style="text-align: center;">
@@ -345,12 +360,12 @@
                 Date Posted: {{ selectedReclamation.dateReclamation|date('d M @ H:i') }}
             </div>
             <div>Posts: {{ messages|length }}</div>
-             <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_new') }}'">
-                    Créer une réclamation
-                </button>
-                <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_show') }}'">
-                    Back to List
-                </button>
+            <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_new') }}'">
+                Créer une réclamation
+            </button>
+            <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_show') }}'">
+                Back to List
+            </button>
             <div class="search-bar">
                 <input type="text" placeholder="Search this topic">
                 <button>🔍</button>
