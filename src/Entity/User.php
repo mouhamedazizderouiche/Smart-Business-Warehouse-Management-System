@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\produit\Produit;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -60,6 +61,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Reclamations::class, cascade: ['persist', 'remove'])]
     private Collection $reclamations;
 
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'user')]
+    private Collection $produits;
 
     public function __construct()
     {

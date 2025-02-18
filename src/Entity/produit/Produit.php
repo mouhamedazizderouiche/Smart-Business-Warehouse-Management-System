@@ -1,6 +1,7 @@
 <?php
-namespace App\Entity;
+namespace App\Entity\produit;
 
+use App\Entity\User;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
@@ -42,7 +43,9 @@ class Produit
     #[Assert\NotNull(message: "La catégorie du produit est obligatoire.")]
     private ?Categorie $categorie = null;
 
-
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'produits')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
 
     public function __construct()
@@ -113,6 +116,17 @@ class Produit
     public function setCategorie(?Categorie $categorie): self
     {
         $this->categorie = $categorie;
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
         return $this;
     }
 

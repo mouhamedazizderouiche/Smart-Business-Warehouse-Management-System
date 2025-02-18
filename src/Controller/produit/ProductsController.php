@@ -1,9 +1,10 @@
 <?php
 namespace App\Controller\produit;
 
-use App\Entity\Categorie;
-use App\Entity\Produit;
+use App\Entity\produit\Categorie;
+use App\Entity\produit\Produit;
 use App\Form\ProductType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductsController extends AbstractController
 {
     #[Route('/produit/ajout', name: 'ajout_produit')]
-    public function home(Request $request, EntityManagerInterface $entityManager): Response
+    public function home(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProductType::class, $produit);
@@ -46,9 +47,13 @@ class ProductsController extends AbstractController
                 }
             }
 
+            $user = $this->getUser();
+            $produit->setUser($user);
+
             $entityManager->persist($produit);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Produit ajouté avec succès!');
             return $this->redirectToRoute('liste_produits');
         }
 
@@ -57,11 +62,12 @@ class ProductsController extends AbstractController
         ]);
     }
 
+
     #[Route('/produit', name: 'liste_produits')]
     public function listeProduits(EntityManagerInterface $entityManager): Response
     {
-        
-        $produits = $entityManager->getRepository(Produit::class)->findAll();
+        $user = $this->getUser();
+        $produits = $entityManager->getRepository(Produit::class)->findBy(['user' => $user]);
 
         return $this->render('produit/listeproduitdashboard.html.twig', [
             'produits' => $produits
