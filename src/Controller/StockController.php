@@ -26,45 +26,70 @@ class StockController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_stock_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $stock = new Stock();
-        $form = $this->createForm(StockType::class, $stock);
+// src/Controller/StockController.php
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $stock = new Stock();
+    $form = $this->createForm(StockType::class, $stock);
+    $form->handleRequest($request);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($stock);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Le stock a été créé avec succès.');
-            return $this->redirectToRoute('app_stock_index');
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Associer les entrepôts sélectionnés au stock
+        foreach ($stock->getEntrepots() as $entrepot) {
+            $entrepot->setStock($stock);
         }
 
-        return $this->render('stock/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        $entityManager->persist($stock);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le stock a été créé avec succès.');
+        return $this->redirectToRoute('app_stock_index');
     }
 
-    #[Route('/{id}/edit', name: 'app_stock_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Stock $stock, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(StockType::class, $stock);
-        $form->handleRequest($request);
+    return $this->render('stock/new.html.twig', [
+        'form' => $form->createView(),
+    ]);
+}
+// src/Controller/StockController.php
+#[Route('/{id}/edit', name: 'app_stock_edit', methods: ['GET', 'POST'])]
+public function edit(Request $request, Stock $stock, EntityManagerInterface $entityManager): Response
+{
+    // Récupérer les entrepôts actuels du stock
+    $currentEntrepots = $stock->getEntrepots()->toArray();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+    $form = $this->createForm(StockType::class, $stock);
+    $form->handleRequest($request);
 
-            $this->addFlash('success', 'Stock mis à jour avec succès.');
-            return $this->redirectToRoute('app_stock_index');
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Gérer les entrepôts supprimés
+        foreach ($currentEntrepots as $entrepot) {
+            if (!$stock->getEntrepots()->contains($entrepot)) {
+                // Si un entrepôt a été retiré, dissocier le stock de cet entrepôt
+                $entrepot->setStock(null);
+                $entityManager->persist($entrepot);
+            }
         }
 
-        return $this->render('stock/edit.html.twig', [
-            'form' => $form->createView(),
-            'button_label' => 'Mettre à jour',
-        ]);
+        // Gérer les entrepôts ajoutés
+        foreach ($stock->getEntrepots() as $entrepot) {
+            if (!in_array($entrepot, $currentEntrepots)) {
+                // Si un entrepôt a été ajouté, associer le stock à cet entrepôt
+                $entrepot->setStock($stock);
+                $entityManager->persist($entrepot);
+            }
+        }
+
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le stock a été mis à jour avec succès.');
+        return $this->redirectToRoute('app_stock_index');
     }
 
+    return $this->render('stock/edit.html.twig', [
+        'form' => $form->createView(),
+        'stock' => $stock,
+    ]);
+}
     #[Route('/{id}', name: 'app_stock_delete', methods: ['POST'])]
     public function delete(Request $request, Stock $stock, EntityManagerInterface $entityManager): Response
     {

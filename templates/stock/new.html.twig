@@ -1,9 +1,229 @@
-{# templates/stock/new.html.twig #}
-{% extends 'base.html.twig' %}
+{# templates/dashboard/index.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}Nouveau Stock{% endblock %}
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
 
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+    
+    {% block stylesheets %}
+    <style>
+        html, body {
+            height: 100%;
+            background-color:rgb(8, 8, 8);
+        }
+
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #eeeeee !important; /* Couleur de la navbar */
+            color: #d1d1d1; /* Texte gris */
+            z-index: 3;
+        }
+
+        .navbar-toggler-icon {
+            background-color: #d1d1d1; /* Icône de menu en gris */
+        }
+
+        .navbar-nav .nav-link {
+            color: #d1d1d1; /* Couleur des liens en gris */
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #000000; /* Changement de couleur au survol */
+        }
+
+        .navbar .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-item i {
+            margin-right: 10px;
+            color: #d1d1d1; /* Couleur gris pour les icônes */
+        }
+
+        .navbar .nav-item:hover i {
+            color: #000000; /* Changement de couleur au survol */
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            overflow: hidden;
+            text-align: center;
+            background-color: #2c3e50; /* Couleur de fond de la sidebar */
+        }
+
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.istockphoto.com/id/1547533623/fr/photo/vue-a%C3%A9rienne-dun-paysage-rural.jpg?s=612x612&w=0&k=20&c=Bz9alSGdhWXekHzN4FpJc5vdqEOIUE7PojOItcn6FGY=');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(3px);
+            z-index: 1;
+        }
+
+        .sidebar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .sidebar a {
+            position: relative;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #d1d1d1;
+            display: block;
+            z-index: 3;
+            text-align: left;
+        }
+
+        .sidebar a:hover, .sidebar a.selected {
+            color: #ffffff;
+            background-color: #a0a0a0;
+        }
+
+        .sidebar a.active {
+            background-color: #50aa54;
+            color: #ffffff;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            background-color: #eeeeee;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-item i {
+            margin-right: 10px;
+        }
+
+        /* Styles pour DataTables */
+        .dataTables_wrapper {
+            margin-top: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            margin: 10px 0;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .main-content i {
+          color: black !important;
+      }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+    </style>
+    {% endblock %}
+
+
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let sidebarLinks = document.querySelectorAll(".sidebar a");
+                let currentPath = window.location.pathname;
+                
+                sidebarLinks.forEach(link => {
+                    if (link.getAttribute("href") === currentPath) {
+                        link.classList.add("active");
+                    }
+                    link.addEventListener("click", function() {
+                        sidebarLinks.forEach(l => l.classList.remove("selected"));
+                        this.classList.add("selected");
+                    });
+                });
+            });
+        </script>
+    {% endblock %}
+</head>
 {% block body %}
+{% include 'backoffice/sidebar.html.twig' %}
+<main>
 <div class="main-content">
     <div class="container-fluid p-4">
         <div class="card shadow">
@@ -12,58 +232,136 @@
             </div>
             <div class="card-body">
                 {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            {{ form_label(form.produit) }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-cube"></i></span>
-                                {{ form_widget(form.produit) }}
+
+                {# Affichage des erreurs globales du formulaire #}
+                {% if form.vars.errors|length > 0 %}
+                    <div class="alert alert-danger">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+
+                <div class="row g-3">
+                    {# Champ Produit #}
+                    <div class="col-md-6">
+                        {{ form_label(form.produit, 'Produit', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-cube"></i></span>
+                            {{ form_widget(form.produit, {'attr': {'class': 'form-control' ~ (form.produit.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.produit) }}
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(form.quantite) }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
-                                {{ form_widget(form.quantite) }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(form.dateEntree) }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar-plus"></i></span>
-                                {{ form_widget(form.dateEntree) }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(form.dateSortie) }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-calendar-minus"></i></span>
-                                {{ form_widget(form.dateSortie) }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(form.fournisseurs) }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-truck"></i></span>
-                                {{ form_widget(form.fournisseurs) }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(form.entrepots) }}
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
-                                {{ form_widget(form.entrepots) }}
-                            </div>
-                        </div>
-                        <div class="col-12 text-end">
-                            <button type="submit" class="btn btn-primary shadow-sm">
-                                <i class="fas fa-save mr-2"></i>Enregistrer
-                            </button>
                         </div>
                     </div>
+
+                    {# Champ Quantité #}
+                    <div class="col-md-6">
+                        {{ form_label(form.quantite, 'Quantité', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control' ~ (form.quantite.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.quantite) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champ Date d'entrée #}
+                    <div class="col-md-6">
+                        {{ form_label(form.dateEntree, 'Date d\'entrée', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-calendar-plus"></i></span>
+                            {{ form_widget(form.dateEntree, {'attr': {'class': 'form-control' ~ (form.dateEntree.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.dateEntree) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champ Date de sortie #}
+                    <div class="col-md-6">
+                        {{ form_label(form.dateSortie, 'Date de sortie', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-calendar-minus"></i></span>
+                            {{ form_widget(form.dateSortie, {'attr': {'class': 'form-control' ~ (form.dateSortie.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.dateSortie) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champ Fournisseurs #}
+                    <div class="col-md-6">
+                        {{ form_label(form.fournisseurs, 'Fournisseurs', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-truck"></i></span>
+                            {{ form_widget(form.fournisseurs, {'attr': {'class': 'form-control' ~ (form.fournisseurs.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.fournisseurs) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Champ Entrepôts #}
+                    <div class="col-md-6">
+                        {{ form_label(form.entrepots, 'Entrepôts', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group has-validation">
+                            <span class="input-group-text"><i class="fas fa-warehouse"></i></span>
+                            {{ form_widget(form.entrepots, {'attr': {'class': 'form-control' ~ (form.entrepots.vars.errors|length > 0 ? ' is-invalid' : '')}}) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.entrepots) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Bouton de soumission #}
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-primary shadow-sm">
+                            <i class="fas fa-save mr-2"></i>Enregistrer
+                        </button>
+                    </div>
+                </div>
                 {{ form_end(form) }}
             </div>
         </div>
     </div>
 </div>
+</main>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector('form.needs-validation');
+
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault(); // Empêche la soumission du formulaire
+                event.stopPropagation();
+
+                // Récupérer tous les champs invalides
+                const invalidFields = form.querySelectorAll(':invalid');
+
+                // Afficher une boîte de dialogue avec les erreurs
+                let errorMessage = "Veuillez corriger les erreurs suivantes :\n";
+                invalidFields.forEach(field => {
+                    errorMessage += `- ${field.getAttribute('name')}: ${field.validationMessage}\n`;
+                });
+
+                alert(errorMessage); // Affiche la boîte de dialogue
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+
+        // Afficher les erreurs côté serveur dans une boîte de dialogue
+        {% if errors is defined and errors|length > 0 %}
+            let serverErrorMessage = "Erreurs de validation :\n";
+            {% for error in errors %}
+                serverErrorMessage += `- {{ error }}\n`;
+            {% endfor %}
+            alert(serverErrorMessage);
+        {% endif %}
+    });
+</script>
+
+
 {% endblock %}

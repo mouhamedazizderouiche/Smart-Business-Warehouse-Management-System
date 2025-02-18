@@ -118,6 +118,8 @@ class Fournisseur
     {
         if (!$this->stocks->contains($stock)) {
             $this->stocks->add($stock);
+            $this->stocks[] = $stock;
+            $stock->addFournisseur($this);
         }
 
         return $this;
@@ -126,6 +128,7 @@ class Fournisseur
     public function removeStock(stock $stock): static
     {
         $this->stocks->removeElement($stock);
+        $stock->removeFournisseur($this);
 
         return $this;
     }

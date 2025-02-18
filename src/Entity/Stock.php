@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator\Constraints\DateEntreeConstraint;
 
 #[ORM\Entity(repositoryClass: StockRepository::class)]
 class Stock
@@ -20,21 +22,29 @@ class Stock
 
     #[ORM\ManyToOne(targetEntity: Produit::class, inversedBy: 'stocks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank(message: 'Le produit est obligatoire.')]
     private ?Produit $produit = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'La quantité est obligatoire.')]
+    #[Assert\Positive(message: 'La quantité doit être un nombre positif.')]
     private ?int $quantite = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[DateEntreeConstraint]
+    #[Assert\NotBlank(message: 'La date d\'entrée est obligatoire.')]
     private ?\DateTimeInterface $date_entree = null;
+    
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_sortie = null;
 
     #[ORM\ManyToMany(targetEntity: Fournisseur::class, mappedBy: 'stocks')]
+    #[Assert\Count(min: 1, minMessage: 'Vous devez sélectionner au moins un fournisseur.')]
     private Collection $fournisseurs;
 
     #[ORM\OneToMany(targetEntity: Entrepot::class, mappedBy: 'stock', cascade: ['persist', 'remove'])]
+    #[Assert\Count(min: 1, minMessage: 'Vous devez sélectionner au moins un entrepôt.')]
     private Collection $entrepots;
 
     public function __construct()
@@ -124,6 +134,7 @@ class Stock
 {
     if (!$this->entrepots->contains($entrepot)) {
         $this->entrepots->add($entrepot);
+        $this->entrepots[] = $entrepot;
         $entrepot->setStock($this);
     }
     return $this;
@@ -132,8 +143,10 @@ class Stock
 public function removeEntrepot(Entrepot $entrepot): self
 {
     if ($this->entrepots->removeElement($entrepot)) {
-        $entrepot->setStock(null);
+      if ($entrepot->getStock() === $this) {
+        $entrepot->setStock(null); // Dissocier l'entrepôt du stock
     }
+  }
     return $this;
 }
 
