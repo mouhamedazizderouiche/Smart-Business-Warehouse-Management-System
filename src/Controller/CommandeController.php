@@ -90,18 +90,26 @@ public function traiterPaiement(
         return $this->redirectToRoute('mon_panier');
     }
 
-    // 🔄 Finalisation des commandes
     foreach ($commandes as $commande) {
         $commandeFinalisee = new CommandeFinalisee();
-        $commandeFinalisee->setNomProduit($commande->getProduit()->getNom());
+        
+        // ✅ Enregistrer les détails du produit
+        $commandeFinalisee->setProduitId($commande->getProduit()->getId());
+      // ✅ Utiliser NomProduit déjà existant
+      $commandeFinalisee->setNomProduit($commande->getProduit()->getNom());
+        $commandeFinalisee->setProduitPrix($commande->getProduit()->getPrixUnitaire());
+    
+        // ✅ Autres informations
         $commandeFinalisee->setQuantite($commande->getQuantite());
         $commandeFinalisee->setPrixTotal($commande->getProduit()->getPrixUnitaire() * $commande->getQuantite());
         $commandeFinalisee->setUser($user);  
-        $commandeFinalisee->setCommande($commande); 
-
+    
         $entityManager->persist($commandeFinalisee);
-        
+    
+        // ❌ Supprimer la commande après finalisation
+        $entityManager->remove($commande);
     }
+    
 
     $entityManager->flush();
 

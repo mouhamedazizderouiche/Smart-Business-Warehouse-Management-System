@@ -24,20 +24,28 @@ class CommandeFinalisee
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateCommande;
 
-    #[ORM\ManyToOne(targetEntity: Commande::class)]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
-    private ?Commande $commande = null; // 🔥 Ajout de la relation avec Commande
+    #[ORM\Column(type: "uuid")]
+    private ?Uuid $produitId = null;
+    
+    
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
+    private float $produitPrix;
+    
 
         // ✅ AJOUT DE LA RELATION USER
         #[ORM\ManyToOne(targetEntity: User::class)]
         #[ORM\JoinColumn(nullable: false)]
         private ?User $user = null;
 
-    public function __construct()
-    {
-        $this->id = Uuid::v4();
-        $this->dateCommande = new \DateTime();
-    }
+        public function __construct()
+        {
+            $this->id = Uuid::v4();
+            $this->dateCommande = new \DateTime();
+            $this->produitId = null;
+            $this->produitNom = '';
+            $this->produitPrix = 0.0;
+        }
+        
 
     public function getId(): ?Uuid { return $this->id; }
     public function getNomProduit(): string { return $this->nomProduit; }
@@ -47,8 +55,14 @@ class CommandeFinalisee
     public function getPrixTotal(): float { return $this->prixTotal; }
     public function setPrixTotal(float $prixTotal): self { $this->prixTotal = $prixTotal; return $this; }
     public function getDateCommande(): \DateTimeInterface { return $this->dateCommande; }
-    public function getCommande(): ?Commande { return $this->commande; }
-    public function setCommande(?Commande $commande): self { $this->commande = $commande; return $this; }
     public function getUser(): ?User { return $this->user; }
     public function setUser(?User $user): self { $this->user = $user; return $this; }
+    public function getProduitId(): ?Uuid { return $this->produitId; }
+public function setProduitId(?Uuid $produitId): self { $this->produitId = $produitId; return $this; }
+
+
+
+public function getProduitPrix(): float { return $this->produitPrix; }
+public function setProduitPrix(float $produitPrix): self { $this->produitPrix = $produitPrix; return $this; }
+
 }
