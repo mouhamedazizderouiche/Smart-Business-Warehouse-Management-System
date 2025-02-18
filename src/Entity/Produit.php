@@ -1,7 +1,5 @@
 <?php
-namespace App\Entity\produit;
 
-use App\Entity\User;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;

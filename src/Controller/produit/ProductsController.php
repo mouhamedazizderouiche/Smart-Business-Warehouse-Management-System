@@ -1,8 +1,8 @@
 <?php
 namespace App\Controller\produit;
 
-use App\Entity\produit\Categorie;
-use App\Entity\produit\Produit;
+use App\Entity\Categorie;
+use App\Entity\Produit;
 use App\Form\ProductType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;

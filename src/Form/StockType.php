@@ -2,18 +2,20 @@
 
 namespace App\Form;
 
-use App\Entity\Stock;
-use App\Entity\Produit;
+use App\Entity\Entrepot;
 use App\Entity\Fournisseur;
-use App\Entity\Entrepot; // Importez l'entité Entrepot
+use App\Entity\Produit;
+use App\Entity\Stock;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
+
+// Importez l'entité Entrepot
 
 class StockType extends AbstractType
 {
