@@ -14,11 +14,11 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin', name: 'admin_')]
 class AdminCommandeController extends AbstractController
 {
-    // ✅ Page principale de la gestion des commandes
+    
     #[Route('/commandes', name: 'commandes')]
     public function index(CommandeFinaliseeRepository $commandeFinaliseeRepository): Response
     {
-        // Récupérer toutes les commandes finalisées
+        
         $commandes = $commandeFinaliseeRepository->findBy([], ['dateCommande' => 'DESC']);
 
         return $this->render('admin_commande/index.html.twig', [
@@ -26,7 +26,7 @@ class AdminCommandeController extends AbstractController
         ]);
     }
 
-    // 🔄 ✅ Modifier une commande en AJAX
+   
     #[Route('/commandes/modifier/{id}', name: 'modifier_commande', methods: ['POST'])]
     public function modifierCommande(
         Request $request,
@@ -39,7 +39,7 @@ class AdminCommandeController extends AbstractController
             return new JsonResponse(['message' => '❌ Données invalides'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Modifier les champs dynamiquement
+       
         foreach ($data as $key => $value) {
             if (property_exists($commandeFinalisee, $key)) {
                 $setter = 'set' . ucfirst($key);
@@ -49,13 +49,13 @@ class AdminCommandeController extends AbstractController
             }
         }
 
-        // Sauvegarde en base
+        
         $entityManager->flush();
 
         return new JsonResponse(['message' => '✅ Commande mise à jour avec succès !'], Response::HTTP_OK);
     }
 
-    // ❌ Supprimer une commande finalisée en AJAX
+    
     #[Route('/commandes/supprimer/{id}', name: 'supprimer_commande', methods: ['DELETE'])]
     public function supprimerCommande(
         CommandeFinalisee $commandeFinalisee,

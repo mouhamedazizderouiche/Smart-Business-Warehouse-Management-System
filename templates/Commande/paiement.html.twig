@@ -22,9 +22,9 @@
 
         <div class="mb-3">
             <label for="numero" class="form-label">Numéro de Carte</label>
-            <input type="tel" class="form-control" id="numero" name="numero" maxlength="16" pattern="[0-9]{16}" required
-       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-       placeholder="•••• •••• •••• ••••">
+            <input type="tel" class="form-control" id="numero" name="numero" maxlength="16" pattern="\d{16}" required
+                   onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                   placeholder="•••• •••• •••• ••••">
         </div>
 
         <div class="row">
@@ -35,8 +35,8 @@
             <div class="col-md-6">
                 <label for="cvv" class="form-label">CVV</label>
                 <input type="tel" class="form-control" id="cvv" name="cvv" maxlength="3" pattern="\d{3}" required
-       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-       placeholder="•••">
+                       onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                       placeholder="•••">
             </div>
         </div>
 
@@ -46,10 +46,27 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        const expirationInput = document.getElementById("expiration");
         const form = document.querySelector("form");
+
+        // Ajout automatique du "/" dans la date d'expiration
+        expirationInput.addEventListener("input", function(event) {
+            let value = expirationInput.value.replace(/\D/g, ''); // Supprime tout sauf les chiffres
+            if (value.length > 4) value = value.slice(0, 4); // Max 4 chiffres
+            if (value.length >= 2) value = value.slice(0, 2) + "/" + value.slice(2);
+            expirationInput.value = value;
+        });
+
+        expirationInput.addEventListener("keydown", function(event) {
+            if (event.key === "Backspace" && expirationInput.value.charAt(expirationInput.value.length - 1) === "/") {
+                expirationInput.value = expirationInput.value.slice(0, -1);
+            }
+        });
+
+        // Vérification avancée des champs avant soumission
         form.addEventListener("submit", function(event) {
             const numero = document.getElementById("numero").value;
-            const expiration = document.getElementById("expiration").value;
+            const expiration = expirationInput.value;
             const cvv = document.getElementById("cvv").value;
 
             let errors = [];

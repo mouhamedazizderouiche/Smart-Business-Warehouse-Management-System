@@ -34,7 +34,7 @@ class CommandeFinalisee
     private float $produitPrix;
     
 
-        // ✅ AJOUT DE LA RELATION USER
+        
         #[ORM\ManyToOne(targetEntity: User::class)]
         #[ORM\JoinColumn(nullable: false)]
         private ?User $user = null;
