@@ -74,7 +74,7 @@ class ReclamationController extends AbstractController
         $avis = $em->getRepository(Reclamations::class)->findBy([
             'statut' => StatutReclamation::AVIS
         ]);
-        $limit = 3;
+        $limit = 4;
         $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
         $criteria = ['statut' => [StatutReclamation::EN_COURS, StatutReclamation::RESOLUE, StatutReclamation::FERMEE]];

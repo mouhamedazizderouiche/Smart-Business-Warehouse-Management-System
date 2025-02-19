@@ -25,7 +25,7 @@ class ReclamationsType extends AbstractType
             ->add('rate', HiddenType::class, [
                 'attr' => ['id' => 'rating-value'],
             ])
-            ->add('save', SubmitType::class, ['label' => 'Submit Reclamation']);
+            ->add('save', SubmitType::class, ['label' => 'Submit']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
