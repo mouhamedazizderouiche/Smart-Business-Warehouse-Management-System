@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,14 +31,45 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <style>
+        /* Add padding and margin to ensure content doesn't overlap with the sidebar */
+        .content-page {
+            padding: 20px;
+            margin-left: 250px; /* Adjust this value based on your sidebar width */
+            width: calc(100% - 250px); /* Ensure the content takes up the remaining space */
+        }
 
-{% include 'backoffice/sidebar.html.twig' %}
-<div class="content-page">
-    <h1>Edit User</h1>
+        /* Style for the back to list link */
+        .content-page a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
 
-    {{ include('admin_user/_form.html.twig', {'button_label': 'Update'}) }}
+        .content-page a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
 
-    <a href="{{ path('app_admin_user_index') }}">back to list</a>
+<body>
+    <div class="wrapper">
+        {% include 'backoffice/sidebar.html.twig' %}
 
-    {{ include('admin_user/_delete_form.html.twig') }}
-</div>
+        <div class="content-page">
+            <h1>Edit User</h1>
+
+            {{ include('admin_user/_form.html.twig', {'button_label': 'Update'}) }}
+
+            <a href="{{ path('app_admin_user_index') }}">Back to list</a>
+
+            {{ include('admin_user/_delete_form.html.twig') }}
+        </div>
+    </div>
+</body>
+
+</html>
