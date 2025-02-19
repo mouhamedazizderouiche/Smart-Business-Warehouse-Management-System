@@ -21,15 +21,10 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, [
+                'empty_data' => '',
                 'label' => 'Nom du produit',
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Le nom du produit est obligatoire.']),
-                    new Assert\Length([
-                        'min' => 3,
-                        'max' => 255,
-                        'minMessage' => 'Le nom doit contenir au moins {{ limit }} caractères.',
-                        'maxMessage' => 'Le nom ne peut pas dépasser {{ limit }} caractères.',
-                    ]),
+                   
                     new Assert\Regex([
                         'pattern' => '/^[a-zA-ZÀ-ÿ\s]+$/u',
                         'message' => 'Le nom ne doit contenir que des lettres et des espaces.',
@@ -38,9 +33,9 @@ class ProductType extends AbstractType
             ])
             ->add('prixUnitaire', NumberType::class, [
                 'label' => 'Prix Unitaire',
+                'empty_data' => '0',
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'Le prix unitaire est obligatoire.']),
-                    new Assert\Positive(['message' => 'Le prix doit être un nombre positif.']),
+                   
                     new Assert\Type([
                         'type' => 'numeric',
                         'message' => 'Le prix doit être un nombre valide.',
@@ -50,15 +45,16 @@ class ProductType extends AbstractType
             ])
             ->add('quantite', IntegerType::class, [
                 'label' => 'Quantité en stock',
+                'empty_data' => '0',
                 'constraints' => [
-                    new Assert\NotBlank(['message' => 'La quantité est obligatoire.']),
-                    new Assert\PositiveOrZero(['message' => 'La quantité ne peut pas être négative.']),
+                    new Assert\Positive(['message' => 'La quantité ne peut pas être négative.']),
                 ],
                 'attr' => ['min' => 0],
                 'invalid_message' => 'Veuillez entrer un nombre entier valide.',
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
+                'empty_data' => '',
                 'required' => false,
                 'constraints' => [
                     new Assert\Length([
@@ -72,12 +68,11 @@ class ProductType extends AbstractType
                 'mapped' => false,
                 'required' => !$options['is_edit'],
                 'attr' => ['accept' => 'image/*'],
-                'constraints' => [
-                    new Assert\NotBlank(['message' => 'L\'image est obligatoire.']),
-                ],
+                
             ])
             ->add('categorie', EntityType::class, [
         'class' => Categorie::class,
+        'empty_data' => '',
         'choice_label' => 'nom',
         'label' => 'Catégorie',
         'placeholder' => 'Sélectionner une catégorie',
