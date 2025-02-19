@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use App\Repository\CommandeFinaliseeRepository;
+use App\Entity\User;
 
 #[ORM\Entity]
 class CommandeFinalisee

@@ -42,59 +42,7 @@
 <body>
 
 
-<!-- Sidebar -->
-<div class="container-fluid">
-    <nav id="sidebar">
-        <div class="position-sticky pt-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="sidebar-logo">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#" data-target="dashboard">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Tableau de bord</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_admin_user_index') }}" data-target="gestion-utilisateur">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Gestion Utilisateur</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-target="gestion-reclamation">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span>Gestion Reclamation</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-target="gestion-evenement">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Gestion Evenement</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-target="gestion-produit">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Gestion Produit</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-target="gestion-commande">
-                        <i class="fas fa-receipt"></i>
-                        <span>Gestion Commande</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ path('app_stock_index') }}" data-target="gestion-stocks">
-                      <i class="fas fa-box"></i>
-                      <span>Gestion Stocks</span>
-                  </a>
-              </li>
-            </ul>
-        </div>
-      </div>
-    </nav>
-    #}
+
     <!-- Sidebar -->
     <div class="container-fluid">
       <nav id="sidebar">
@@ -173,7 +121,7 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="#" data-target="gestion-stocks">
+              <a class="nav-link" href="{{ path('app_stock_index') }}"  data-target="gestion-stocks">
                 <i class="fas fa-box"></i>
                 <span>Gestion Stocks</span>
               </a>
