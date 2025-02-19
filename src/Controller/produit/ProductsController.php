@@ -80,8 +80,10 @@ class ProductsController extends AbstractController
     public function editProduit(Request $request, EntityManagerInterface $entityManager, Produit $produit): Response
     {
         $form = $this->createForm(ProductType::class, $produit, [
-            'is_edit' => true
+            'is_edit' => true,
+            'attr' => ['novalidate' => 'novalidate']
         ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
