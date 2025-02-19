@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>Dashboard - Gestion des Stocks</title>
+    <title>Dashboard</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -31,47 +30,63 @@
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .content-page {
+            padding: 20px;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+        }
+    </style>
+</head>
 
+<body>
+    <div class="wrapper">
+        {% include 'backoffice/sidebar.html.twig' %}
+        
+        <div class="content-page">
+            <h1>Liste des utilisateurs</h1>
 
-{% include 'backoffice/sidebar.html.twig' %}
-<div class="content-page">
-    <h1>User index</h1>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Travail</th>
+                        <th>DateIscri</th>
+                        <th>PhotoUrl</th>
+                        <th>IsVerified</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.Nom }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                        <td>{{ user.travail }}</td>
+                        <td>{{ user.dateIscri ? user.dateIscri|date('Y-m-d H:i:s') : '' }}</td>
+                        <td>{{ user.photoUrl }}</td>
+                        <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
+                        <td>
+                            <a href="{{ path('app_admin_user_show', {'id': user.id}) }}">Show</a>
+                            <a href="{{ path('app_admin_user_edit', {'id': user.id}) }}">Edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">No records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Email</th>
-                <th>Roles</th>
-                <th>Travail</th>
-                <th>DateIscri</th>
-                <th>PhotoUrl</th>
-                <th>IsVerified</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-                <td>{{ user.travail }}</td>
-                <td>{{ user.dateIscri ? user.dateIscri|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ user.photoUrl }}</td>
-                <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
-                <td>
-                    <a href="{{ path('app_admin_user_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('app_admin_user_edit', {'id': user.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_admin_user_new') }}">Create new</a>
-</div>
+            <a href="{{ path('app_admin_user_new') }}">Create new</a>
+        </div>
+    </div>
+</body>
+</html>
