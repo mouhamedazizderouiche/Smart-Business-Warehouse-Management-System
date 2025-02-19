@@ -132,6 +132,7 @@
                         <th scope="col">Review</th>
                         <th scope="col">Rating</th>
                         <th scope="col">Posted On</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -154,6 +155,12 @@
 
                             </td>
                             <td>{{ testimonial.dateReclamation|date('d M Y H:i') }}</td>
+                            <td><form action="{{ path('reclamation_delete', {'id': testimonial.id}) }}" method="POST" style="display: inline;">
+
+                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this reclamation?');">
+                                            🗑️
+                            </button>
+                            </form></td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -308,10 +315,6 @@
 
     .custom-table th {
         font-weight: 600;
-    }
-
-    .custom-table tr:hover {
-        background-color: #f1f1f1;
     }
 
     .profile-img-container {

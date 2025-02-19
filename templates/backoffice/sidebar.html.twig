@@ -39,6 +39,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
 
+
 <body>
 
 
@@ -105,7 +106,7 @@
                 href="{{ path('liste_categories') }}"
                 data-target="categories"
               >
-                <i class="fas fa-shopping-cart"></i>
+              <i class="fas fa-boxes"></i>
                 <span>Gestion Categorie</span>
               </a>
             </li>
@@ -124,6 +125,15 @@
             </li>
           </ul>
         </div>
+        <div class="logout" >
+          <li>
+            <a class="nav-link text-white no-hover" href="{{ path('app_logout') }}" data-target="logout">
+                <i class="fas fa-sign-out-alt text-white"></i> 
+                <span>Logout</span>
+            </a>
+        </li>
+
+        </div>
       </nav>
     </div>
     <!-- End Sidebar -->
@@ -131,22 +141,32 @@
     <!-- JavaScript to Handle Active State -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const navLinks = document.querySelectorAll(".nav-link");
-        const currentUrl = window.location.href;
+          const navLinks = document.querySelectorAll(".nav-link");
+          const currentUrl = window.location.href;
 
-        navLinks.forEach((link) => {
-          if (link.href === currentUrl) {
-            link.classList.add("active");
-          }
-        });
+          navLinks.forEach((link) => {
+              if (link.dataset.target === "logout") {
+                  return;
+              }
 
-        navLinks.forEach((link) => {
-          link.addEventListener("click", function () {
-            navLinks.forEach((el) => el.classList.remove("active"));
-            this.classList.add("active");
+              if (link.href === currentUrl) {
+                  link.classList.add("active");
+              }
           });
-        });
+
+          navLinks.forEach((link) => {
+
+              if (link.dataset.target === "logout") {
+                  return;
+              }
+
+              link.addEventListener("click", function () {
+                  navLinks.forEach((el) => el.classList.remove("active"));
+                  this.classList.add("active");
+              });
+          });
       });
+
     </script>
   </body>
 </html>

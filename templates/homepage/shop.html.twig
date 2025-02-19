@@ -280,7 +280,14 @@
                                         <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                             <h4>{{ produit.nom }}</h4>
                                             <p>{{ produit.description }}</p>
-                                            <p class="quantite-produit">Quantite en stock : {{ produit.quantite }}</p>
+                                            <p class="quantite-produit">
+                                                    Quantité en stock :
+                                                    {% if produit.quantite > 0 %}
+                                                        {{ produit.quantite }}
+                                                    {% else %}
+                                                        <span style="color: red; font-weight: bold;">Rupture de stock</span>
+                                                    {% endif %}
+                                                </p>
                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                 <p class="text-dark fs-5 fw-bold mb-0">{{ produit.prixUnitaire }}DT/
                                                     kg</p>
