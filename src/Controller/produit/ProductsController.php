@@ -18,7 +18,9 @@ class ProductsController extends AbstractController
     public function home(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
     {
         $produit = new Produit();
-        $form = $this->createForm(ProductType::class, $produit);
+        $form = $this->createForm(ProductType::class, $produit, [
+            'attr' => ['novalidate' => 'novalidate']
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -43,9 +43,16 @@ class Produit
     #[Assert\NotNull(message: "La catégorie du produit est obligatoire.")]
     private ?Categorie $categorie = null;
 
+    #[ORM\Column(type: "integer")]
+    #[Assert\NotBlank(message: "La quantité est obligatoire.")]
+    #[Assert\PositiveOrZero(message: "La quantité ne peut pas être négative.")]
+    private int $quantite;
+
+
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
 
 
     public function __construct()
@@ -116,6 +123,17 @@ class Produit
     public function setCategorie(?Categorie $categorie): self
     {
         $this->categorie = $categorie;
+        return $this;
+    }
+
+    public function getQuantite(): int
+    {
+        return $this->quantite;
+    }
+
+    public function setQuantite(int $quantite): self
+    {
+        $this->quantite = $quantite;
         return $this;
     }
 

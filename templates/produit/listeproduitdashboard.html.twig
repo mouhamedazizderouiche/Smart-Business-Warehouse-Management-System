@@ -182,6 +182,7 @@
                             <th>Description</th>
                             <th>Catégorie</th>
                             <th>Prix</th>
+                            <th>Quantité</th>
                             <th>Image</th>
                             <th>Actions</th>
                         </tr>
@@ -194,6 +195,7 @@
                                 <td>{{ produit.description }}</td>
                                 <td>{{ produit.categorie.nom }}</td>
                                 <td>{{ produit.prixUnitaire }} DT</td>
+                                <td>{{ produit.quantite}}</td>
                                 <td class="image-containter">
                                     <img src="{{ asset(produit.urlImageProduit) }}" class="img-fluid" alt="Image produit" style="width: 100px;">
                                 </td>

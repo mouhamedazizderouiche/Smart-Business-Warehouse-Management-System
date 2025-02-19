@@ -1,10 +1,9 @@
 <head>
     <link rel="stylesheet" href="{{ asset('css/ajoutProduit.css') }}">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
 
-    <link href="{{ asset('css/sidebar.css')}}" rel="stylesheet">
     <style>
-        /* General Styles */
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
@@ -24,23 +23,35 @@
             border-radius: 8px;
         }
 
-        /* Image Preview */
-        /* Image Preview */
-        .image-preview {
-            border: 2px dashed #ccc;
+        .image-preview-container {
+            width: 60%;
+            min-height: 200px;
+            border: 2px dashed #ced4da;
             border-radius: 8px;
-            text-align: center;
-            min-height: 300px;
-            position: relative;
-            overflow: hidden;
             background-color: #f8f9fa;
+            position: relative;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .image-preview-container:hover {
+            border-color: #81c408;
         }
 
         #preview-image {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            display: none;
+            object-fit: cover;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #preview-image.loaded {
+            opacity: 1;
         }
 
         .preview-text {
@@ -51,9 +62,13 @@
             color: #6c757d;
             font-size: 16px;
             pointer-events: none;
+            transition: opacity 0.3s ease;
         }
 
-        /* Form Container */
+        .preview-text.hidden {
+            opacity: 0;
+        }
+
         .container-form {
             flex: 2;
         }
@@ -63,19 +78,13 @@
             flex-direction: column;
         }
 
-        /* Form Labels */
-        .label-nom,
-        .label-prix,
-        .label-description,
-        .label-categorie,
-        .image-label {
+        .label-nom, .label-prix, .label-description, .label-categorie, .image-label,.label-quantite {
             font-weight: 600;
-            color: #343a40;
+            color: #000;
             margin-bottom: 5px;
         }
 
-        /* Form Inputs */
-        .form-control {
+        .form-control, .form-text-area, .form-image {
             width: 100%;
             padding: 10px;
             border: 1px solid #ced4da;
@@ -84,35 +93,13 @@
             color: #495057;
         }
 
-        .form-control:focus {
-            border-color: #0000;
-            outline: 0;
-        }
-
-        /* Textarea */
         .form-text-area {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #495057;
             resize: vertical;
             min-height: 100px;
         }
 
-        /* File Upload */
-        .form-image {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #495057;
-        }
-
         .submit-button {
-            background-color:  #81c408;
+            background-color: #81c408;
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -122,11 +109,26 @@
             transition: background-color 0.3s ease;
         }
 
-        /* Error Messages */
         .form-error {
             color: #dc3545;
-            font-size: 12px;
-            margin-top: 5px;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .form-error.show {
+            opacity: 1;
+            transform: translateY(0);
+            max-height: 100px;
+        }
+
+        .form-control.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
     </style>
 </head>
@@ -134,24 +136,24 @@
 {% block body %}
     {% include 'backoffice/sidebar.html.twig' %}
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-
         <div class="content-page">
             <div class="display-container">
-                <div class="image-preview" id="image-preview">
-                    <img id="preview-image" src="#" alt="Preview" style="display: none; max-width: 100%; max-height: 300px;">
-                    <span class="preview-text">No image selected</span>
+                <div class="image-preview-container">
+                    <img id="preview-image" src="#" alt="Aperçu de l'image" class="preview-image">
+                    <p class="preview-text">Aucune image sélectionnée</p>
                 </div>
-
                 <div class="container-form">
                     {{ form_start(form, {'attr': {'class': 'produit-form'}}) }}
-
                     <div class="nom-container">
                         <div class="label-nom">
                             {{ form_label(form.nom) }}
                         </div>
                         <div class="mb-3">
                             {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.nom) }}
+                            <div class="form-error {% if form.nom.vars.errors|length %}show{% endif %}"
+                                 id="{{ form.nom.vars.id }}_error">
+                                {{ form_errors(form.nom) }}
+                            </div>
                         </div>
                     </div>
 
@@ -159,7 +161,23 @@
                         <div class="label-prix">{{ form_label(form.prixUnitaire) }}</div>
                         <div class="mb-3">
                             {{ form_widget(form.prixUnitaire, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.prixUnitaire) }}
+                            <div class="form-error {% if form.prixUnitaire.vars.errors|length %}show{% endif %}"
+                                 id="{{ form.prixUnitaire.vars.id }}_error">
+                                {{ form_errors(form.prixUnitaire) }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quantite-container">
+                        <div class="label-quantite">
+                            {{ form_label(form.quantite) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_widget(form.quantite, {'attr': {'class': 'form-control'}}) }}
+                            <div class="form-error {% if form.quantite.vars.errors|length %}show{% endif %}"
+                                 id="{{ form.quantite.vars.id }}_error">
+                                {{ form_errors(form.quantite) }}
+                            </div>
                         </div>
                     </div>
 
@@ -169,7 +187,10 @@
                         </div>
                         <div class="mb-3">
                             {{ form_widget(form.description, {'attr': {'class': 'form-text-area'}}) }}
-                            {{ form_errors(form.description) }}
+                            <div class="form-error {% if form.description.vars.errors|length %}show{% endif %}"
+                                 id="{{ form.description.vars.id }}_error">
+                                {{ form_errors(form.description) }}
+                            </div>
                         </div>
                     </div>
 
@@ -179,17 +200,26 @@
                         </div>
                         <div class="mb-3">
                             {{ form_widget(form.categorie, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(form.categorie) }}
+                            <div class="form-error {% if form.categorie.vars.errors|length %}show{% endif %}"
+                                 id="{{ form.categorie.vars.id }}_error">
+                                {{ form_errors(form.categorie) }}
+                            </div>
                         </div>
                     </div>
 
                     <div class="image-label">
                         image
                     </div>
-                    <div class="produit-image-upload">
 
-                <input type="file" id="image-upload" name="{{ form.urlImageProduit.vars.full_name }}" class="form-image">
-                        {{ form_errors(form.urlImageProduit) }}
+                    <div class="produit-image-upload">
+                        {{ form_widget(form.urlImageProduit, {'attr': {
+                            'class': 'form-image',
+                            'onchange': 'previewFile()'
+                        }}) }}
+                        <div class="form-error {% if form.urlImageProduit.vars.errors|length %}show{% endif %}"
+                             id="{{ form.urlImageProduit.vars.id }}_error">
+                            {{ form_errors(form.urlImageProduit) }}
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -197,48 +227,37 @@
                     </div>
 
                     {{ form_end(form) }}
-
                 </div>
             </div>
         </div>
     </main>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const imageUpload = document.getElementById('image-upload');
-            const previewImage = document.getElementById('preview-image');
+        function previewFile() {
+            const previewContainer = document.querySelector('.image-preview-container');
+            const preview = document.getElementById('preview-image');
             const previewText = document.querySelector('.preview-text');
+            const fileInput = document.querySelector('input[type="file"]');
 
-            if (imageUpload && previewImage && previewText) {
-                imageUpload.addEventListener('change', function(event) {
-                    const file = event.target.files[0];
+            if (!fileInput) return;
 
-                    if (file && file.type.startsWith('image/')) {
-                        const reader = new FileReader();
+            const file = fileInput.files[0];
+            const reader = new FileReader();
 
-                        reader.onload = function(e) {
-                            previewImage.style.display = 'block';
-                            previewImage.src = e.target.result;
-                            previewText.style.display = 'none';
-                        };
-
-                        reader.onerror = function(error) {
-                            console.error('Error reading file:', error);
-                            previewText.textContent = 'Error loading image';
-                        };
-
-                        reader.readAsDataURL(file);
-                    } else {
-                        previewImage.style.display = 'none';
-                        previewImage.src = '#';
-                        previewText.style.display = 'block';
-                        previewText.textContent = 'No image selected';
-                    }
-                });
+            if (file) {
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.classList.add('loaded');
+                    previewText.classList.add('hidden');
+                    previewContainer.style.backgroundColor = '#fff';
+                };
+                reader.readAsDataURL(file);
             } else {
-                console.error('Required elements not found!');
+                preview.src = '';
+                preview.classList.remove('loaded');
+                previewText.classList.remove('hidden');
+                previewContainer.style.backgroundColor = '#f8f9fa';
             }
-        });
+        }
     </script>
 {% endblock %}
-
-

@@ -24,15 +24,12 @@ class CategorieController extends AbstractController
     #[Route('/categorie/ajout', name: 'ajout_categorie')]
     public function ajoutCategorie(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Create a new Categorie object (the constructor will initialize the UUID)
         $categorie = new Categorie();
 
-        // Create the form
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Save the category to the database
             $entityManager->persist($categorie);
             $entityManager->flush();
 
