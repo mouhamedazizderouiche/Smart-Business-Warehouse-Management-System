@@ -17,6 +17,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
 
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 class EvenementType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -89,6 +91,10 @@ class EvenementType extends AbstractType
                 'multiple' => true,
                 'expanded' => true, // ou true pour des cases à cocher
                 'attr' => ['class' => 'form-control'],
+            ])
+            ->add('save',  SubmitType::class, [
+                'label' => 'Enregistrer',
+                'attr' => ['class' => 'btn btn-primary'],
             ]);
     }
 
