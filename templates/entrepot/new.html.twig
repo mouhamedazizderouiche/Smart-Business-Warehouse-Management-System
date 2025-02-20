@@ -195,6 +195,7 @@
     {% block javascripts %}
         {% block importmap %}{{ importmap('app') }}{% endblock %}
     <script>
+    /*
       document.addEventListener("DOMContentLoaded", function () {
           const form = document.querySelector('form.needs-validation');
   
@@ -226,7 +227,7 @@
               {% endfor %}
               alert(serverErrorMessage);
           {% endif %}
-      });
+      });*/
   </script>
   {% endblock %}
 </head>  

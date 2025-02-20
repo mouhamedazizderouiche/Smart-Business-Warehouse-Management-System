@@ -254,9 +254,13 @@
                 <tr>
                     <td>{{ stock.id }}</td>
                     <td>{{ stock.produit }}</td>
-                    <td>
-                        <img src="{{ stock.produit.urlImageProduit starts with 'http' ? stock.produit.urlImageProduit : asset('uploads/images/' ~ stock.produit.urlImageProduit) }}" alt="Image du produit" style="max-width: 100px; height: auto;">
-                    </td>
+                               <td>
+                               
+                                {% if stock.produit.urlImageProduit %}
+                                    <img src="{{ asset(stock.produit.urlImageProduit) }}" class="img-fluid" alt="Image produit" style="width: 100px;">                                {% else %}
+                                    <span>Aucune image disponible</span>
+                                {% endif %}
+                            </td>
                     <td>{{ stock.quantite }}</td>
                     <td>{{ stock.dateEntree|date('d/m/Y H:i') }}</td>
                     <td>{{ stock.dateSortie ? stock.dateSortie|date('d/m/Y H:i') : 'N/A' }}</td>

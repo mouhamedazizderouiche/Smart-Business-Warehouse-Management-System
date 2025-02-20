@@ -121,8 +121,7 @@
                 {% endfor %} {% for message in app.flashes('error') %}
                 <div class="alert alert-danger">{{ message }}</div>
                 {% endfor %}
-
-                {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+                {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}}) }}
 
                 <div class="form-group">
                   {{ form_label(form.titre, "Titre de l'événement", {'label_attr': {'class': 'form-label'
