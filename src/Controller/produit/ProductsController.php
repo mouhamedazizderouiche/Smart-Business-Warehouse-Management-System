@@ -87,6 +87,30 @@ class ProductsController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $imageFile = $form->get('urlImageProduit')->getData();
+
+            if ($imageFile) {
+                $extension = strtolower($imageFile->getClientOriginalExtension());
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+                if (in_array($extension, $allowedExtensions)) {
+                    $newFilename = uniqid() . '.' . $extension;
+
+                    try {
+                        $imageFile->move(
+                            $this->getParameter('images_directory'),
+                            $newFilename
+                        );
+
+                        $produit->setUrlImageProduit('uploads/images/' . $newFilename);
+                    } catch (FileException $e) {
+                        $this->addFlash('error', 'Une erreur est survenue lors de l\'upload de l\'image.');
+                    }
+
+                } else {
+                    $this->addFlash('error', 'Le fichier téléchargé n\'est pas une image valide. Extensions autorisées: .jpg, .jpeg, .png, .gif.');
+                }
+            }
             $entityManager->flush();
             return $this->redirectToRoute('liste_produits');
         }
