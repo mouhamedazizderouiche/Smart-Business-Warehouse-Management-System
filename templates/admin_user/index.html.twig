@@ -57,6 +57,13 @@
         .btn-danger:hover {
             background-color: #c82333;
         }
+        .profile-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+        }
     </style>
 </head>
 
@@ -76,7 +83,7 @@
                         <th>Roles</th>
                         <th>Travail</th>
                         <th>DateIscri</th>
-                        <th>PhotoUrl</th>
+                        <th>Photo</th>
                         <th>IsVerified</th>
                         <th>Actions</th>
                     </tr>
@@ -90,15 +97,21 @@
                         <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
                         <td>{{ user.travail }}</td>
                         <td>{{ user.dateIscri ? user.dateIscri|date('Y-m-d H:i:s') : '' }}</td>
-                        <td>{{ user.photoUrl }}</td>
+                        <td>
+                            {% if user.photoUrl %}
+                                <img src="{{ asset('uploads/photos/' ~ user.photoUrl) }}" alt="User Photo" class="profile-img">
+                            {% else %}
+                                <span>No Image</span>
+                            {% endif %}
+                        </td>
                         <td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
                         <td>
                             <a href="{{ path('app_admin_user_show', {'id': user.id}) }}" class="btn">Montrer</a>
                             <a href="{{ path('app_admin_user_edit', {'id': user.id}) }}" class="btn">Modifier</a>
-                            <form action="{{ path('app_admin_user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Suprimer?');" style="display: inline;">
+                            <form action="{{ path('app_admin_user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Supprimer?');" style="display: inline;">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-                                <button type="submit" class="btn btn-danger">Suprimer</button>
+                                <button type="submit" class="btn btn-danger">Supprimer</button>
                             </form>
                         </td>
                     </tr>
