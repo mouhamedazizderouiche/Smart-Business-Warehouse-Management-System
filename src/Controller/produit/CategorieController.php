@@ -26,7 +26,9 @@ class CategorieController extends AbstractController
     {
         $categorie = new Categorie();
 
-        $form = $this->createForm(CategorieType::class, $categorie);
+        $form = $this->createForm(CategorieType::class, $categorie, [
+            'attr' => ['novalidate' => 'novalidate']
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -41,4 +43,16 @@ class CategorieController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/categorie/supprimer/{id}', name: 'supprimer_categorie')]
+    public function supprimerCategorie(EntityManagerInterface $entityManager, Categorie $categorie): Response
+    {
+        $entityManager->remove($categorie);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('liste_categories');
+    }
+
+
+
 }

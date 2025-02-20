@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CategorieType extends AbstractType
 {
@@ -18,12 +19,30 @@ class CategorieType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Entrez le nom de la catégorie',
                 ],
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'Le nom de la catégorie est obligatoire.',
+                    ]),
+                    new Assert\Length([
+                        'max' => 255,
+                        'maxMessage' => 'Le nom ne doit pas dépasser 255 caractères.',
+                    ]),
+                ],
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'required' => false,
                 'attr' => [
-                    'placeholder' => 'Entrez une description (optionnelle)',
+                    'placeholder' => 'Entrez une description',
+                ],
+                'constraints' => [
+                    new Assert\NotBlank([
+                        'message' => 'La  description de la catégorie est obligatoire.',
+                    ]),
+                    new Assert\Length([
+                        'max' => 1000,
+                        'maxMessage' => 'La description ne doit pas dépasser 1000 caractères.',
+                    ]),
                 ],
             ]);
     }

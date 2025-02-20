@@ -17,6 +17,26 @@
                 border-radius: 4px;
         }
 
+        .action-buttons {
+                display: flex;
+                gap: 12px;
+        }
+
+        .modifier-button, .supprimer-button {
+                padding: 8px 15px;
+                border-radius: 6px;
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s ease;
+                color: #747D88 !important;
+        }
+
+        .modifier,.supprimer{
+                color: #747D88 !important;
+        }
+
         </style>
 </head>
 
@@ -26,26 +46,34 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
         <h1>Liste des catégories</h1>
-        <table class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                        <th>Nom</th>
-                        <th>Description</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for categorie in categories %}
+                <table class="table table-bordered table-striped">
+                        <thead>
                         <tr>
-                                <td>{{ categorie.nom }}</td>
-                                <td>{{ categorie.description }}</td>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>Actions</th>
                         </tr>
-                {% else %}
-                        <tr>
-                <td colspan="2" class="text-center">Aucune catégorie trouvée</td>
-                        </tr>
-                {% endfor %}
-                </tbody>
-        </table>
+                        </thead>
+                        <tbody>
+                        {% for categorie in categories %}
+                                <tr>
+                                        <td>{{ categorie.nom }}</td>
+                                        <td>{{ categorie.description }}</td>
+                                        <td>
+                                                        <a class="supprimer-button" href="{{ path('supprimer_categorie', {'id': categorie.id}) }}" title="Supprimer">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                                <span class="supprimer">Supprimer</span>
+                                                        </a>
+                                        </td>
+                                </tr>
+                        {% else %}
+                                <tr>
+                                        <td colspan="3" class="text-center">Aucune catégorie trouvée</td>
+                                </tr>
+                        {% endfor %}
+                        </tbody>
+                </table>
+
         <a href="{{ path('ajout_categorie') }}" class="add-categorie-button">Ajouter une catégorie</a>
                 {% endblock %}
 
