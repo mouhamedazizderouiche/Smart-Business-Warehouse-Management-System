@@ -144,6 +144,31 @@ class ProductsController extends AbstractController
     }
 
 
+    #[Route('/produit/search', name: 'search_produits')]
+    public function searchProduits(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $query = $request->query->get('q', '');
+
+        $produits = $entityManager->getRepository(Produit::class)
+            ->createQueryBuilder('p')
+            ->where('p.nom LIKE :query OR p.description LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->getQuery()
+            ->getResult();
+
+        $categories = $entityManager->getRepository(Categorie::class)->findAll();
+
+        return $this->render('homepage/shop.html.twig', [
+            'produits' => $produits,
+            'categories' => $categories,
+            'query' => $query,
+        ]);
+    }
+
+
+
+
+
 
 
 

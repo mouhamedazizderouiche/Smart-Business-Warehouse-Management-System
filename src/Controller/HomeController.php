@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controller;
+use App\Entity\Categorie;
 use App\Entity\Reclamations;
 use Doctrine\ORM\EntityManagerInterface;
 use StatutReclamation; 
@@ -15,12 +16,15 @@ final class HomeController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        $categories = $entityManager->getRepository(Categorie::class)->findAll();
+
         $reclamations = $entityManager->getRepository(Reclamations::class)->findBy([
             'statut' => StatutReclamation::AVIS
         ]);
 
         return $this->render('homepage/homepage.html.twig', [
-            'reclamationsAvis' => $reclamations
+            'reclamationsAvis' => $reclamations,
+            'categories' => $categories
         ]);
     }
     

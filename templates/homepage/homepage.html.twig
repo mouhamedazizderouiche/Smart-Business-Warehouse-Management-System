@@ -51,6 +51,36 @@
             .py-5 {
                 padding-top: 1rem !important;
             }
+
+             .category-carousel img {
+                 width: 180px;
+                 height: 180px;
+                 object-fit: cover;
+                 border-radius: 50%;
+             }
+
+            .category-title {
+                text-align: center;
+                margin-top: 10px;
+                font-size: 14px;
+            }
+
+            .category-carousel {
+                overflow: hidden;
+            }
+
+            .swiper-wrapper {
+                display: flex;
+                align-items: center;
+            }
+
+            .swiper-slide {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
         </style>
     </head>
 
@@ -205,79 +235,38 @@
 
          <!-- categorie section -->
          <div class="categorie-section">
-                 <div class="row">
-                     <div class="col-md-12">
-
-                         <div class="section-header d-flex flex-wrap justify-content-between mb-5">
-                             <h2 class="section-title">Category</h2>
-
-                             <div class="d-flex align-items-center">
-                                 <a href="#" class="btn btn-primary me-2">View All</a>
-                                 <div class="swiper-buttons">
-                                     <button class="swiper-prev category-carousel-prev btn btn-yellow">❮</button>
-                                     <button class="swiper-next category-carousel-next btn btn-yellow">❯</button>
-                                 </div>
+             <div class="row">
+                 <div class="col-md-12">
+                     <div class="section-header d-flex flex-wrap justify-content-between mb-5">
+                         <h2 class="section-title">Category</h2>
+                         <div class="d-flex align-items-center">
+                             <a href="#" class="btn btn-primary me-2">View All</a>
+                             <div class="swiper-buttons">
+                                 <button class="swiper-prev category-carousel-prev btn btn-yellow">❮</button>
+                                 <button class="swiper-next category-carousel-next btn btn-yellow">❯</button>
                              </div>
                          </div>
-
                      </div>
                  </div>
-                 <div class="row">
-                     <div class="col-md-12">
-
-                         <div class="category-carousel swiper">
-                             <div class="swiper-wrapper">
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-1.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Agrumes</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-2.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Fruits exotiques</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-3.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Fruits rouges</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-4.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Beverages</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-5.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Légumes racines</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-6.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Légumes verts</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-1.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Tomates & Poivrons</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-1.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Légumineuses fraîches</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-1.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Fruits & Veges</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-1.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Fruits & Veges</h4>
-                                 </a>
-                                 <a href="category.html" class="nav-link swiper-slide text-center">
-                                     <img src="{{ asset('img/category-thumb-1.jpg') }}" class="rounded-circle" alt="Category Thumbnail">
-                                     <h4 class="fs-6 mt-3 fw-normal category-title">Fruits & Veges</h4>
-                                 </a>
-
-
-                             </div>
+             </div>
+             <div class="row">
+                 <div class="col-md-12">
+                     <div class="category-carousel swiper">
+                         <div class="swiper-wrapper">
+                             {% for category in categories %}
+                                 {% for subcategory in category.subcategories %}
+                                     <a href="category.html" class="nav-link swiper-slide text-center">
+                                         <img src="{{ asset(subcategory.imgUrl) }}"
+                                              class="rounded-circle"
+                                              alt="{{ subcategory.nom }}">
+                                         <h4 class="fs-6 mt-3 fw-normal category-title">{{ subcategory.nom }}</h4>
+                                     </a>
+                                 {% endfor %}
+                             {% endfor %}
                          </div>
-
                      </div>
                  </div>
+             </div>
          </div>
 
         <!-- Featurs Section Start

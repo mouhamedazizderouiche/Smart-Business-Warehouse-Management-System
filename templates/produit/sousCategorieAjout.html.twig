@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une catégorie</title>
+    <title>Ajouter une sous-catégorie</title>
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
@@ -40,7 +40,8 @@
 
         .form-group input,
         .form-group textarea,
-        .form-group select {
+        .form-group select,
+        .form-group .custom-file-input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -51,7 +52,8 @@
 
         .form-group input:focus,
         .form-group textarea:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group .custom-file-input:focus {
             border-color: #81c408;
             outline: none;
             box-shadow: 0 0 5px rgba(129, 196, 8, 0.5);
@@ -78,16 +80,15 @@
             border-color: #dc3545;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
-
     </style>
 </head>
 <body>
 {% block body %}
     {% include 'backoffice/sidebar.html.twig' %}
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <h1>Ajouter une catégorie</h1>
+        <h1>Ajouter une sous-catégorie à {{ parentCategorie.nom }}</h1>
         <div class="form-container">
-            {{ form_start(form) }}
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
 
             <div class="form-group">
                 {{ form_label(form.nom) }}
@@ -113,7 +114,15 @@
                 </div>
             </div>
 
-            <button type="submit" class="ajout-categorie-btn">Ajouter catégorie</button>
+            <div class="form-group">
+                {{ form_label(form.slug) }}
+                {{ form_widget(form.slug, {'attr': {'class': 'form-control' ~ (form.slug.vars.errors|length > 0 ? ' error' : '')}}) }}
+                <div class="form-error {% if form.slug.vars.errors|length > 0 %}show{% endif %}">
+                    {{ form_errors(form.slug) }}
+                </div>
+            </div>
+
+            <button type="submit" class="ajout-categorie-btn">Ajouter sous-catégorie</button>
             {{ form_end(form) }}
         </div>
     </main>

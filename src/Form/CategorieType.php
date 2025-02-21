@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Form;
 
 use App\Entity\Categorie;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -44,6 +46,12 @@ class CategorieType extends AbstractType
                         'maxMessage' => 'La description ne doit pas dépasser 1000 caractères.',
                     ]),
                 ],
+            ])
+            ->add('imgUrl', FileType::class, [
+                'label' => 'Image de la sous-catégorie',
+                'attr' => ['class' => 'form-control'],
+                'required' => false,
+                'mapped' => false,
             ]);
     }
 
