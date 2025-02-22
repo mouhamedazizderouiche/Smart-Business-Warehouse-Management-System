@@ -15,7 +15,7 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[ORM\HasLifecycleCallbacks] 
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -64,18 +64,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'user')]
     private Collection $produits;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $faceToken = null;
+
     public function __construct()
     {
         $this->reclamations = new ArrayCollection();
     }
 
-     /**
-     * @return Collection|Reclamations[]
-     */
-    public function getReclamations(): Collection
-    {
-        return $this->reclamations;
-    }
     public function getId(): ?Uuid
     {
         return $this->id;
@@ -95,14 +91,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
-    #[ORM\PrePersist] 
+
+    #[ORM\PrePersist]
     public function generateUuid(): void
     {
         if ($this->id === null) {
-            $this->id = Uuid::v4();  
+            $this->id = Uuid::v4();
         }
     }
 
@@ -124,7 +120,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // Guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -136,14 +132,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
-
         return $this;
     }
 
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
@@ -151,7 +146,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -172,7 +166,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTravail(string $travail): static
     {
         $this->travail = $travail;
-
         return $this;
     }
 
@@ -184,7 +177,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDateIscri(?\DateTimeInterface $dateIscri): static
     {
         $this->dateIscri = $dateIscri;
-
         return $this;
     }
 
@@ -196,7 +188,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhotoUrl(string $photoUrl): static
     {
         $this->photoUrl = $photoUrl;
-
         return $this;
     }
 
@@ -208,7 +199,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
-
         return $this;
     }
 
@@ -220,7 +210,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(string $Nom): static
     {
         $this->Nom = $Nom;
-
         return $this;
     }
 
@@ -232,7 +221,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPrenom(string $Prenom): static
     {
         $this->Prenom = $Prenom;
-
         return $this;
     }
 
@@ -244,7 +232,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNumTel(int $NumTel): static
     {
         $this->NumTel = $NumTel;
-
         return $this;
+    }
+
+    public function getFaceToken(): ?string
+    {
+        return $this->faceToken;
+    }
+
+    public function setFaceToken(?string $faceToken): static
+    {
+        $this->faceToken = $faceToken;
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reclamations[]
+     */
+    public function getReclamations(): Collection
+    {
+        return $this->reclamations;
     }
 }

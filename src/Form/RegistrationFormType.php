@@ -103,7 +103,20 @@ class RegistrationFormType extends AbstractType
                 'constraints' => [
                     new IsTrue(['message' => 'Vous devez accepter nos conditions.']),
                 ],
+            ])
+            ->add('faceImage', FileType::class, [
+                'label' => 'Face Image',
+                'mapped' => false, // This field is not mapped to the User entity
+                'required' => true,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
+                        'mimeTypesMessage' => 'Please upload a valid image file (JPEG, PNG, GIF).',
+                    ]),
+                ],
             ]);
+        
     }
 
     public function configureOptions(OptionsResolver $resolver): void

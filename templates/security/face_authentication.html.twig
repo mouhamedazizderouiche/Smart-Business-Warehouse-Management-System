@@ -1,0 +1,155 @@
+{% block title %}Face Authentication{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: linear-gradient(135deg,rgb(188, 214, 158),rgb(149, 217, 150));
+        color: white;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    #webcam-container {
+        position: relative;
+        display: inline-block;
+        margin: 20px auto;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    video {
+        border: 3px solid white;
+        border-radius: 10px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .face-frame {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 120px;
+        height: 120px;
+        border: 3px solid rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8); }
+        100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+    }
+
+    button, input {
+        margin-top: 10px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+    }
+
+    button {
+        background-color: #ff4081;
+        color: white;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background-color: #ff1e63;
+    }
+
+    #result-message {
+        margin-top: 15px;
+        font-weight: bold;
+    }
+</style>
+
+<h1>Face Authentication</h1>
+<p>Please look into the camera or upload an image.</p>
+
+<div id="webcam-container">
+    <video id="webcam" autoplay></video>
+    <div class="face-frame"></div>
+</div>
+<canvas id="canvas" style="display:none;"></canvas>
+<button id="capture-btn">Capture</button>
+
+<div>
+    <p>Or upload an image:</p>
+    <input type="file" id="upload-input" accept="image/*">
+</div>
+
+<div id="result-message"></div>
+
+<script>
+    const video = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('capture-btn');
+    const uploadInput = document.getElementById('upload-input');
+    const resultMessage = document.getElementById('result-message');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+            video.srcObject = stream;
+        })
+        .catch((error) => {
+            console.error('Error accessing webcam:', error);
+            resultMessage.innerText = 'Error accessing webcam. Please upload an image instead.';
+        });
+
+    captureBtn.addEventListener('click', () => {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageBase64 = canvas.toDataURL('image/jpeg').split(',')[1];
+        sendImageToBackend(imageBase64);
+    });
+
+    uploadInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+            const imageBase64 = e.target.result.split(',')[1];
+            sendImageToBackend(imageBase64);
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    function sendImageToBackend(imageBase64) {
+        fetch('{{ path('verify_face') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ image: imageBase64 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resultMessage.innerText = 'Face recognized! Redirecting...';
+                window.location.href = '{{ path('app_home') }}';
+            } else {
+                resultMessage.innerText = 'Face not recognized. Please try again.';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            resultMessage.innerText = 'An error occurred. Please try again.';
+        });
+    }
+</script>
+{% endblock %}

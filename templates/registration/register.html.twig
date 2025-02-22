@@ -92,6 +92,11 @@
                             'label': 'J\'accepte les termes et conditions'
                         }) }}
 
+                                {{ form_row(registrationForm.faceImage, {
+                                'label': 'photo de visage pour la reconaissance faciale'
+                                }) }}
+
+
                         {{ form_errors(registrationForm) }}
 
                         <div class="text-center mt-4">

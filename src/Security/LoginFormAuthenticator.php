@@ -43,28 +43,18 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
-{
-    $user = $token->getUser();
-    $roles = $token->getRoleNames();
+    {
+        $user = $token->getUser();
+        $roles = $token->getRoleNames();
 
-    // Forcer la redirection pour les admins
-    if (in_array('ROLE_ADMIN', $roles)) {
-        return new RedirectResponse($this->urlGenerator->generate('app_admin_user_index'));
+        // Redirect admins to the admin dashboard
+        if (in_array('ROLE_ADMIN', $roles)) {
+            return new RedirectResponse($this->urlGenerator->generate('app_admin_user_index'));
+        }
+
+        // Redirect all other users to the face authentication page
+        return new RedirectResponse($this->urlGenerator->generate('face_authentication'));
     }
-
-    $travail = method_exists($user, 'getTravail') ? $user->getTravail() : null;
-
-    if ($travail === 'organisateur') {
-        return new RedirectResponse($this->urlGenerator->generate('app_dashboard'));
-    }
-
-    if ($travail === 'fournisseur' || $travail === 'agriculteur') {
-        return new RedirectResponse($this->urlGenerator->generate('app_home'));
-    }
-
-    // Ne jamais aller à /home par défaut
-    return null;
-}
 
     protected function getLoginUrl(Request $request): string
     {
