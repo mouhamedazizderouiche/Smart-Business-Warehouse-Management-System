@@ -132,12 +132,12 @@ class ProductsController extends AbstractController
 
 
     #[Route('/produit/shop', name: 'shop_produits')]
-    public function shopProduits(EntityManagerInterface $entityManager): Response
+    public function shopProduits(Request $request, EntityManagerInterface $entityManager): Response
     {
         $produits = $entityManager->getRepository(Produit::class)->findAll();
         $categories = $entityManager->getRepository(Categorie::class)->findAll();
 
-        return $this->render('homepage/shop.html.twig', [
+        return $this->render('homepage/ProductsPage.html.twig', [
             'produits' => $produits,
             'categories' => $categories
         ]);
@@ -164,6 +164,7 @@ class ProductsController extends AbstractController
             'query' => $query,
         ]);
     }
+
 
 
 

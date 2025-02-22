@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Fruitables - Vegetable Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Stylesheets -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+        .filter-sidebar {
+            background: #ffffff;
+            border-right: 1px solid #e9ecef;
+            height: calc(200vh - 120px);
+            top: 80px;
+            padding: 1.5rem;
+        }
+
+        .filter-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3436;
+            border-bottom: 2px solid #81c408;
+            padding-bottom: 0.8rem;
+        }
+
+        .parent-category {
+            padding: 0.5rem 0;
+            border-bottom: 0.5px solid #81c408;
+        }
+
+        .category-header {
+            cursor: pointer;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .category-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .subcategories-list {
+            padding-left: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+
+        .price-slider-container {
+            padding: 0 0.5rem;
+        }
+
+        .form-range::-webkit-slider-thumb {
+            background: #81c408;
+        }
+
+        .product-card {
+            transition: transform 0.2s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+        }
+    </style>
+</head>
+
+<body>
+{% include 'homepage/newNav.html.twig' %}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filter Sidebar -->
+        <div class="col-lg-3 filter-sidebar">
+            <div class="filter-section">
+                <h5 class="filter-title mb-4">Filtrer les produits</h5>
+
+                <!-- Catégories -->
+                <div class="category-filter-group">
+                    {% for category in categories %}
+                        {% if category.parent is null %}
+                            <div class="parent-category mb-3">
+                                <div class="category-header d-flex align-items-center">
+                                    <span class="fw-bold text-dark">{{ category.nom }}</span>
+                                </div>
+
+                                <div class="subcategories-list mt-2">
+                                    {% for subcategory in category.subcategories %}
+                                        <div class="form-check py-1">
+                                            <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    id="subcat{{ loop.parent.loop.index }}-{{ loop.index }}"
+                                            >
+                                            <label
+                                                    class="form-check-label text-muted"
+                                                    for="subcat{{ loop.parent.loop.index }}-{{ loop.index }}"
+                                            >
+                                                {{ subcategory.nom }}
+                                                <span class="badge bg-light text-muted ms-2">24</span>
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Prix -->
+                <div class="price-filter-group mt-4">
+                    <h6 class="filter-subtitle mb-3">Fourchette de prix</h6>
+                    <div class="price-slider-container mb-3">
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>0 DT</span>
+                            <span>100 DT</span>
+                        </div>
+                        <div class="position-relative">
+                            <input type="range"
+                                   class="form-range"
+                                   min="0"
+                                   max="100"
+                                   step="1"
+                                   id="priceSlider">
+                            <div class="price-display-badge">
+                                Jusqu'à <span id="priceValue">100</span> DT
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disponibilité -->
+                <div class="availability-filter-group mt-4">
+                    <h6 class="filter-subtitle mb-3">Stock disponible</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="stock">
+                        <label class="form-check-label text-muted" for="stock">
+                            Afficher seulement les produits en stock
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Produits -->
+        <div class="col-lg-9">
+            <div class="row g-4 justify-content-center">
+                {% for produit in produits %}
+                    <div class="col-md-6 col-lg-6 col-xl-4">
+                        <div class="product-card rounded position-relative">
+                            <div class="fruite-img">
+                                <img src="{{ asset(produit.urlImageProduit) }}"
+                                     class="img-fluid w-100 rounded-top"
+                                     alt="{{ produit.nom }}">
+                            </div>
+                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute"
+                                 style="top: 10px; left: 10px;">
+                                {{ produit.categorie.nom }}
+                            </div>
+                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                <h4>{{ produit.nom }}</h4>
+                                <p class="text-muted">{{ produit.description }}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="text-dark fs-5 fw-bold">{{ produit.prixUnitaire }} DT/kg</span>
+                                    <button class="btn btn-primary rounded-pill px-3">
+                                        <i class="fa fa-shopping-bag me-2"></i>Ajouter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center">Aucun produit trouvé</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion du slider de prix
+        const priceSlider = document.getElementById('priceSlider');
+        const priceValue = document.getElementById('priceValue');
+
+        priceSlider.addEventListener('input', function() {
+            priceValue.textContent = this.value;
+        });
+        priceValue.textContent = priceSlider.value;
+
+        // Animation des chevrons
+        document.querySelectorAll('.category-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                icon.style.transform = this.classList.contains('collapsed')
+                    ? 'rotate(0deg)'
+                    : 'rotate(-180deg)';
+            });
+        });
+    });
+</script>
+</body>
+</html>
