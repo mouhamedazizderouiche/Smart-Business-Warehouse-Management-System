@@ -113,6 +113,11 @@
     <div class="form-group">
         <label for="{{ form.title.vars.id }}">Title: <span class="required">*</span></label>
         {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
+        {% for message in app.flashes('title') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% for error in form.title.vars.errors %}
             <div class="error-message">{{ error.message }}</div>
         {% endfor %}
@@ -121,6 +126,11 @@
     <div class="form-group">
         <label for="{{ form.description.vars.id }}">Describe Your experience with us: <span class="required">*</span></label>
         {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
+        {% for message in app.flashes('des') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
         {% for error in form.description.vars.errors %}
             <div class="error-message">{{ error.message }}</div>
         {% endfor %}

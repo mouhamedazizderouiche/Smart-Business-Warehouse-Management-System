@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use ConsoleTVs\Profanity\Builder as Profanity;
 use StatutReclamation;
 
 #[Route('/reclamation')]
@@ -21,16 +22,35 @@ class ReclamationController extends AbstractController
     {
         $reclamation = new Reclamations();
         $user = $this->getUser();
+        
         if ($user) {
             $reclamation->setUser($user);
         }
+
         $form = $this->createForm(ReclamationsType::class, $reclamation);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $reclamation->setDateReclamation(new \DateTime());
-            $entityManager->persist($reclamation);
-            $entityManager->flush();
-            return $this->redirectToRoute('reclamation_show');
+
+        if ($form->isSubmitted()) {
+            $title = $form->get('title')->getData();
+            $description = $form->get('description')->getData();
+            $hasProfanity = false;
+            if (!Profanity::blocker($title)->clean()) {
+                $this->addFlash('title', 'Do not use bad words in the title.');
+                $hasProfanity = true;
+            }
+            if (!Profanity::blocker($description)->clean()) {
+                $this->addFlash('des', 'Do not use bad words in the description.');
+                $hasProfanity = true;
+            }
+            if ($hasProfanity) {
+                return $this->redirectToRoute('reclamation_new');
+            }
+            if ($form->isValid()) {
+                $reclamation->setDateReclamation(new \DateTime());
+                $entityManager->persist($reclamation);
+                $entityManager->flush();
+                return $this->redirectToRoute('reclamation_show');
+            }
         }
 
         return $this->render('reclamation/new.html.twig', [
@@ -49,7 +69,24 @@ class ReclamationController extends AbstractController
         $form = $this->createForm(ReclamationsType::class, $reclamation);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() ) {
+
+            $title = $form->get('title')->getData();
+            $description = $form->get('description')->getData();
+            $hasProfanity = false;
+            if (!Profanity::blocker($title, languages: ['en', 'fr'])->clean()) {
+                $this->addFlash('title', 'Do not use bad words in the title.');
+                $hasProfanity = true;
+            }
+            if (!Profanity::blocker($description, languages: ['en', 'fr'])->clean()) {
+                $this->addFlash('des', 'Do not use bad words in the description.');
+                $hasProfanity = true;
+            }
+            if ($hasProfanity) {
+                return $this->redirectToRoute('reclamation_newReview');
+            }
+
+            if ($form->isValid()) {
             $reclamation->setDateReclamation(new \DateTime());
             $reclamation->setStatut(StatutReclamation::AVIS);
             $entityManager->persist($reclamation);
@@ -57,6 +94,7 @@ class ReclamationController extends AbstractController
 
             return $this->redirectToRoute('testimonial');
         }
+    }
         return $this->render('reclamation/newReview.html.twig', [
             'reclamation' => $reclamation,
             'form' => $form->createView(),

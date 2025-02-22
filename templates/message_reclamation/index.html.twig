@@ -341,7 +341,13 @@
                         <div class="form-group" style="margin-top: 10px;">
                             {{ form_widget(messageForm.save, {'attr': {'class': 'reply-submit'}}) }}
                         </div>
+                        {% for message in app.flashes('contenu') %}
+                            <div class="alert alert-danger">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
                         <div class="error-message">
+                        
                             {{ form_errors(messageForm.contenu) }}
                         </div>
                         {{ form_end(messageForm) }}
