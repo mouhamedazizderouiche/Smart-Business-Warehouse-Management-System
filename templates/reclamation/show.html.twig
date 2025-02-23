@@ -34,6 +34,14 @@
                                         </span>
                                     {% endif %}
                                     <p class="reclamation-title">{{ reclamation.title }}</p>
+                                    <a href="{{ path('reclamation_filter_by_tag', { 'tagName': reclamation.tag.name }) }}" 
+                                        class="btn border border-secondary rounded-pill px-2 py-0 text-primary d-inline-block" 
+                                        style="font-size: 0.75rem; line-height: 1.5; max-width: 13%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        #{{ reclamation.tag.name }}
+                                        </a>
+
+
+
                                 </div>
                                 {% if reclamation.user and app.user and reclamation.user.id == app.user.id %}
                                     <div class="buttons-container">
@@ -70,21 +78,26 @@
             {% endif %}
         </div>
         <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="search-section">
-                <input type="text" class="search-bar" placeholder="Search ...">
-                <button class="search-btn">🔍</button>
-            </div>
-            <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_new') }}'">
-                Start a New Discussion
-            </button>
-            <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_newReview') }}'">
-                Send a Review
-            </button>
-            <p class="subscribe-text">
-                The Discussion shown can be clicked to interact more with the community
-            </p>
-        </div>
+        <!-- Example: templates/partials/sidebar.html.twig -->
+<div class="sidebar">
+    <div class="search-section">
+        <input type="text" class="search-bar" placeholder="Search ...">
+        <button class="search-btn">🔍</button>
+    </div>
+    <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_new') }}'">
+        Start a New Discussion
+    </button>
+    <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_newReview') }}'">
+        Send a Review
+    </button>
+    <p class="subscribe-text">
+        The Discussion shown can be clicked to interact more with the community
+    </p>
+
+    {# Render the tags sidebar fragment #}
+    {{ render(controller('App\\Controller\\TagController::sidebarTags')) }}
+</div>
+
     </div>
 </div>
 

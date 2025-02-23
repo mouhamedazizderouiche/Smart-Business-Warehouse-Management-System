@@ -16,6 +16,7 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Tag;
 use Gemini;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/reclamation')]
 class ReclamationController extends AbstractController
@@ -130,7 +131,10 @@ class ReclamationController extends AbstractController
     
 
         foreach ($reclamations as $reclamation) {
-            $this->assignTagToReclamation($em, $reclamation->getId());
+            if ($reclamation->getTag() === null) {
+                $this->assignTagToReclamation($em, $reclamation->getId());
+            }
+            
         }
     
         if ($isAdmin) {
@@ -260,7 +264,8 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
     $description = $reclamation->getDescription();
     $prompt = "answer with only one of those tags : " . $formattedTags . " to this reclamation " . $description;
 
-    $apiKey = "AIzaSyBaRoGkT-edsd9WToHHsSjEaCfaNzLcYM4"; 
+    // $apiKey = "AIzaSyBaRoGkT-edsd9WToHHsSjEaCfaNzLcYM4"; 
+    $apiKey = $_ENV['GEMINI_API_KEY'];
     if (!$apiKey) {
         throw new \RuntimeException('Gemini API key is not set in the environment.');
     }
@@ -280,6 +285,33 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
 
     return $responseText;
 }
+
+
+#[Route("/tag/{tagName}", name:"reclamation_filter_by_tag")]
+
+    public function filterByTag(
+        string $tagName,
+        ReclamationsRepository $reclamationRepository,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response {
+        // Build a query to find all Reclamation records that match the tag name
+        $queryBuilder = $reclamationRepository->createQueryBuilder('r')
+            ->leftJoin('r.tag', 't')
+            ->where('t.name = :name')
+            ->setParameter('name', $tagName)
+        ;
+        $pagination = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            2
+        );
+
+        return $this->render('reclamation/filtredtags.html.twig', [
+            'pagination' => $pagination,
+            'name' => $tagName,
+        ]);
+    }
 
 
 
