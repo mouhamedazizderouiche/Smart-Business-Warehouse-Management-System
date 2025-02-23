@@ -107,55 +107,108 @@ class ReclamationController extends AbstractController
     }
 
 
-    #[Route('/', name: 'reclamation_show', methods: ['GET'])]
-    public function show(Request $request, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
-        $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
+    // #[Route('/', name: 'reclamation_show', methods: ['GET'])]
+    // public function show(Request $request, EntityManagerInterface $em): Response
+    // {
+    //     $user = $this->getUser();
+    //     $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
     
-        $repository = $em->getRepository(Reclamations::class);
-        $avis = $repository->findBy(['statut' => StatutReclamation::AVIS]);
+    //     $repository = $em->getRepository(Reclamations::class);
+    //     $avis = $repository->findBy(['statut' => StatutReclamation::AVIS]);
     
-        $limit = 4;
-        $page = max(1, (int) $request->query->get('page', 1));
-        $offset = ($page - 1) * $limit;
-        $criteria = ['statut' => [StatutReclamation::EN_COURS, StatutReclamation::RESOLUE, StatutReclamation::FERMEE]];
-        $totalReclamations = $repository->count($criteria);
-        $totalPages = (int) ceil($totalReclamations / $limit);
+    //     $limit = 4;
+    //     $page = max(1, (int) $request->query->get('page', 1));
+    //     $offset = ($page - 1) * $limit;
+    //     $criteria = ['statut' => [StatutReclamation::EN_COURS, StatutReclamation::RESOLUE, StatutReclamation::FERMEE]];
+    //     $totalReclamations = $repository->count($criteria);
+    //     $totalPages = (int) ceil($totalReclamations / $limit);
     
-        if ($page > $totalPages && $totalPages > 0) {
-            throw $this->createNotFoundException("Page not found");
-        }
+    //     if ($page > $totalPages && $totalPages > 0) {
+    //         throw $this->createNotFoundException("Page not found");
+    //     }
     
-        $reclamations = $repository->findBy($criteria, ['dateReclamation' => 'DESC'], $limit, $offset);
+    //     $reclamations = $repository->findBy($criteria, ['dateReclamation' => 'DESC'], $limit, $offset);
     
 
-        foreach ($reclamations as $reclamation) {
-            if ($reclamation->getTag() === null) {
-                $this->assignTagToReclamation($em, $reclamation->getId());
-            }
+    //     foreach ($reclamations as $reclamation) {
+    //         if ($reclamation->getTag() === null) {
+    //             $this->assignTagToReclamation($em, $reclamation->getId());
+    //         }
             
-        }
+    //     }
     
-        if ($isAdmin) {
-            return $this->render('reclamation/dashboardrec.html.twig', [
-                'reclamationsAvis' => $avis,
-                'reclamations' => $reclamations,
-                'currentPage'  => $page,
-                'totalPages'   => $totalPages
-            ]);
-        } else {
-            return $this->render('reclamation/show.html.twig', [
-                'reclamationsAvis' => $avis,
-                'reclamations' => $reclamations,
-                'currentPage'  => $page,
-                'totalPages'   => $totalPages
-            ]);
+    //     if ($isAdmin) {
+    //         return $this->render('reclamation/dashboardrec.html.twig', [
+    //             'reclamationsAvis' => $avis,
+    //             'reclamations' => $reclamations,
+    //             'currentPage'  => $page,
+    //             'totalPages'   => $totalPages
+    //         ]);
+    //     } else {
+    //         return $this->render('reclamation/show.html.twig', [
+    //             'reclamationsAvis' => $avis,
+    //             'reclamations' => $reclamations,
+    //             'currentPage'  => $page,
+    //             'totalPages'   => $totalPages
+    //         ]);
+    //     }
+    // }
+
+    #[Route('/', name: 'reclamation_show', methods: ['GET'])]
+public function show(
+    Request $request,
+    EntityManagerInterface $em,
+    PaginatorInterface $paginator
+): Response {
+    $user = $this->getUser();
+    $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
+
+    $repository = $em->getRepository(Reclamations::class);
+    $avis = $repository->findBy(['statut' => StatutReclamation::AVIS]);
+
+    // Get search query from request
+    $searchTerm = $request->query->get('q');
+
+    // Build query with filters
+    $queryBuilder = $repository->createQueryBuilder('r')
+        ->where('r.statut IN (:statuts)')
+        ->setParameter('statuts', [
+            StatutReclamation::EN_COURS,
+            StatutReclamation::RESOLUE,
+            StatutReclamation::FERMEE
+        ]);
+
+    // Add search filter if term exists
+    if ($searchTerm) {
+        $queryBuilder
+            ->andWhere('r.title LIKE :searchTerm OR r.description LIKE :searchTerm')
+            ->setParameter('searchTerm', '%' . $searchTerm . '%');
+    }
+
+    $queryBuilder->orderBy('r.dateReclamation', 'DESC');
+
+    // Paginate results
+    $pagination = $paginator->paginate(
+        $queryBuilder->getQuery(),
+        $request->query->getInt('page', 1),
+        4,
+        ['distinct' => false]
+    );
+
+    foreach ($pagination as $reclamation) {
+        if ($reclamation->getTag() === null) {
+            $this->assignTagToReclamation($em, $reclamation->getId());
         }
     }
+
+    $template = $isAdmin ? 'reclamation/dashboardrec.html.twig' : 'reclamation/show.html.twig';
     
-    
-    
+    return $this->render($template, [
+        'reclamationsAvis' => $avis,
+        'reclamations' => $pagination,
+        'searchTerm' => $searchTerm
+    ]);
+}
 
 
     #[Route('/{id}/edit', name: 'reclamation_edit', methods: ['GET', 'POST'])]
@@ -216,34 +269,32 @@ class ReclamationController extends AbstractController
         }
     }
     #[Route('/{id}/update-status', name: 'reclamation_update_status', methods: ['POST'])]
-public function updateStatus(Request $request, Reclamations $reclamation, EntityManagerInterface $entityManager): Response
-{
-    $newStatus = $request->request->get('status');
+    public function updateStatus(Request $request, Reclamations $reclamation, EntityManagerInterface $entityManager): Response
+    {
+        $newStatus = $request->request->get('status');
+        $allowedStatuses = [
+            StatutReclamation::EN_COURS->value,
+            StatutReclamation::RESOLUE->value,
+            StatutReclamation::FERMEE->value,
+            StatutReclamation::AVIS->value,
+        ];
 
-    // Allowed status values
-    $allowedStatuses = [
-        StatutReclamation::EN_COURS->value,
-        StatutReclamation::RESOLUE->value,
-        StatutReclamation::FERMEE->value,
-        StatutReclamation::AVIS->value,
-    ];
+        if (!in_array($newStatus, $allowedStatuses, true)) {
+            return new Response(
+                json_encode(['error' => 'Invalid status']),
+                400,
+                ['Content-Type' => 'application/json']
+            );
+        }
+        $reclamation->setStatut(StatutReclamation::from($newStatus));
+        $entityManager->flush();
 
-    if (!in_array($newStatus, $allowedStatuses, true)) {
         return new Response(
-            json_encode(['error' => 'Invalid status']),
-            400,
+            json_encode(['success' => true, 'newStatus' => $newStatus]),
+            200,
             ['Content-Type' => 'application/json']
         );
     }
-    $reclamation->setStatut(StatutReclamation::from($newStatus));
-    $entityManager->flush();
-
-    return new Response(
-        json_encode(['success' => true, 'newStatus' => $newStatus]),
-        200,
-        ['Content-Type' => 'application/json']
-    );
-}
 
 
 private function assignTagToReclamation(EntityManagerInterface $entityManager, Uuid $id): ?string
@@ -295,7 +346,6 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
         PaginatorInterface $paginator,
         Request $request
     ): Response {
-        // Build a query to find all Reclamation records that match the tag name
         $queryBuilder = $reclamationRepository->createQueryBuilder('r')
             ->leftJoin('r.tag', 't')
             ->where('t.name = :name')
@@ -304,7 +354,7 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
         $pagination = $paginator->paginate(
             $queryBuilder,
             $request->query->getInt('page', 1),
-            2
+            1
         );
 
         return $this->render('reclamation/filtredtags.html.twig', [
@@ -312,8 +362,5 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
             'name' => $tagName,
         ]);
     }
-
-
-
 
 }

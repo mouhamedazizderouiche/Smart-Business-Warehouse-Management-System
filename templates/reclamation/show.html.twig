@@ -64,38 +64,49 @@
                 </div>
 
                 <!-- Pagination Controls -->
-                <div class="pagination">
-                    {% if currentPage > 1 %}
-                        <a href="{{ path('reclamation_show', {'page': currentPage - 1}) }}" class="pagination-btn">⬅️ Previous</a>
-                    {% endif %}
-
-                    <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
-
-                    {% if currentPage < totalPages %}
-                        <a href="{{ path('reclamation_show', {'page': currentPage + 1}) }}" class="pagination-btn">Next ➡️</a>
-                    {% endif %}
-                </div>
+              <div class="pagination">
+                {{ knp_pagination_render(reclamations, 'paginations/pageReclamation.html.twig') }}
+            </div>
             {% endif %}
         </div>
         <!-- Sidebar -->
         <!-- Example: templates/partials/sidebar.html.twig -->
 <div class="sidebar">
-    <div class="search-section">
-        <input type="text" class="search-bar" placeholder="Search ...">
-        <button class="search-btn">🔍</button>
+    <!-- Search Section -->
+ <div class="search-section">
+    <form action="{{ path('reclamation_show') }}" method="get" class="search-form">
+        <div class="input-group">
+            <input type="text"
+                   class="form-control search-bar"
+                   name="q"
+                   placeholder="Search by title or description..."
+                   value="{{ searchTerm }}">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+    <!-- Buttons -->
+    <div class="sidebar-buttons">
+        <button type="button" class="btn btn-primary btn-block sidebar-btn" onclick="window.location.href='{{ path('reclamation_new') }}'">
+            Start a New Discussion
+        </button>
+        <button type="button" class="btn btn-secondary btn-block sidebar-btn" onclick="window.location.href='{{ path('reclamation_newReview') }}'">
+            Send a Review
+        </button>
     </div>
-    <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_new') }}'">
-        Start a New Discussion
-    </button>
-    <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_newReview') }}'">
-        Send a Review
-    </button>
-    <p class="subscribe-text">
+
+    <!-- Description Text -->
+    <p class="sidebar-text">
         The Discussion shown can be clicked to interact more with the community
     </p>
 
-    {# Render the tags sidebar fragment #}
-    {{ render(controller('App\\Controller\\TagController::sidebarTags')) }}
+    <!-- Tags Section -->
+    <div class="tags-section">
+        {{ render(controller('App\\Controller\\TagController::sidebarTags')) }}
+    </div>
 </div>
 
     </div>
@@ -217,17 +228,59 @@
 .main-container {
     width: 70%;
 }
-
+/* Sidebar Container */
 .sidebar {
-    width: 25%;
-    background-color: #ffffff;
-    padding: 12px;
-    border-radius: 6px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* Search Section */
+.search-section {
+    margin-bottom: 20px;
+}
+
+.search-form .input-group {
+    display: flex;
+    align-items: center; /* Vertically center the input and button */
+}
+
+.search-bar {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    font-size: 14px;
+    outline: none;
+}
+
+
+/* Buttons */
+.sidebar-buttons {
+    margin-bottom: 20px;
+}
+
+.sidebar-btn {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+
+/* Description Text */
+.sidebar-text {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+
+
 
 /* Header and no-content message */
 .header {
@@ -367,20 +420,7 @@
     color: #cc0000;
 }
 
-/* Sidebar styles */
-.search-section {
-    display: flex;
-    gap: 4px;
-}
 
-.search-bar {
-    flex: 1;
-    padding: 6px;
-    border: 1px solid #7AAE49;
-    border-radius: 4px;
-    background-color: #ffffff;
-    color: #333;
-}
 
 .search-btn {
     background-color: #7AAE49;
@@ -420,32 +460,6 @@
     color: #333;
 }
 
-/* Pagination Controls */
-.pagination {
-    margin-top: 15px;
-    text-align: center;
-}
-
-.pagination-btn {
-    text-decoration: none;
-    padding: 6px 10px;
-    margin: 0 4px;
-    border: 1px solid #7AAE49;
-    border-radius: 4px;
-    color: #7AAE49;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.pagination-btn:hover {
-    background-color: #7AAE49;
-    color: #ffffff;
-}
-
-.pagination-info {
-    font-size: 12px;
-    margin: 0 8px;
-    color: #333;
-}
 
 /* Special Status Styles */
 .closed-reclamation {
