@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use ConsoleTVs\Profanity\Builder as Profanity;
 use StatutReclamation;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Tag;
+use Gemini;
 
 #[Route('/reclamation')]
 class ReclamationController extends AbstractController
@@ -107,11 +111,10 @@ class ReclamationController extends AbstractController
     {
         $user = $this->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
-        
+    
         $repository = $em->getRepository(Reclamations::class);
-        $avis = $em->getRepository(Reclamations::class)->findBy([
-            'statut' => StatutReclamation::AVIS
-        ]);
+        $avis = $repository->findBy(['statut' => StatutReclamation::AVIS]);
+    
         $limit = 4;
         $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
@@ -123,12 +126,13 @@ class ReclamationController extends AbstractController
             throw $this->createNotFoundException("Page not found");
         }
     
-        $reclamations = $repository->findBy(
-            $criteria,
-            ['dateReclamation' => 'DESC'],
-            $limit,
-            $offset
-        );
+        $reclamations = $repository->findBy($criteria, ['dateReclamation' => 'DESC'], $limit, $offset);
+    
+
+        foreach ($reclamations as $reclamation) {
+            $this->assignTagToReclamation($em, $reclamation->getId());
+        }
+    
         if ($isAdmin) {
             return $this->render('reclamation/dashboardrec.html.twig', [
                 'reclamationsAvis' => $avis,
@@ -144,8 +148,8 @@ class ReclamationController extends AbstractController
                 'totalPages'   => $totalPages
             ]);
         }
-        
     }
+    
     
     
 
@@ -236,5 +240,43 @@ public function updateStatus(Request $request, Reclamations $reclamation, Entity
         ['Content-Type' => 'application/json']
     );
 }
+
+
+private function assignTagToReclamation(EntityManagerInterface $entityManager, Uuid $id): ?string
+{
+    $reclamation = $entityManager->getRepository(Reclamations::class)->find($id);
+    if (!$reclamation) {
+        return null;
+    }
+
+    $tags = $entityManager->getRepository(Tag::class)->findAll();
+    $tagNames = array_map(fn($tag) => $tag->getName(), $tags);
+    $formattedTags = implode(', ', $tagNames);
+
+    $description = $reclamation->getDescription();
+    $prompt = "answer with only one of those tags : " . $formattedTags . " to this reclamation " . $description;
+
+    $apiKey = "AIzaSyBaRoGkT-edsd9WToHHsSjEaCfaNzLcYM4"; 
+    if (!$apiKey) {
+        throw new \RuntimeException('Gemini API key is not set in the environment.');
+    }
+
+    $client = Gemini::client($apiKey);
+    $result = $client->geminiPro()->generateContent($prompt);
+    $responseText = trim($result->text());
+
+    $tag = $entityManager->getRepository(Tag::class)->findOneBy(['name' => $responseText]);
+
+    if (!$tag) {
+        return null; 
+    }
+    $reclamation->setTag($tag);
+    $entityManager->persist($reclamation);
+    $entityManager->flush();
+
+    return $responseText; 
+}
+
+
 
 }

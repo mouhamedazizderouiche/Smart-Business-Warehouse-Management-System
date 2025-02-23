@@ -53,6 +53,13 @@ class Reclamations
         private ?User $user = null;
     #[ORM\Column(enumType: StatutReclamation::class)]
     private StatutReclamation $statut;
+
+    #[ORM\ManyToOne(targetEntity: Tag::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
+    private ?Tag $tag = null;
+
+
+
     
 
     /**
@@ -60,6 +67,18 @@ class Reclamations
      */
     #[ORM\OneToMany(targetEntity: MessageReclamation::class, mappedBy: 'reclamation', cascade: ['remove'])]
     private Collection $reclamations;
+
+    public function getTag(): ?Tag
+{
+    return $this->tag;
+}
+
+public function setTag(?Tag $tag): static
+{
+    $this->tag = $tag;
+    return $this;
+}
+
 
     public function __construct()
     {
