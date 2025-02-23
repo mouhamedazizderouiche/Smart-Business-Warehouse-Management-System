@@ -250,7 +250,11 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
     }
 
     $tags = $entityManager->getRepository(Tag::class)->findAll();
-    $tagNames = array_map(fn($tag) => $tag->getName(), $tags);
+    $tagNames = [];
+    
+    foreach ($tags as $tag) {
+        $tagNames[] = $tag->getName();
+    }
     $formattedTags = implode(', ', $tagNames);
 
     $description = $reclamation->getDescription();
@@ -268,14 +272,15 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
     $tag = $entityManager->getRepository(Tag::class)->findOneBy(['name' => $responseText]);
 
     if (!$tag) {
-        return null; 
+        return null;
     }
     $reclamation->setTag($tag);
     $entityManager->persist($reclamation);
     $entityManager->flush();
 
-    return $responseText; 
+    return $responseText;
 }
+
 
 
 
