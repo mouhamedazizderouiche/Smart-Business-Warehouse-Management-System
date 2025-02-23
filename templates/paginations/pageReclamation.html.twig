@@ -40,4 +40,25 @@
 .pagination li {
   display: inline-block;
 }
+
+.pagination .page-link {
+  color: black !important; /* Texte et flèches en noir */
+  border-color: #ddd; /* Bordures visibles */
+}
+
+.pagination .page-item.active .page-link {
+  background-color:#28a745 /* Couleur de fond pour la page active */
+  border-color:#28a745
+  color: white !important; /* Texte blanc pour la page active */
+}
+
+.pagination .page-link:hover {
+  background-color: #f8f9fa; /* Effet survol */
+}
+
+/* Assure que les flèches « et » sont également en noir */
+.pagination .page-link span {
+  color: black !important;
+}
+
 </style>

@@ -54,6 +54,7 @@
                                     <th scope="col">Title</th>
                                     <th scope="col">Description</th>
                                     <th scope="col">Posted On</th>
+                                    <th scope="col">AI Tags</th>
                                     <th scope="col">Statut</th>
                                     <th scope="col">Actions</th>
                                 </tr>
@@ -77,6 +78,12 @@
                                         <td>{{ reclamation.description }}</td>
 
                                         <td>{{ reclamation.dateReclamation|date('d M Y H:i') }}</td>
+                                        <td>
+                                            <span class="btn border border-secondary rounded-pill px-2 py-0 mt-2 text-primary"
+                                                  style="font-size: 0.75rem; line-height: 2.5; max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block;">
+                                                {{ reclamation.tag.name }}
+                                            </span>
+                                        </td>
                                          <td>
                                             <select class="status-dropdown" data-reclamation-id="{{ reclamation.id }}">
                                                 <option value="en_cours" {% if reclamation.statut.value == 'en_cours' %}selected{% endif %}>En cours</option>
@@ -107,15 +114,7 @@
                     </div>
                     <!-- Pagination Controls -->
                     <div class="pagination">
-                        {% if currentPage > 1 %}
-                            <a href="{{ path('reclamation_show', {'page': currentPage - 1}) }}" class="pagination-btn pagination-prev">⬅️ Previous</a>
-                        {% endif %}
-
-                        <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
-
-                        {% if currentPage < totalPages %}
-                            <a href="{{ path('reclamation_show', {'page': currentPage + 1}) }}" class="pagination-btn pagination-next">Next ➡️</a>
-                        {% endif %}
+                        {{ knp_pagination_render(reclamations, 'paginations/pageReclamation.html.twig') }}
                     </div>
                 {% endif %}
             </div>
@@ -312,9 +311,7 @@
         font-weight: 600;
     }
 
-    .custom-table tr:hover {
-        background-color: #f1f1f1;
-    }
+
 
     .profile-img-container {
         display: flex;
