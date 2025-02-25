@@ -1,26 +1,29 @@
-
 {% if pageCount > 1 %}
   {% set routeParams = app.request.query.all %}
- <nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
+  <nav aria-label="Page navigation" class="pagination-wrapper">
+    <ul class="pagination">
       {% if previous is defined %}
-        <li class="page-item">
+        <li class="page-item page-arrow">
           <a class="page-link" href="{{ path(app.request.attributes.get('_route'), routeParams|merge({'page': previous})) }}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
+            <span class="arrow-icon"><i class="fas fa-chevron-left"></i></span>
+            <span class="arrow-text">Previous</span>
           </a>
         </li>
       {% endif %}
       
       {% for page in pagesInRange %}
         <li class="page-item {% if page == current %}active{% endif %}">
-          <a class="page-link" href="{{ path(app.request.attributes.get('_route'), routeParams|merge({'page': page})) }}">{{ page }}</a>
+          <a class="page-link" href="{{ path(app.request.attributes.get('_route'), routeParams|merge({'page': page})) }}">
+            <span class="page-number">{{ page }}</span>
+          </a>
         </li>
       {% endfor %}
       
       {% if next is defined %}
-        <li class="page-item">
+        <li class="page-item page-arrow">
           <a class="page-link" href="{{ path(app.request.attributes.get('_route'), routeParams|merge({'page': next})) }}" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
+            <span class="arrow-text">Next</span>
+            <span class="arrow-icon"><i class="fas fa-chevron-right"></i></span>
           </a>
         </li>
       {% endif %}
@@ -29,36 +32,186 @@
 {% endif %}
 
 <style>
-.pagination {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  list-style: none;
-  margin-top: 20px;
-}
-
-.pagination li {
-  display: inline-block;
-}
-
-.pagination .page-link {
-  color: black !important; /* Texte et flèches en noir */
-  border-color: #ddd; /* Bordures visibles */
-}
-
-.pagination .page-item.active .page-link {
-  background-color:#28a745 /* Couleur de fond pour la page active */
-  border-color:#28a745
-  color: white !important; /* Texte blanc pour la page active */
-}
-
-.pagination .page-link:hover {
-  background-color: #f8f9fa; /* Effet survol */
-}
-
-/* Assure que les flèches « et » sont également en noir */
-.pagination .page-link span {
+.page-number{
   color: black !important;
 }
+:root {
+    --primary:rgb(217, 230, 101);
+    --secondary: #2ecc71;
+    --dark: #2c3e50;
+    --light: #ecf0f1;
+    --accent: #e74c3c;
+}
 
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    position: relative;
+}
+
+.page-item {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--light);
+    color: var(--dark) !important;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.page-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(74, 144, 226, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.page-link:hover::before {
+    width: 200%;
+    height: 200%;
+}
+
+.page-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(45deg, var(--primary), #3498db);
+    color: white !important;
+    border-color: var(--primary);
+}
+
+.page-item.active .page-link {
+    background: linear-gradient(45deg, var(--secondary), #27ae60);
+    color: white !important;
+    border-color: var(--secondary);
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.page-item.active .page-link::before {
+    display: none;
+}
+
+.page-arrow .page-link {
+    width: auto;
+    padding: 0 1.5rem;
+    border-radius: 25px;
+}
+
+.arrow-icon {
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.arrow-text {
+  color: black !important;
+    margin: 0 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+}
+
+.page-arrow .page-link:hover .arrow-text {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.page-arrow .page-link:hover .arrow-icon {
+    transform: translateX(5px);
+}
+
+.page-arrow:first-child .page-link:hover .arrow-icon {
+    transform: translateX(-5px);
+}
+
+/* Animated underline effect */
+.pagination::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    transform: translateX(-50%);
+    animation: pulseLine 3s infinite ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseLine {
+    0%, 100% { width: 60%; opacity: 0.5; }
+    50% { width: 80%; opacity: 1; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .page-link {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
+    
+    .page-arrow .page-link {
+        padding: 0 1rem;
+    }
+    
+    .arrow-text {
+        display: none;
+    }
+}
 </style>
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Animate page items on load
+    document.querySelectorAll('.page-item').forEach((item, index) => {
+        item.style.opacity = '0';
+        item.animate([
+            { opacity: 0, transform: 'scale(0.8)' },
+            { opacity: 1, transform: 'scale(1)' }
+        ], {
+            duration: 300,
+            easing: 'ease-out',
+            delay: index * 100
+        }).onfinish = () => item.style.opacity = '1';
+    });
+});
+</script>

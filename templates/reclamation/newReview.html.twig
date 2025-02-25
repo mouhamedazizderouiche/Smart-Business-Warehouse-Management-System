@@ -3,100 +3,266 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - Agriplanner</title>
     <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <style>
+        :root {
+            --primary: #27ae60;
+            --secondary: #219653;
+            --dark: #2d3436;
+            --light: #f7f8fc;
+            --accent: #f1c40f;
+            --error: #e74c3c;
+        }
+
+        * {
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+        }
+
         .reclamation-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 10px;
+            max-width: 720px;
+            margin: 80px auto;
+            padding: 40px;
+            border-radius: 25px;
+            background: white;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h1 {
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 2.4rem;
+            margin-bottom: 10px;
             text-align: center;
-            border: 1px solid #ddd;
+        }
+
+        .reclamation-container p {
+            color: #666;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 35px;
         }
 
         .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+            margin-bottom: 30px;
+            position: relative;
         }
 
         label {
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
             display: block;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .required {
+            color: var(--primary);
+            font-size: 1.2rem;
         }
 
         .form-control, .textarea {
             width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #f9f9f9;
-            box-sizing: border-box;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            background: var(--light);
+            transition: all 0.3s ease;
         }
 
         .textarea {
             min-height: 200px;
+            resize: vertical;
         }
 
-        .submit-button {
-            background: #28a745;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        .submit-button:hover {
-            background: #218838;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 5px;
+        .title-input {
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 2px solid var(--primary);
         }
 
         .form-control:focus, .textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.2);
             outline: none;
-            border-color: #80bdff;
-            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+
+        .submit-button {
+            background: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .submit-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .submit-button::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .submit-button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Enhanced Star Rating */
+        .star-rating {
+            font-size: 32px;
+            color: #ddd;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .star-rating .star {
+            transition: all 0.2s ease;
+            transform: scale(1);
+        }
+
+        .star-rating .star:hover,
+        .star-rating .star.selected {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .rating-value {
+            display: none;
+        }
+
+        /* Footer Styling */
+        .footer {
+            background: var(--dark);
+            padding: 60px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(circle, rgba(39, 174, 96, 0.1), transparent);
+        }
+
+        .footer h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+
+        .footer-item h4 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .footer-item p, .btn-link {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            padding: 5px 0;
+        }
+
+        .btn-link:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline-secondary {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-control.border-0 {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 20px;
+        }
+
+        .form-control.border-0::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .copyright {
+            background: #222;
+            padding: 20px 0;
         }
 
         @media (max-width: 600px) {
             .reclamation-container {
-                padding: 15px;
+                margin: 40px 20px;
+                padding: 25px;
             }
-        }
-        
-        .star-rating {
-            font-size: 24px;
-            color: #ccc;
-            cursor: pointer;
-        }
-        .star-rating .star {
-            display: inline-block;
-        }
-        .star-rating .star.selected,
-        .star-rating .star:hover {
-            color: #ffcc00;
-        }
-        .title-input {
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid #28a745; /* Green accent to match the button */
-            padding: 12px;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            transition: all 0.3s ease;
-        }
-
-        .title-input:focus {
-            border-color: #218838;
-            box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+            h1 { font-size: 2rem; }
+            .star-rating { font-size: 28px; }
         }
     </style>
 </head>
@@ -106,7 +272,7 @@
 {% block body %}
 <div class="reclamation-container">
     <h1>Submit a Review</h1>
-    <p>We value your feedback. Please describe your concern below.</p>
+    <p>We value your feedback. Please share your experience with us.</p>
 
     {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
     
@@ -114,34 +280,29 @@
         <label for="{{ form.title.vars.id }}">Title: <span class="required">*</span></label>
         {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
         {% for message in app.flashes('title') %}
-                <div class="alert alert-danger">
-                    {{ message }}
-                </div>
-            {% endfor %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
         {% for error in form.title.vars.errors %}
             <div class="error-message">{{ error.message }}</div>
         {% endfor %}
     </div>
     
     <div class="form-group">
-        <label for="{{ form.description.vars.id }}">Describe Your experience with us: <span class="required">*</span></label>
+        <label for="{{ form.description.vars.id }}">Describe Your Experience: <span class="required">*</span></label>
         {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
         {% for message in app.flashes('des') %}
-                <div class="alert alert-danger">
-                    {{ message }}
-                </div>
-            {% endfor %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
         {% for error in form.description.vars.errors %}
             <div class="error-message">{{ error.message }}</div>
         {% endfor %}
     </div>
 
-    <!-- Star Rating System -->
     <div class="form-group">
         <label>Rate Your Experience:</label>
         <div class="star-rating">
             {% for i in 1..5 %}
-                <span class="star" data-value="{{ i }}">&#9733;</span>
+                <span class="star" data-value="{{ i }}">★</span>
             {% endfor %}
         </div>
         {{ form_widget(form.rate, {'attr': {'class': 'rating-value'}}) }}
@@ -156,27 +317,28 @@
 
     {{ form_end(form) }}
 </div>
+
 <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
     <div class="container py-5">
-        <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
-            <div class="row g-4">
+        <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(39, 174, 96, 0.2);">
+            <div class="row g-4 align-items-center">
                 <div class="col-lg-3">
                     <a href="#">
-                        <h1 class="text-primary mb-0">Fruitables</h1>
+                        <h1 class="mb-0">Fruitables</h1>
                         <p class="text-secondary mb-0">Fresh products</p>
                     </a>
                 </div>
                 <div class="col-lg-6">
                     <div class="position-relative mx-auto">
-                        <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Your Email">
-                        <button type="submit" class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">Subscribe Now</button>
+                        <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="email" placeholder="Your Email">
+                        <button type="submit" class="btn btn-primary border-0 py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">Subscribe Now</button>
                     </div>
                 </div>
                 <div class="col-lg-3">
                     <div class="d-flex justify-content-end pt-3">
-                        <a class="btn  btn-outline-secondary me-2 btn-md-square rounded-circle" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href=""><i class="fab fa-youtube"></i></a>
+                        <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-youtube"></i></a>
                         <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
@@ -185,66 +347,56 @@
         <div class="row g-5">
             <div class="col-lg-3 col-md-6">
                 <div class="footer-item">
-                    <h4 class="text-light mb-3">Why People Like us!</h4>
-                    <p class="mb-4">typesetting, remaining essentially unchanged. It was 
-                        popularised in the 1960s with the like Aldus PageMaker including of Lorem Ipsum.</p>
+                    <h4>Why Choose Us</h4>
+                    <p class="mb-4">Premium quality products and exceptional service that keeps our customers coming back.</p>
                     <a href="" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="d-flex flex-column text-start footer-item">
-                    <h4 class="text-light mb-3">Shop Info</h4>
+                    <h4>Shop Info</h4>
                     <a class="btn-link" href="">About Us</a>
                     <a class="btn-link" href="">Contact Us</a>
                     <a class="btn-link" href="">Privacy Policy</a>
-                    <a class="btn-link" href="">Terms & Condition</a>
-                    <a class="btn-link" href="">Return Policy</a>
-                    <a class="btn-link" href="">FAQs & Help</a>
+                    <a class="btn-link" href="">Terms & Conditions</a>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="d-flex flex-column text-start footer-item">
-                    <h4 class="text-light mb-3">Account</h4>
+                    <h4>Account</h4>
                     <a class="btn-link" href="">My Account</a>
-                    <a class="btn-link" href="">Shop details</a>
+                    <a class="btn-link" href="">Shop Details</a>
                     <a class="btn-link" href="">Shopping Cart</a>
                     <a class="btn-link" href="">Wishlist</a>
-                    <a class="btn-link" href="">Order History</a>
-                    <a class="btn-link" href="">International Orders</a>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
                 <div class="footer-item">
-                    <h4 class="text-light mb-3">Contact</h4>
+                    <h4>Contact</h4>
                     <p>Address: 1429 Netus Rd, NY 48247</p>
                     <p>Email: Example@gmail.com</p>
                     <p>Phone: +0123 4567 8910</p>
                     <p>Payment Accepted</p>
-                    <img src="img/payment.png" class="img-fluid" alt="">
+                    <img src="img/payment.png" class="img-fluid" alt="Payment Methods">
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Footer End -->
 
-<!-- Copyright Start -->
 <div class="container-fluid copyright bg-dark py-4">
     <div class="container">
         <div class="row">
             <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Your Site Name</a>, All right reserved.</span>
+                <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Fruitables</a>, All rights reserved.</span>
             </div>
             <div class="col-md-6 my-auto text-center text-md-end text-white">
-                <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
                 Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
             </div>
         </div>
     </div>
 </div>
-<!-- Add JavaScript for Star Rating -->
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const stars = document.querySelectorAll('.star-rating .star');
@@ -256,10 +408,20 @@
                 ratingInput.value = value;
 
                 stars.forEach(s => s.classList.remove('selected'));
-                this.classList.add('selected');
                 for (let i = 0; i < value; i++) {
                     stars[i].classList.add('selected');
                 }
+            });
+
+            star.addEventListener('mouseover', function() {
+                const value = this.getAttribute('data-value');
+                for (let i = 0; i < value; i++) {
+                    stars[i].classList.add('hover');
+                }
+            });
+
+            star.addEventListener('mouseout', function() {
+                stars.forEach(s => s.classList.remove('hover'));
             });
         });
     });

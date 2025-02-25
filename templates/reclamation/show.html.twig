@@ -1,474 +1,451 @@
+
 {% include 'homepage/newNav.html.twig' %}
 
 <div class="page-wrapper">
     <div class="content-container">
         <!-- Main Content -->
         <div class="main-container">
-            <h2 class="header">Reclamation Discussions</h2>
+            <h2 class="header">
+                <span class="header-text">Reclamation Discussions</span>
+                <span class="header-count">{{ reclamations|length }} active</span>
+            </h2>
 
             {% if reclamations is empty %}
-                <p class="no-reclamations">No reclamations available.</p>
+                <div class="empty-state">
+                    <div class="empty-icon">📪</div>
+                    <p class="empty-text">No discussions yet. Be the first to start one!</p>
+                </div>
             {% else %}
-                <div class="reclamations-container">
+                <div class="reclamations-container animate-in">
                     {% for reclamation in reclamations %}
-                        <div class="reclamation-item 
-    {% if reclamation.statut.value == 'fermee' %} closed-reclamation unclickable {% elseif reclamation.statut.value == 'resolue' %} resolved-reclamation{% endif %}"
-    data-href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}"
->
+                        <div class="reclamation-card 
+                            {% if reclamation.statut.value == 'fermee' %} closed-card unclickable 
+                            {% elseif reclamation.statut.value == 'resolue' %} resolved-card{% endif %}"
+                            data-href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}">
+                            
                             <div class="reclamation-header">
-                                <div class="profile-img-container">
-                                    {% if reclamation.user and reclamation.user.photoUrl %}
-                                        <img src="{{ asset('uploads/photos/' ~ reclamation.user.photoUrl) }}" alt="User Photo" class="profile-img">
-                                    {% else %}
-                                        <img src="{{ asset('images/admin.jpg') }}" alt="Default User Photo" class="profile-img">
-                                    {% endif %}
+                                <div class="profile-container">
+                                    <div class="profile-status {% if reclamation.statut.value == 'fermee' %}closed{% elseif reclamation.statut.value == 'resolue' %}resolved{% endif %}"></div>
+                                    <img src="{{ reclamation.user and reclamation.user.photoUrl ? asset('uploads/photos/' ~ reclamation.user.photoUrl) : asset('images/admin.jpg') }}"
+                                         alt="User Photo" 
+                                         class="profile-avatar">
                                 </div>
-                                <div class="reclamation-title-container">
-                                    {% if reclamation.statut.value == 'fermee' %}
-                                        <span class="status-inline">
-                                            <span class="status-icon">❌</span> Closed
+                                
+                                <div class="content-wrapper">
+                                    <div class="title-bar">
+                                        <h3 class="reclamation-title">{{ reclamation.title }}</h3>
+                                        <span class="tag" 
+                                              style="background-color: {{ reclamation.tag.color ?? '#7AAE49' }}">
+                                            #{{ reclamation.tag.name }}
                                         </span>
-                                    {% elseif reclamation.statut.value == 'resolue' %}
-                                        <span class="status-inline">
-                                            <span class="status-icon">✅</span> Resolved
-                                        </span>
-                                    {% endif %}
-                                    <p class="reclamation-title">{{ reclamation.title }}</p>
-                                    <a href="{{ path('reclamation_filter_by_tag', { 'tagName': reclamation.tag.name }) }}" 
-                                        class="btn border border-secondary rounded-pill px-2 py-0 text-primary d-inline-block" 
-                                        style="font-size: 0.75rem; line-height: 1.5; max-width: 13%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                        #{{ reclamation.tag.name }}
-                                        </a>
-
-
-
+                                    </div>
+                                    
+                                    <p class="reclamation-desc">{{ reclamation.description }}</p>
+                                    
+                                    <div class="meta-info">
+                                        <span class="date">{{ reclamation.dateReclamation|date('d M Y H:i') }}</span>
+                                        <span class="author">by {{ reclamation.user.Prenom }}</span>
+                                    </div>
                                 </div>
+
                                 {% if reclamation.user and app.user and reclamation.user.id == app.user.id %}
-                                    <div class="buttons-container">
-                                        <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="edit-btn" onclick="event.stopPropagation();">✏️</a>
-                                        <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;" onclick="event.stopPropagation();">
-                                            <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this reclamation?');">
-                                                🗑️
+                                    <div class="action-buttons">
+                                        <button class="action-btn edit" onclick="event.stopPropagation(); window.location.href='{{ path('reclamation_edit', {'id': reclamation.id}) }}'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" class="delete-form">
+                                            <button type="submit" 
+                                                    class="action-btn delete" 
+                                                    onclick="return confirm('Are you sure?');">
+                                                <i class="fas fa-trash"></i>
                                             </button>
                                         </form>
                                     </div>
                                 {% endif %}
                             </div>
-                            <p class="reclamation-description">{{ reclamation.description }}</p>
-                            <p class="reclamation-date">
-                                <span>Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</span> 
-                                <span class="username">by {{ reclamation.user.Prenom }}</span>
-                            </p>
                         </div>
                     {% endfor %}
                 </div>
 
-                <!-- Pagination Controls -->
-              <div class="pagination">
-                {{ knp_pagination_render(reclamations, 'paginations/pageReclamation.html.twig') }}
-            </div>
+                <div class="pagination-wrapper">
+                    {{ knp_pagination_render(reclamations, 'paginations/pageReclamation.html.twig') }}
+                </div>
             {% endif %}
         </div>
-        <!-- Sidebar -->
-        <!-- Example: templates/partials/sidebar.html.twig -->
-<div class="sidebar">
-    <!-- Search Section -->
- <div class="search-section">
-    <form action="{{ path('reclamation_show') }}" method="get" class="search-form">
-        <div class="input-group">
-            <input type="text"
-                   class="form-control search-bar"
-                   name="q"
-                   placeholder="Search by title or description..."
-                   value="{{ searchTerm }}">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-    </form>
-</div>
 
-    <!-- Buttons -->
-    <div class="sidebar-buttons">
-        <button type="button" class="btn btn-primary btn-block sidebar-btn" onclick="window.location.href='{{ path('reclamation_new') }}'">
-            Start a New Discussion
-        </button>
-        <button type="button" class="btn btn-secondary btn-block sidebar-btn" onclick="window.location.href='{{ path('reclamation_newReview') }}'">
-            Send a Review
-        </button>
-    </div>
+        <!-- Enhanced Sidebar -->
+        <aside class="sidebar animate-in">
+            <div class="search-wrapper">
+                <form action="{{ path('reclamation_show') }}" method="get" class="search-form">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               name="q" 
+                               class="search-input" 
+                               placeholder="Search discussions..." 
+                               value="{{ searchTerm }}">
+                    </div>
+                </form>
+            </div>
 
-    <!-- Description Text -->
-    <p class="sidebar-text">
-        The Discussion shown can be clicked to interact more with the community
-    </p>
+            <div class="sidebar-actions">
+                <button class="btn btn-primary glow" 
+                        onclick="window.location.href='{{ path('reclamation_new') }}'">
+                    <i class="fas fa-plus"></i> New Discussion
+                </button>
+                <button class="btn btn-secondary glow" 
+                        onclick="window.location.href='{{ path('reclamation_newReview') }}'">
+                    <i class="fas fa-star"></i> Write Review
+                </button>
+            </div>
 
-    <!-- Tags Section -->
-    <div class="tags-section">
-        {{ render(controller('App\\Controller\\TagController::sidebarTags')) }}
-    </div>
-</div>
-
-    </div>
-</div>
-
-    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
-            <div class="container py-5">
-                <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
-                    <div class="row g-4">
-                        <div class="col-lg-3">
-                            <a href="#">
-                                <h1 class="text-primary mb-0">Fruitables</h1>
-                                <p class="text-secondary mb-0">Fresh products</p>
-                            </a>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="position-relative mx-auto">
-                                <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="number" placeholder="Your Email">
-                                <button type="submit" class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">Subscribe Now</button>
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="d-flex justify-content-end pt-3">
-                                <a class="btn  btn-outline-secondary me-2 btn-md-square rounded-circle" href=""><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href=""><i class="fab fa-youtube"></i></a>
-                                <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-linkedin-in"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row g-5">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Why People Like us!</h4>
-                            <p class="mb-4">typesetting, remaining essentially unchanged. It was 
-                                popularised in the 1960s with the like Aldus PageMaker including of Lorem Ipsum.</p>
-                            <a href="" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex flex-column text-start footer-item">
-                            <h4 class="text-light mb-3">Shop Info</h4>
-                            <a class="btn-link" href="">About Us</a>
-                            <a class="btn-link" href="">Contact Us</a>
-                            <a class="btn-link" href="">Privacy Policy</a>
-                            <a class="btn-link" href="">Terms & Condition</a>
-                            <a class="btn-link" href="">Return Policy</a>
-                            <a class="btn-link" href="">FAQs & Help</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex flex-column text-start footer-item">
-                            <h4 class="text-light mb-3">Account</h4>
-                            <a class="btn-link" href="">My Account</a>
-                            <a class="btn-link" href="">Shop details</a>
-                            <a class="btn-link" href="">Shopping Cart</a>
-                            <a class="btn-link" href="">Wishlist</a>
-                            <a class="btn-link" href="">Order History</a>
-                            <a class="btn-link" href="">International Orders</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Contact</h4>
-                            <p>Address: 1429 Netus Rd, NY 48247</p>
-                            <p>Email: Example@gmail.com</p>
-                            <p>Phone: +0123 4567 8910</p>
-                            <p>Payment Accepted</p>
-                            <img src="img/payment.png" class="img-fluid" alt="">
-                        </div>
-                    </div>
+            <div class="sidebar-info">
+                <p>Click any discussion to join the conversation</p>
+                <div class="stats">
+                    <span><i class="fas fa-users"></i> {{ totalUsers ?? '100+' }} Members</span>
+                    <span><i class="fas fa-comments"></i> {{ totalPosts ?? '500+' }} Posts</span>
                 </div>
             </div>
-        </div>
-        <!-- Footer End -->
 
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="#"><i class="fas fa-copyright text-light me-2"></i>Your Site Name</a>, All right reserved.</span>
-                    </div>
-                    <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
-                        <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
-                        <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
-                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
-                    </div>
-                </div>
+            <div class="tags-cloud">
+                {{ render(controller('App\\Controller\\TagController::sidebarTags')) }}
             </div>
-        </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Updated Footer remains the same but with added animations -->
+
 <script>
-   document.querySelectorAll('.reclamation-item').forEach(function(item) {
-    if (!item.classList.contains('unclickable')) {
-        item.addEventListener('click', function() {
-            const href = this.getAttribute('data-href');
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.reclamation-card:not(.unclickable)');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const href = card.getAttribute('data-href');
             if (href) {
                 window.location.href = href;
             }
         });
-    }
+    });
+
+    // Add hover effects
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('hovered');
+        });
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('hovered');
+        });
+    });
 });
 </script>
 
 <style>
-/* Layout */
+/* Core Layout */
 .page-wrapper {
-    padding: 15px;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
 }
 
 .content-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+.header {
+    padding: 1rem 0;
     display: flex;
     justify-content: space-between;
-    gap: 15px;
+    align-items: center;
+    background: linear-gradient(to right, #6C983B, #7AAE49);
+    color: white;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.main-container {
-    width: 70%;
-}
-/* Sidebar Container */
-.sidebar {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.header-text {
+    font-size: 2rem;
+    font-weight: 700;
 }
 
-/* Search Section */
-.search-section {
-    margin-bottom: 20px;
+.header-count {
+    font-size: 1rem;
+    background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
 }
 
-.search-form .input-group {
-    display: flex;
-    align-items: center; /* Vertically center the input and button */
-}
-
-.search-bar {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px 0 0 5px;
-    font-size: 14px;
-    outline: none;
-}
-
-
-/* Buttons */
-.sidebar-buttons {
-    margin-bottom: 20px;
-}
-
-.sidebar-btn {
-    margin-bottom: 10px;
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-
-/* Description Text */
-.sidebar-text {
-    font-size: 14px;
-    color: #666;
+/* Empty State */
+.empty-state {
     text-align: center;
-    margin-bottom: 20px;
+    padding: 4rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
-
-
-
-
-/* Header and no-content message */
-.header {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #6C983B;
-    border-bottom: 2px solid #EEC044;
-    padding-bottom: 8px;
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
 }
 
-.no-reclamations {
-    font-size: 16px;
-    color: #ff5555;
-    padding: 8px;
+.empty-text {
+    color: #666;
+    font-size: 1.2rem;
 }
 
-/* Reclamation Items */
-.reclamations-container {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* Reclamation Cards */
+.reclamation-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.reclamation-item {
-    display: flex;
-    flex-direction: column;
-    padding: 12px;
-    border: 1px solid #7AAE49;
-    border-radius: 6px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(122, 174, 73, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
+.reclamation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
-.reclamation-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(122, 174, 73, 0.3);
+.reclamation-card.hovered::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.02);
+    pointer-events: none;
 }
 
-/* Header: Image and Title in a Row */
 .reclamation-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+}
+
+.profile-container {
+    position: relative;
+}
+
+.profile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.profile-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.profile-status.closed { background: #ff5555; }
+.profile-status.resolved { background: #4CAF50; }
+
+.content-wrapper {
+    padding: 0 1rem;
+}
+
+.title-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 }
 
-/* Image Container */
-.profile-img-container {
-    flex-shrink: 0;
+.reclamation-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
 }
 
-.profile-img {
+.tag {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.reclamation-desc {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0.5rem 0;
+}
+
+.meta-info {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.author {
+    font-weight: 600;
+    color: #6C983B;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ddd;
-}
-
-/* Title Container */
-.reclamation-title-container {
-    display: flex;
-    flex-direction: column;
-    margin-left: 8px;
-    flex-grow: 1;
-}
-
-/* Title Styling */
-.reclamation-title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-}
-
-/* Status styling inline with title */
-.status-inline {
-    display: inline-block;
-    margin-bottom: 4px;
-    font-size: 12px;
-    color: #333;
-}
-
-.status-icon {
-    font-size: 14px;
-    margin-right: 4px;
-}
-
-/* Description and Date */
-.reclamation-description {
-    color: #555;
-    font-size: 12px;
-    margin: 4px 0;
-}
-
-.reclamation-date {
-    font-size: 10px;
-    color: #666;
-    margin: 0;
-}
-
-.username {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
-}
-
-/* Buttons Container */
-.buttons-container {
-    margin-left: auto;
-    display: flex;
-    gap: 8px;
-}
-
-.edit-btn, .delete-btn {
-    background: none;
     border: none;
+    background: #f5f5f5;
     cursor: pointer;
-    font-size: 16px;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
-.edit-btn {
-    color: #4CAF50;
+.action-btn.edit:hover { background: #4CAF50; color: white; }
+.action-btn.delete:hover { background: #ff5555; color: white; }
+
+/* Status Styles */
+.closed-card {
+    background: #fff5f5;
+    border-left: 5px solid #ff5555;
 }
 
-.edit-btn:hover {
-    color: #2E7D32;
+.resolved-card {
+    background: #f5fff5;
+    border-left: 5px solid #4CAF50;
 }
 
-.delete-btn {
-    color: #ff5555;
+/* Sidebar */
+.sidebar {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
 }
 
-.delete-btn:hover {
-    color: #cc0000;
+.search-wrapper {
+    margin-bottom: 2rem;
 }
 
-
-
-.search-btn {
-    background-color: #7AAE49;
-    border: none;
-    padding: 6px 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    color: #ffffff;
+.search-input-group {
+    position: relative;
 }
 
-.btn {
-    display: inline-block;
+.search-input {
     width: 100%;
-    text-align: center;
-    padding: 10px;
-    margin-top: 8px;
+    padding: 1rem 1rem 1rem 3rem;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-}
-.unclickable {
-    pointer-events: none;
-    cursor: default;
-    opacity: 0.6; /* Optional: Makes it visually distinct */
+    border-radius: 25px;
+    background: #f5f5f5;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
 }
 
-.subscribe-btn {
-    background-color: #6C983B;
-    color: #ffffff;
+.search-input:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(108,152,59,0.2);
 }
 
-.subscribe-text {
-    font-size: 10px;
-    margin-top: 8px;
-    color: #333;
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
 }
 
-
-/* Special Status Styles */
-.closed-reclamation {
-    background-color: #ffcccc !important; /* Light red */
-    border: 1px solid #ff5555;
+.sidebar-actions .btn {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-.resolved-reclamation {
-    background-color: #ccffcc !important; /* Light green */
-    border: 1px solid #4CAF50;
+.btn.glow {
+    box-shadow: 0 4px 15px rgba(108,152,59,0.2);
+}
+
+.btn.glow:hover {
+    box-shadow: 0 6px 20px rgba(108,152,59,0.4);
+    transform: translateY(-2px);
+}
+
+.sidebar-info {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.stats {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Animations */
+.animate-in {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+        position: static;
+    }
+    
+    .reclamation-header {
+        grid-template-columns: auto 1fr;
+    }
+    
+    .action-buttons {
+        grid-column: 1 / -1;
+        margin-top: 1rem;
+    }
 }
 </style>

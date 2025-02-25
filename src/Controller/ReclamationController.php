@@ -165,11 +165,7 @@ public function show(
 
     $repository = $em->getRepository(Reclamations::class);
     $avis = $repository->findBy(['statut' => StatutReclamation::AVIS]);
-
-    // Get search query from request
     $searchTerm = $request->query->get('q');
-
-    // Build query with filters
     $queryBuilder = $repository->createQueryBuilder('r')
         ->where('r.statut IN (:statuts)')
         ->setParameter('statuts', [
@@ -177,8 +173,6 @@ public function show(
             StatutReclamation::RESOLUE,
             StatutReclamation::FERMEE
         ]);
-
-    // Add search filter if term exists
     if ($searchTerm) {
         $queryBuilder
             ->andWhere('r.title LIKE :searchTerm OR r.description LIKE :searchTerm')
@@ -186,8 +180,6 @@ public function show(
     }
 
     $queryBuilder->orderBy('r.dateReclamation', 'DESC');
-
-    // Paginate results
     $pagination = $paginator->paginate(
         $queryBuilder->getQuery(),
         $request->query->getInt('page', 1),
