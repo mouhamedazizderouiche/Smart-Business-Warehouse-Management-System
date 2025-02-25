@@ -22,12 +22,20 @@
                 </thead>
                 <tbody>
                     {% for commande in commandesFinalisees %}
-                        <tr>
+                        <tr data-id="{{ commande.id }}">
                             <td style="font-size: 15px; font-weight: 500;">{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
                             <td style="font-size: 15px;">{{ commande.nomProduit }}</td>
                             <td style="font-size: 15px;">{{ commande.quantite }}</td>
                             <td style="font-size: 15px; color: green; font-weight: bold;">{{ commande.prixTotal }} DT</td>
-                            <td>
+                            <td class="d-flex gap-2 justify-content-center">
+                                
+                                <!-- 🔴 Bouton Télécharger Facture -->
+                                <a href="{{ path('facture_utilisateur', { id: commande.id }) }}" 
+                                   class="btn btn-primary btn-sm" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> Facture
+                                </a>
+
+                                <!-- 🗑 Bouton Supprimer -->
                                 <a href="{{ path('supprimer_commande_historique', { id: commande.id }) }}" 
                                    class="btn btn-danger btn-sm"
                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette commande de l’historique ?');">
@@ -48,12 +56,12 @@
 
 <style>
     .big-table th, .big-table td {
-        padding: 15px; /* Plus d'espace pour la lisibilité */
+        padding: 15px;
         font-size: 16px;
     }
 
     .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.1); /* Effet hover léger */
+        background-color: rgba(0, 123, 255, 0.1);
     }
 
     .table thead th {
@@ -63,7 +71,12 @@
     }
 
     .container {
-        max-width: 90%; /* Largeur max pour plus de confort */
+        max-width: 90%;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
     }
 </style>
 {% endblock %}

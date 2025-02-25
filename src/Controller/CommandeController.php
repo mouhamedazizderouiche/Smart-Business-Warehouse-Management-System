@@ -12,9 +12,34 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Snappy\Pdf;
 
 class CommandeController extends AbstractController
 {
+    #[Route('/facture/{id}', name: 'facture_utilisateur')]
+public function genererFactureUtilisateur(CommandeFinalisee $commandeFinalisee, Pdf $pdf, Security $security): Response
+{
+    $user = $security->getUser();
+
+    
+    if ($commandeFinalisee->getUser() !== $user) {
+        throw $this->createAccessDeniedException("Vous n'avez pas accès à cette facture.");
+    }
+
+    $html = $this->renderView('facture/facture.html.twig', [
+        'commande' => $commandeFinalisee
+    ]);
+
+    return new Response(
+        $pdf->getOutputFromHtml($html),
+        Response::HTTP_OK,
+        [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="facture.pdf"'
+        ]
+    );
+}
+
     #[Route('/mon-panier', name: 'mon_panier')]
 public function voirPanier(CommandeRepository $commandeRepository, Security $security): Response
 {
