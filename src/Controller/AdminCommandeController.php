@@ -12,10 +12,29 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Knp\Snappy\Pdf;
 
 #[Route('/admin', name: 'admin_')]
 class AdminCommandeController extends AbstractController
 {
+    #[Route('/facture/{id}', name: 'generer_facture')]
+public function genererFacture(CommandeFinalisee $commandeFinalisee, Pdf $pdf): Response
+{
+    $html = $this->renderView('facture/facture.html.twig', [
+        'commande' => $commandeFinalisee
+    ]);
+
+    return new Response(
+        $pdf->getOutputFromHtml($html),
+        Response::HTTP_OK,
+        [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="facture-' . $commandeFinalisee->getId() . '.pdf"',
+        ]
+    );
+}
+
+
     #[Route('/commandes', name: 'commandes')]
     public function index(
         CommandeFinaliseeRepository $commandeFinaliseeRepository,

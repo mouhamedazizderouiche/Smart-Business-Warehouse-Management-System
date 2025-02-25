@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 80%; margin: 0 auto; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid black; }
+        th, td { padding: 10px; text-align: left; }
+        .total { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facture</h1>
+        <p>Date : {{ commande.dateCommande|date('d/m/Y H:i') }}</p>
+        <p>Client : {{ commande.user.nom }}</p>
+
+        <table>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix Unitaire (DT)</th>
+                <th>Total (DT)</th>
+            </tr>
+            <tr>
+                <td>{{ commande.nomProduit }}</td>
+                <td>{{ commande.quantite }}</td>
+                <td>{{ commande.produitPrix }}</td>
+                <td class="total">{{ commande.prixTotal }}</td>
+            </tr>
+        </table>
+
+        <p class="total">Montant total : {{ commande.prixTotal }} DT</p>
+    </div>
+</body>
+</html>
