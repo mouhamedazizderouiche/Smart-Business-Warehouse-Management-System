@@ -36,14 +36,14 @@
                                         <h3 class="reclamation-title">{{ reclamation.title }}</h3>
                                         <span class="tag" 
                                               style="background-color: {{ reclamation.tag.color ?? '#7AAE49' }}">
-                                            #{{ reclamation.tag.name }}
+                                            #{{ reclamation.tag.name|default('No Tag') }}
                                         </span>
                                     </div>
                                     
                                     <p class="reclamation-desc">{{ reclamation.description }}</p>
                                     
                                     <div class="meta-info">
-                                        <span class="date">{{ reclamation.dateReclamation|date('d M Y H:i') }}</span>
+                                        <span class="date" data-timestamp="{{ reclamation.dateReclamation|date('c') }}">{{ reclamation.dateReclamation|date('d M Y H:i') }}</span>
                                         <span class="author">by {{ reclamation.user.Prenom }}</span>
                                     </div>
                                 </div>
@@ -76,7 +76,7 @@
         <!-- Enhanced Sidebar -->
         <aside class="sidebar animate-in">
             <div class="search-wrapper">
-                <form action="{{ path('reclamation_show') }}" method="get" class="search-form">
+                <form action="{{ path('reclamation_showU') }}" method="get" class="search-form">
                     <div class="search-input-group">
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" 
@@ -138,6 +138,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+function timeAgo(date) {
+    const now = new Date();
+    const past = new Date(date);
+    const diffMs = now - past; 
+    if (diffMs < 0) {
+        return 'in the future';
+    }
+    const diffSeconds = Math.floor(diffMs / 1000);
+    if (diffSeconds < 10) {
+        return 'just now';
+    } else if (diffSeconds < 60) {
+        return diffSeconds + ' sec' + (diffSeconds > 1 ? 's' : '') + ' ago';
+    }
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes < 60) {
+        return diffMinutes + ' minute' + (diffMinutes > 1 ? 's' : '') + ' ago';
+    }
+    const diffHours = Math.floor(diffMs / 3600000);
+    if (diffHours < 24) {
+        return diffHours + ' hour' + (diffHours > 1 ? 's' : '') + ' ago';
+    }
+    const diffDays = Math.floor(diffMs / 86400000);
+    return diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago';
+}
+
+// Function to update all .date elements
+function updateDateTimes() {
+    document.querySelectorAll('.date').forEach(function(span) {
+        const timestamp = span.getAttribute('data-timestamp');
+        if (timestamp) {
+            span.textContent = timeAgo(timestamp);
+        }
+    });
+}
+
+// Run initially
+updateDateTimes();
+
+// Optional: Update every minute for a live effect
+setInterval(updateDateTimes, 60000);
 </script>
 
 <style>

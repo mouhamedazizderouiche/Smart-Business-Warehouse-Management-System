@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Reclamations;
+use App\Entity\Notifications;
 use App\Form\ReclamationsType;
 use App\Repository\ReclamationsRepository;
+use App\Repository\NotificationsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,52 +19,78 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Tag;
 use Gemini;
 use Knp\Component\Pager\PaginatorInterface;
+use Pusher\Pusher;
 
 #[Route('/reclamation')]
 class ReclamationController extends AbstractController
 {
-
     #[Route('/new', name: 'reclamation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $reclamation = new Reclamations();
-        $user = $this->getUser();
-        
-        if ($user) {
-            $reclamation->setUser($user);
-        }
+    public function new(Request $request, EntityManagerInterface $entityManager, Pusher $pusher): Response
+{
+    $reclamation = new Reclamations();
+    $user = $this->getUser();
+    $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
+    
 
-        $form = $this->createForm(ReclamationsType::class, $reclamation);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted()) {
-            $title = $form->get('title')->getData();
-            $description = $form->get('description')->getData();
-            $hasProfanity = false;
-            if (!Profanity::blocker($title)->clean()) {
-                $this->addFlash('title', 'Do not use bad words in the title.');
-                $hasProfanity = true;
-            }
-            if (!Profanity::blocker($description)->clean()) {
-                $this->addFlash('des', 'Do not use bad words in the description.');
-                $hasProfanity = true;
-            }
-            if ($hasProfanity) {
-                return $this->redirectToRoute('reclamation_new');
-            }
-            if ($form->isValid()) {
-                $reclamation->setDateReclamation(new \DateTime());
-                $entityManager->persist($reclamation);
-                $entityManager->flush();
-                return $this->redirectToRoute('reclamation_show');
-            }
-        }
-
-        return $this->render('reclamation/new.html.twig', [
-            'reclamation' => $reclamation,
-            'form' => $form->createView(),
-        ]);
+    if ($user) {
+        $reclamation->setUser($user);
     }
+
+    $form = $this->createForm(ReclamationsType::class, $reclamation);
+    $form->handleRequest($request);
+
+    if ($form->isSubmitted()) {
+        $title = $form->get('title')->getData();
+        $description = $form->get('description')->getData();
+        $hasProfanity = false;
+
+        if (!Profanity::blocker($title)->clean()) {
+            $this->addFlash('title', 'Do not use bad words in the title.');
+            $hasProfanity = true;
+        }
+        if (!Profanity::blocker($description)->clean()) {
+            $this->addFlash('des', 'Do not use bad words in the description.');
+            $hasProfanity = true;
+        }
+
+        if ($hasProfanity) {
+            return $this->redirectToRoute('reclamation_new');
+        }
+
+        if ($form->isValid()) {
+            $reclamation->setDateReclamation(new \DateTime());
+            $entityManager->persist($reclamation);
+
+            // Save notification in database
+            $notification = new Notifications();
+            $notification->setTitle($title);
+            $notification->setDescription($description);
+            if ($user) {
+                $notification->setUser($user);
+            }
+            $notification->setIsForAdmins(true);
+            $entityManager->persist($notification);
+            $entityManager->flush();
+
+            $pusher->trigger('admin-notifications', 'new_reclamation', [
+                'title' => $title,
+                'createdAt' => $notification->getCreatedAt()->format('Y-m-d H:i:s')
+            ]);
+
+            if ($isAdmin) {
+                return $this->redirectToRoute('reclamation_showA');
+            } else {
+                return $this->redirectToRoute('reclamation_showU');
+            }
+        }
+    }
+
+    return $this->render('reclamation/new.html.twig', [
+        'reclamation' => $reclamation,
+        'form' => $form->createView(),
+    ]);
+}
+
     #[Route('/newReview', name: 'reclamation_newReview', methods: ['GET', 'POST'])]
     public function newReview(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -154,53 +182,87 @@ class ReclamationController extends AbstractController
     //     }
     // }
 
-    #[Route('/', name: 'reclamation_show', methods: ['GET'])]
-public function show(
-    Request $request,
-    EntityManagerInterface $em,
-    PaginatorInterface $paginator
-): Response {
-    $user = $this->getUser();
-    $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
-
-    $repository = $em->getRepository(Reclamations::class);
-    $avis = $repository->findBy(['statut' => StatutReclamation::AVIS]);
-    $searchTerm = $request->query->get('q');
-    $queryBuilder = $repository->createQueryBuilder('r')
-        ->where('r.statut IN (:statuts)')
-        ->setParameter('statuts', [
-            StatutReclamation::EN_COURS,
-            StatutReclamation::RESOLUE,
-            StatutReclamation::FERMEE
-        ]);
-    if ($searchTerm) {
-        $queryBuilder
-            ->andWhere('r.title LIKE :searchTerm OR r.description LIKE :searchTerm')
-            ->setParameter('searchTerm', '%' . $searchTerm . '%');
+    #[Route('/U', name: 'reclamation_showU', methods: ['GET'])]
+    public function showUser(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, NotificationsRepository $notificationsRepository): Response
+    {
+        return $this->renderReclamations($request, $em, $paginator, $notificationsRepository, 'reclamation/showU.html.twig', false);
     }
 
-    $queryBuilder->orderBy('r.dateReclamation', 'DESC');
-    $pagination = $paginator->paginate(
-        $queryBuilder->getQuery(),
-        $request->query->getInt('page', 1),
-        4,
-        ['distinct' => false]
-    );
-
-    foreach ($pagination as $reclamation) {
-        if ($reclamation->getTag() === null) {
-            $this->assignTagToReclamation($em, $reclamation->getId());
-        }
+    #[Route('/A', name: 'reclamation_showA', methods: ['GET'])]
+    public function show(Request $request, EntityManagerInterface $em, PaginatorInterface $paginator, NotificationsRepository $notificationsRepository): Response
+    {
+        return $this->renderReclamations($request, $em, $paginator, $notificationsRepository, 'reclamation/dashboardrec.html.twig', true);
     }
 
-    $template = $isAdmin ? 'reclamation/dashboardrec.html.twig' : 'reclamation/show.html.twig';
+
+    private function renderReclamations(
+        Request $request,
+        EntityManagerInterface $em,
+        PaginatorInterface $paginator,
+        NotificationsRepository $notificationsRepository,
+        string $template,
+        bool $isAdmin = false
+    ): Response {
+        $user = $this->getUser();
     
-    return $this->render($template, [
-        'reclamationsAvis' => $avis,
-        'reclamations' => $pagination,
-        'searchTerm' => $searchTerm
-    ]);
-}
+        if ($isAdmin && (!$user || !in_array('ROLE_ADMIN', $user->getRoles()))) {
+            throw $this->createAccessDeniedException('Only admins can access this page.');
+        }
+    
+        // Fetch notifications based on role
+        $notifications = $notificationsRepository->findBy(
+            ['isForAdmins' => $isAdmin],
+            ['createdAt' => 'DESC']
+        );
+    
+        // Mark unread admin notifications as read only for admins
+        if ($isAdmin) {
+            foreach ($notifications as $notification) {
+                if (!$notification->isRead()) {
+                    $notification->setIsRead(true);
+                    $em->persist($notification);
+                }
+            }
+            $em->flush();
+        }
+    
+        $repository = $em->getRepository(Reclamations::class);
+        $avis = $repository->findBy(['statut' => StatutReclamation::AVIS]);
+        $searchTerm = $request->query->get('q');
+        $queryBuilder = $repository->createQueryBuilder('r')
+            ->where('r.statut IN (:statuts)')
+            ->setParameter('statuts', [
+                StatutReclamation::EN_COURS,
+                StatutReclamation::RESOLUE,
+                StatutReclamation::FERMEE
+            ]);
+        if ($searchTerm) {
+            $queryBuilder
+                ->andWhere('r.title LIKE :searchTerm OR r.description LIKE :searchTerm')
+                ->setParameter('searchTerm', '%' . $searchTerm . '%');
+        }
+    
+        $queryBuilder->orderBy('r.dateReclamation', 'DESC');
+        $pagination = $paginator->paginate(
+            $queryBuilder->getQuery(),
+            $request->query->getInt('page', 1),
+            4,
+            ['distinct' => false]
+        );
+    
+        foreach ($pagination as $reclamation) {
+            if ($reclamation->getTag() === null) {
+                $this->assignTagToReclamation($em, $reclamation->getId());
+            }
+        }
+    
+        return $this->render($template, [
+            'reclamationsAvis' => $avis,
+            'reclamations' => $pagination,
+            'searchTerm' => $searchTerm,
+            'notifications' => $notifications,
+        ]);
+    }
 
 
     #[Route('/{id}/edit', name: 'reclamation_edit', methods: ['GET', 'POST'])]
@@ -214,8 +276,12 @@ public function show(
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-            
-            return $this->redirectToRoute('reclamation_show');
+        if ($isAdmin) {
+            return $this->redirectToRoute('reclamation_showA');
+        } else {
+            return $this->redirectToRoute('reclamation_showU');
+        }
+        
             
         }
         if ($isAdmin) {
@@ -234,10 +300,15 @@ public function show(
     #[Route('/{id}', name: 'reclamation_delete', methods: ['POST'])]
     public function delete(Reclamations $reclamation, EntityManagerInterface $entityManager): Response
     {
-        
+        $user = $this->getUser();
+    $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
         $entityManager->remove($reclamation);
         $entityManager->flush();
-        return $this->redirectToRoute('reclamation_show');
+        if ($isAdmin) {
+            return $this->redirectToRoute('reclamation_showA');
+        } else {
+            return $this->redirectToRoute('reclamation_showU');
+        }
     }
 
     #[Route('/testimonial', name: 'testimonial')]
@@ -314,7 +385,7 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
     }
 
     $client = Gemini::client($apiKey);
-    $result = $client->geminiPro()->generateContent($prompt);
+    $result = $client->geminiFlash()->generateContent($prompt);
     $responseText = trim($result->text());
 
     $tag = $entityManager->getRepository(Tag::class)->findOneBy(['name' => $responseText]);
@@ -354,5 +425,34 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
             'name' => $tagName,
         ]);
     }
+
+
+    #[Route('/notif/mark-read/{id}', name: 'mark_notification_read')]
+    public function markNotificationRead(Notifications $notification, EntityManagerInterface $entityManager): Response
+    {
+        $notification->setIsRead(true);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('admin_notifications');
+    }
+
+    #[Route('/notif/delete/{id}', name: 'delete_notification')]
+    public function deleteNotification(Notifications $notification, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($notification);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('admin_notifications');
+    }
+    #[Route('/notif', name: 'admin_notifications')]
+    public function adminNotifications(EntityManagerInterface $entityManager): Response
+    {
+        $notifications = $entityManager->getRepository(Notifications::class)->findBy([], ['createdAt' => 'DESC']);
+
+        return $this->render('admin/notifications.html.twig', [
+            'notifications' => $notifications,
+        ]);
+    }
+
 
 }

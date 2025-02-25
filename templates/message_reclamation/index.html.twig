@@ -435,10 +435,10 @@
                 <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_new') }}'">
                     Create Reclamation
                 </button>
-                <button type="button" class="button" onclick="window.location.href='{{ path('reclamation_show') }}'">
-                    Back to List
-                </button>
-
+                <button type="button" class="button" 
+                        onclick="window.location.href='{{ is_granted('ROLE_ADMIN') ? path('reclamation_showA') : path('reclamation_showU') }}'">
+                        Back to List
+                    </button>
                 <div class="section">
                     <strong style="color: var(--secondary);">Your Account</strong>
                     <a href="#">Post History</a>

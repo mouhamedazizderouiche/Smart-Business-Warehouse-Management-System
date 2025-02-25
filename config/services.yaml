@@ -5,8 +5,15 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
-
 services:
+    Pusher\Pusher:
+        arguments:
+            $auth_key: '%env(PUSHER_KEY)%'
+            $secret: '%env(PUSHER_SECRET)%'
+            $app_id: '%env(PUSHER_APP_ID)%'
+            $options: { cluster: '%env(PUSHER_CLUSTER)%', useTLS: true }
+
+            
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

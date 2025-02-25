@@ -20,6 +20,7 @@
         "phpstan/phpdoc-parser": "^2.0",
         "psr/http-client": "^1.0",
         "psr/http-client-implementation": "*",
+        "pusher/pusher-php-server": "^7.2",
         "symfony/asset": "6.4.*",
         "symfony/asset-mapper": "6.4.*",
         "symfony/console": "6.4.*",

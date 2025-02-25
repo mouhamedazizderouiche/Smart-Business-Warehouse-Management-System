@@ -32,36 +32,6 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="margin-left: 250px;">Dashboard</a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="theme-toggle">
-                        <i class="fas fa-moon"></i> Thème sombre
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-bell"></i> <span class="badge bg-danger">3</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-user"></i> Profil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_logout') }}">
-                        <i class="fas fa-sign-out-alt"></i> logout
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
 <!-- Sidebar -->
 <div class="container-fluid">
     <nav id="sidebar">
@@ -81,7 +51,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('reclamation_show') }}" data-target="gestion-reclamation">
+                    <a class="nav-link" href="{{ path('reclamation_showA') }}" data-target="gestion-reclamation">
                         <i class="fas fa-exclamation-circle"></i>
                         <span>Community </span>
                     </a>
