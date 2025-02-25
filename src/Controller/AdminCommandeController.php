@@ -6,6 +6,7 @@ use App\Entity\CommandeFinalisee;
 use App\Entity\Produit;
 use App\Repository\CommandeFinaliseeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,21 +19,30 @@ class AdminCommandeController extends AbstractController
     #[Route('/commandes', name: 'commandes')]
     public function index(
         CommandeFinaliseeRepository $commandeFinaliseeRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PaginatorInterface $paginator,
+        Request $request
     ): Response {
-        
         $user = $this->getUser();
-      
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
-        
-        
+
+        // 🔥 Redirection si l'utilisateur n'est pas admin
         if (!$isAdmin) {
-           
             return $this->redirectToRoute('shop_produits');
         }
 
-        
-        $commandes = $commandeFinaliseeRepository->findBy([], ['dateCommande' => 'DESC']);
+        // 🔄 Récupération des commandes avec pagination
+        $query = $commandeFinaliseeRepository->createQueryBuilder('c')
+            ->orderBy('c.dateCommande', 'DESC')
+            ->getQuery();
+
+        $commandes = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10 // Nombre de commandes par page
+        );
+
+        // 📦 Récupérer la liste des produits pour la modification des commandes
         $listeProduits = $entityManager->getRepository(Produit::class)->findAll();
 
         return $this->render('admin_commande/index.html.twig', [
@@ -47,16 +57,20 @@ class AdminCommandeController extends AbstractController
         CommandeFinalisee $commandeFinalisee,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-       
-        
+        $user = $this->getUser();
+        $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
+
+        // 🔥 Vérification de l'autorisation
+        if (!$isAdmin) {
+            return new JsonResponse(['message' => '❌ Accès refusé'], Response::HTTP_FORBIDDEN);
+        }
 
         $data = json_decode($request->getContent(), true);
-
         if (!$data) {
             return new JsonResponse(['message' => '❌ Données invalides'], Response::HTTP_BAD_REQUEST);
         }
 
-        
+        // 🔄 Mise à jour des champs de la commande
         foreach ($data as $key => $value) {
             $setter = 'set' . ucfirst($key);
             if (method_exists($commandeFinalisee, $setter)) {
@@ -65,7 +79,6 @@ class AdminCommandeController extends AbstractController
         }
 
         $entityManager->flush();
-
         return new JsonResponse(['message' => '✅ Commande mise à jour avec succès !'], Response::HTTP_OK);
     }
 
@@ -74,7 +87,13 @@ class AdminCommandeController extends AbstractController
         CommandeFinalisee $commandeFinalisee,
         EntityManagerInterface $entityManager
     ): JsonResponse {
-       
+        $user = $this->getUser();
+        $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
+
+        // 🔥 Vérification de l'autorisation
+        if (!$isAdmin) {
+            return new JsonResponse(['message' => '❌ Accès refusé'], Response::HTTP_FORBIDDEN);
+        }
 
         $entityManager->remove($commandeFinalisee);
         $entityManager->flush();

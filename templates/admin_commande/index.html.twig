@@ -50,6 +50,7 @@
             display: flex;
             gap: 10px;
         }
+
         .edit-mode input {
             width: 80px;
         }
@@ -67,9 +68,9 @@
     {% include 'backoffice/sidebar.html.twig' %}
 
     <main class="container-fluid content-page">
-        <h1 class="my-4 text-center">📜 Gestion Commandes Finalisées</h1>
+        <h1 class="my-4 text-center">📜 Gestion des Commandes Finalisées</h1>
 
-        {% if commandes is empty %}
+        {% if commandes|length == 0 %}
             <p class="text-center text-muted">Aucune commande finalisée trouvée.</p>
         {% else %}
             <div class="table-responsive">
@@ -144,6 +145,11 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+
+            <!-- 🔄 Pagination -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ knp_pagination_render(commandes) }}
             </div>
         {% endif %}
     </main>

@@ -137,7 +137,7 @@ class ProductsController extends AbstractController
         $produits = $entityManager->getRepository(Produit::class)->findAll();
         $categories = $entityManager->getRepository(Categorie::class)->findAll();
 
-        return $this->render('homepage/ProductsPage.html.twig', [
+        return $this->render('homepage/shop.html.twig', [
             'produits' => $produits,
             'categories' => $categories
         ]);
