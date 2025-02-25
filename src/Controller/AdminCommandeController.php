@@ -26,12 +26,12 @@ class AdminCommandeController extends AbstractController
         $user = $this->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
 
-        // 🔥 Redirection si l'utilisateur n'est pas admin
+        
         if (!$isAdmin) {
             return $this->redirectToRoute('shop_produits');
         }
 
-        // 🔄 Récupération des commandes avec pagination
+       
         $query = $commandeFinaliseeRepository->createQueryBuilder('c')
             ->orderBy('c.dateCommande', 'DESC')
             ->getQuery();
@@ -39,10 +39,10 @@ class AdminCommandeController extends AbstractController
         $commandes = $paginator->paginate(
             $query,
             $request->query->getInt('page', 1),
-            10 // Nombre de commandes par page
+            
         );
 
-        // 📦 Récupérer la liste des produits pour la modification des commandes
+        
         $listeProduits = $entityManager->getRepository(Produit::class)->findAll();
 
         return $this->render('admin_commande/index.html.twig', [
@@ -60,7 +60,7 @@ class AdminCommandeController extends AbstractController
         $user = $this->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
 
-        // 🔥 Vérification de l'autorisation
+      
         if (!$isAdmin) {
             return new JsonResponse(['message' => '❌ Accès refusé'], Response::HTTP_FORBIDDEN);
         }
@@ -70,7 +70,7 @@ class AdminCommandeController extends AbstractController
             return new JsonResponse(['message' => '❌ Données invalides'], Response::HTTP_BAD_REQUEST);
         }
 
-        // 🔄 Mise à jour des champs de la commande
+        
         foreach ($data as $key => $value) {
             $setter = 'set' . ucfirst($key);
             if (method_exists($commandeFinalisee, $setter)) {
@@ -90,7 +90,7 @@ class AdminCommandeController extends AbstractController
         $user = $this->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
 
-        // 🔥 Vérification de l'autorisation
+        
         if (!$isAdmin) {
             return new JsonResponse(['message' => '❌ Accès refusé'], Response::HTTP_FORBIDDEN);
         }
