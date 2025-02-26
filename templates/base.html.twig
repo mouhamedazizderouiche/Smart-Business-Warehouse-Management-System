@@ -144,6 +144,7 @@
       }
     </style>
     {% endblock %} {% block javascripts %} {% block importmap %}{{
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
       importmap("app")
     }}{% endblock %}
     <script>

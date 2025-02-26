@@ -96,7 +96,7 @@ class MessageReclamation
         return $this;
     }
 
-    #[ORM\PrePersist]  // Lifecycle callback to auto-generate UUID
+    #[ORM\PrePersist] 
     public function generateUuid(): void
     {
         if ($this->id === null) {

@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Reclamations;
 
+use ConsoleTVs\Profanity\Builder as Profanity;
 
 class MessageReclamationController extends AbstractController
 {
@@ -56,14 +57,29 @@ class MessageReclamationController extends AbstractController
 
         $form = $this->createForm(MessageReclamationType::class, $messageReclamation);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+
+        
+            
+        if ($form->isSubmitted() ) {
             $user = $this->getUser();
                 if ($user) {
                     $messageReclamation->setUser($user);
                 }
-            $em->persist($messageReclamation);
-            $em->flush();
-            return $this->redirectToRoute('message_reclamation_index', ['id' => $selectedReclamation->getId()]);
+            $contenu = $form->get('contenu')->getData();
+            $hasProfanity = false;
+            if (!Profanity::blocker($contenu, languages: ['en', 'fr'])->clean()) {
+                $this->addFlash('contenu', 'Do not use bad words in the reply.');
+                $hasProfanity = true;
+            }
+            if ($hasProfanity) {
+                return $this->redirectToRoute('message_reclamation_index', ['id' => $selectedReclamation->getId()]);
+            }
+            if ($form->isValid()) {
+                $em->persist($messageReclamation);
+                $em->flush();
+                return $this->redirectToRoute('message_reclamation_index', ['id' => $selectedReclamation->getId()]);
+            }
+            
         }
 
         if ($isAdmin) {

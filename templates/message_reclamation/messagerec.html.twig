@@ -255,7 +255,6 @@
 
                                         
                                             <span class="message-buttons">
-                                                <a href="{{ path('message_reclamation_edit', {'id': message.id}) }}" class="edit-btn" title="Edit Message">✏️</a>
                                                 <form action="{{ path('message_reclamation_delete', {'id': message.id}) }}" method="POST" style="display: inline;">
                                                     <button type="submit" class="delete-btn" onclick="return confirm('Are you sure?');" title="Delete">🗑️</button>
                                                 </form>
