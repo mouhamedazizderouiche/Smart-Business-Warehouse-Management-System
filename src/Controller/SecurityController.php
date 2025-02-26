@@ -100,7 +100,7 @@ class SecurityController extends AbstractController
             $this->logger->info('Face++ Response: ' . json_encode($compareResult));
 
             // Check the confidence score and compare it to the threshold
-            if (!empty($compareResult['confidence']) && $compareResult['confidence'] >= 60) { // Confidence threshold set to 75
+            if (!empty($compareResult['confidence']) && $compareResult['confidence'] >= 63) { // Confidence threshold set to 63
                 return new JsonResponse(['success' => true, 'message' => 'Face recognized successfully.']);
             } else {
                 return new JsonResponse(['success' => false, 'message' => 'Face not recognized.']);

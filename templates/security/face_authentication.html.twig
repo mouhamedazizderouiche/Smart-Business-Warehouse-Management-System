@@ -1,18 +1,25 @@
-{% block title %}Face Authentication{% endblock %}
+{% block title %}Authentification Faciale{% endblock %}
 
 {% block body %}
 <style>
     body {
         font-family: Arial, sans-serif;
         text-align: center;
-        background: linear-gradient(135deg,rgb(188, 214, 158),rgb(149, 217, 150));
+        background: linear-gradient(135deg, rgb(188, 214, 158), rgb(149, 217, 150));
         color: white;
         margin: 0;
         padding: 20px;
+        animation: fadeIn 1.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     h1 {
-        font-size: 2em;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     }
 
     #webcam-container {
@@ -21,6 +28,12 @@
         margin: 20px auto;
         border-radius: 10px;
         overflow: hidden;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        transition: transform 0.3s;
+    }
+
+    #webcam-container:hover {
+        transform: scale(1.05);
     }
 
     video {
@@ -28,6 +41,7 @@
         border-radius: 10px;
         width: 100%;
         max-width: 400px;
+        transform: scaleX(-1); /* This will flip the video horizontally */
     }
 
     .face-frame {
@@ -50,41 +64,44 @@
 
     button, input {
         margin-top: 10px;
-        padding: 10px 20px;
+        padding: 12px 25px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 1em;
+        font-size: 1.2em;
+        transition: all 0.3s ease;
     }
 
     button {
         background-color: #ff4081;
         color: white;
-        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
     button:hover {
         background-color: #ff1e63;
+        transform: scale(1.1);
     }
 
     #result-message {
         margin-top: 15px;
         font-weight: bold;
+        font-size: 1.2em;
     }
 </style>
 
-<h1>Face Authentication</h1>
-<p>Please look into the camera or upload an image.</p>
+<h1>Authentification Faciale</h1>
+<p>Regardez la caméra ou téléchargez une image.</p>
 
 <div id="webcam-container">
     <video id="webcam" autoplay></video>
     <div class="face-frame"></div>
 </div>
 <canvas id="canvas" style="display:none;"></canvas>
-<button id="capture-btn">Capture</button>
+<button id="capture-btn">Capturer</button>
 
 <div>
-    <p>Or upload an image:</p>
+    <p>Ou téléchargez une image :</p>
     <input type="file" id="upload-input" accept="image/*">
 </div>
 
@@ -102,8 +119,8 @@
             video.srcObject = stream;
         })
         .catch((error) => {
-            console.error('Error accessing webcam:', error);
-            resultMessage.innerText = 'Error accessing webcam. Please upload an image instead.';
+            console.error('Erreur d\'accès à la webcam :', error);
+            resultMessage.innerText = 'Erreur d\'accès à la webcam. Veuillez télécharger une image.';
         });
 
     captureBtn.addEventListener('click', () => {
@@ -140,15 +157,18 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                resultMessage.innerText = 'Face recognized! Redirecting...';
+                resultMessage.innerText = 'Visage reconnu ! Bienvenue !';
+                resultMessage.style.color = 'green';
                 window.location.href = '{{ path('app_home') }}';
             } else {
-                resultMessage.innerText = 'Face not recognized. Please try again.';
+                resultMessage.innerText = 'Visage non reconnu. Veuillez réessayer.';
+                resultMessage.style.color = 'red';
             }
         })
         .catch(error => {
-            console.error('Error:', error);
-            resultMessage.innerText = 'An error occurred. Please try again.';
+            console.error('Erreur :', error);
+            resultMessage.innerText = 'Une erreur est survenue. Veuillez réessayer.';
+            resultMessage.style.color = 'orange';
         });
     }
 </script>
