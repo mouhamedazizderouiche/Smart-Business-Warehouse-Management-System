@@ -1,0 +1,245 @@
+{% include 'homepage/newNav.html.twig' %}
+
+<div class="page-wrapper">
+    <div class="content-container">
+        <!-- Main Content -->
+        <div class="main-container">
+            <h2 class="header">Reclamation Discussions</h2>
+
+            {% if reclamations is empty %}
+                <p class="no-reclamations">No reclamations available.</p>
+            {% else %}
+                <div class="reclamations-container">
+                    {% for reclamation in reclamations %}
+                        <div class="reclamation-item">
+                            
+                            <a href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}" class="reclamation-content">
+                                <div class="reclamation-content">
+                                    <p class="reclamation-text">{{ reclamation.description }}</p>
+                                    <p class="reclamation-date">Posted on: {{ reclamation.dateReclamation|date('d M Y H:i') }}</p>
+                                </div>
+                                <!-- Right: Edit and Delete Buttons -->
+                                <div class="buttons-container">
+                                    <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}" class="edit-btn">✏️</a>
+                                    <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this reclamation?');">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </div>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination">
+                    {% if currentPage > 1 %}
+                        <a href="{{ path('reclamation_show', {'page': currentPage - 1}) }}" class="pagination-btn">⬅️ Previous</a>
+                    {% endif %}
+
+                    <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+
+                    {% if currentPage < totalPages %}
+                        <a href="{{ path('reclamation_show', {'page': currentPage + 1}) }}" class="pagination-btn">Next ➡️</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="search-section">
+                <input type="text" class="search-bar" placeholder="Search reclamations...">
+                <button class="search-btn">🔍</button>
+            </div>
+            <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_new') }}'">
+                Start a New Reclamation
+            </button>
+            <button type="button" class="btn subscribe-btn" onclick="window.location.href='{{ path('reclamation_newReview') }}'">
+                Send a Review
+            </button>
+            <p class="subscribe-text">
+                The Reclamation shown can be be clicked to interact more with the community
+            </p>
+            
+        </div>
+    </div>
+</div>
+
+<style>
+/* Overall layout */
+body {
+    background-color: #ffffff;
+    color: #333;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.page-wrapper {
+    padding: 20px;
+}
+.content-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+.main-container {
+    width: 70%;
+}
+.sidebar {
+    width: 25%;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Header and no-content message */
+.header {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #6C983B; /* Green accent */
+    border-bottom: 2px solid #EEC044; /* Yellow accent */
+    padding-bottom: 10px;
+}
+.no-reclamations {
+    font-size: 18px;
+    color: #ff5555;
+    padding: 10px;
+}
+
+/* Reclamation Items */
+.reclamations-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.reclamation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #7AAE49; /* Green accent */
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(122, 174, 73, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.reclamation-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(122, 174, 73, 0.3);
+}
+
+/* Left section: Description & Date */
+.reclamation-content {
+    flex: 1;
+}
+.reclamation-text {
+    font-size: 16px;
+    margin: 0 0 10px;
+    font-weight: bold;
+    color: #333;
+}
+.reclamation-date {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+}
+
+/* Right section: Buttons */
+.buttons-container {
+    display: flex;
+    gap: 10px;
+}
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+}
+.edit-btn {
+    color: #4CAF50;
+}
+.edit-btn:hover {
+    color: #2E7D32;
+}
+.delete-btn {
+    color: #ff5555;
+}
+.delete-btn:hover {
+    color: #cc0000;
+}
+
+/* Sidebar styles */
+.search-section {
+    display: flex;
+    gap: 5px;
+}
+.search-bar {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #7AAE49;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #333;
+}
+.search-btn {
+    background-color: #7AAE49;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #ffffff;
+}
+.btn {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+}
+.subscribe-btn {
+    background-color: #6C983B;
+    color: #ffffff;
+}
+.subscribe-text {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #333;
+}
+
+/* Pagination Controls */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+.pagination-btn {
+    text-decoration: none;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #7AAE49;
+    border-radius: 4px;
+    color: #7AAE49;
+    transition: background-color 0.3s, color 0.3s;
+}
+.pagination-btn:hover {
+    background-color: #7AAE49;
+    color: #ffffff;
+}
+.pagination-info {
+    font-size: 14px;
+    margin: 0 10px;
+    color: #333;
+}
+</style>

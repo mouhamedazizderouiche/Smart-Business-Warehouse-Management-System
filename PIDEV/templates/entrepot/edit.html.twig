@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'entrepôt{% endblock %}
+
+{% block body %}
+    <h1>Modifier l'entrepôt</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.nom) }}
+        {{ form_row(form.adresse) }}
+        {{ form_row(form.responsable) }}
+        <button type="submit">Sauvegarder les modifications</button>
+    {{ form_end(form) }}
+{% endblock %}

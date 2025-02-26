@@ -1,0 +1,100 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Agriplanner</title>
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+    
+    <style>
+        .reclamation-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            
+            border: 1px solid #ddd;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-control, .textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+        }
+
+        .textarea {
+            min-height: 200px;
+        }
+
+        .submit-button {
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background: #218838;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .form-control:focus, .textarea:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+
+        @media (max-width: 600px) {
+            .reclamation-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+{% include 'homepage/newNav.html.twig' %}
+
+{% block body %}
+
+<div class="reclamation-container">
+    <h1>Submit a Reclamation</h1>
+    <p>We value your feedback. Please describe your concern below.</p>
+
+    {{ form_start(form) }}
+
+    <div class="form-group">
+        <label for="{{ form.description.vars.id }}">Describe Your Reclamation: <span class="required">*</span></label>
+        {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
+        <p class="error-message">{{ form_errors(form.description) }}</p>
+    </div>
+
+    <div class="form-group">
+        {{ form_widget(form.save, {'attr': {'class': 'submit-button'}}) }}
+    </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.agriplanner-navbar {
+display: flex;
+    height: 60px;
+padding: 4px 0 8px 12px;
+    align-items: center;
+}
+
+.logo-agriplanner{
+    background-color: #ffffff;
+    height: 40px;
+}
+
+.nav-links{
+    display: flex;
+    align-items: center;
+    margin: 14px 10px 0 auto;
+}
+
+ul {
+    list-style: none;
+    padding: 10px;
+    display: flex;
+    margin: 0 24px 0 0;
+    gap: 24px;
+}
+
+ul li {
+    color: #000;
+    font-size: 18px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    margin-right: 10px;
+}
+
+.login-buttons{
+    background-color: #000;
+    width: 160px;
+    height: 46px;
+    border-radius: 10px;
+    margin: 0 14px 0 0;
+    font-size: 18px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.homepage-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6% 0 0 0;
+}
+
+.hero-text {
+    font-weight: 800;
+    font-size: 60px;
+    color: #000;
+    display: inline;
+    white-space: nowrap;
+}
+
+.hero-text span {
+    color: #7AAE49;
+}
+
+.app-description {
+    margin: 0 250px 0 240px;
+}
+
+.homepage-buttons
+{
+    display: flex;
+    justify-content: center;
+    width: 80%;
+    margin: 40px 40px 0 0;
+    gap: 20px;
+}
+
+.about-button
+{
+height: 52px;
+    width: 280px;
+    background-color: #7AAE49;
+    border-radius: 10px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign-up-button
+{
+    height: 52px;
+    width: 280px;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #000;
+    color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+a{
+    text-decoration: none;
+    border:none;
+    color: #000;
+}
+
+.agriplanner-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 4px 20px;
+    background-color: #fff; 
+    border-bottom: 1px solid #ddd;
+}
+
+.logo-agriplanner {
+    height: 40px;
+    flex: 1; 
+}
+
+.logo-agriplanner img {
+    height: 100%;
+}
+
+.nav-links {
+    flex: 2; 
+    display: flex;
+    justify-content: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 24px;
+    margin: 0;
+}
+
+ul li {
+    color: #000;
+    font-size: 18px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #000;
+    padding: 10px;
+}
+
+ul li a:hover {
+    color: #7AAE49;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropbtn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #000;
+    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 180px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border: 1px solid #ddd;
+}
+
+.dropdown-content a {
+    color: #000;
+    padding: 10px;
+    display: block;
+    font-size: 16px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f9f9f9;
+    color: #7AAE49;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.login-buttons {
+    background-color: #000;
+    width: 40%; 
+    height: 40px;  
+    border-radius: 8px;
+    font-size: 16px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex: 1;
+    text-align: right;
+}
+

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'événement{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Modifier l'événement</h1>
+
+        {{ form_start(form) }}
+            {{ form_row(form.titre) }}
+            {{ form_row(form.description) }}
+            {{ form_row(form.type) }}
+            {{ form_row(form.statut) }}
+            <button type="submit" class="btn btn-success">Sauvegarder</button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('app_evenement') }}" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+{% endblock %}
