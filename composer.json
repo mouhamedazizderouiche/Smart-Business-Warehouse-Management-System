@@ -12,7 +12,6 @@
         "doctrine/doctrine-fixtures-bundle": "*",
         "doctrine/doctrine-migrations-bundle": "^3.4",
         "doctrine/orm": "^3.3",
-        "friendsofsymfony/elastica-bundle": "^6.5",
         "guzzlehttp/guzzle": "^7.9",
         "h4cc/wkhtmltopdf-amd64": "^0.12.4",
         "knplabs/knp-paginator-bundle": "^6.6",
