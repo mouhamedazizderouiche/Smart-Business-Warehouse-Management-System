@@ -58,8 +58,7 @@
         "symfony/yaml": "6.4.*",
         "symfonycasts/reset-password-bundle": "^1.23",
         "symfonycasts/verify-email-bundle": "*",
-        "twig/twig": "^2.12|^3.0",
-        "vich/uploader-bundle": "^2.5"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {

@@ -11,9 +11,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\Reclamations;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Entity\User;
 
 use ConsoleTVs\Profanity\Builder as Profanity;
-
+use StatutReclamation;
 class MessageReclamationController extends AbstractController
 {
     #[Route('/message/{id}/edit', name: 'message_reclamation_edit', methods: ['GET', 'POST'])]
@@ -114,6 +117,81 @@ class MessageReclamationController extends AbstractController
         return $this->redirectToRoute('message_reclamation_index', ['id' => $reclamationId]);
     }
 
+    #[Route('/reclamation/{id}/auto-reply', name: 'reclamation_auto_reply', methods: ['POST'])]
+    public function generateAutoReply(?string $id, EntityManagerInterface $em, HttpClientInterface $httpClient): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not authenticated'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Fetch the reclamation by ID
+        $reclamation = $em->getRepository(Reclamations::class)->find($id);
+        if (!$reclamation) {
+            return new JsonResponse(['error' => 'Reclamation not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Construct the reclamation text (title + description)
+        $reclamationText = trim($reclamation->getTitle() . ' ' . $reclamation->getDescription());
+        if (empty($reclamationText)) {
+            return new JsonResponse(['error' => 'Reclamation text is empty'], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            // Make a POST request to the Flask API
+            $response = $httpClient->request('POST', 'http://localhost:5000/predict', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'reclamation' => $reclamationText,
+                ],
+            ]);
+
+            // Get the response data from Flask
+            $data = $response->toArray();
+            $autoResponse = $data['response'] ?? null;
+
+            if (!$autoResponse) {
+                return new JsonResponse(['error' => 'No response received from API'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+    
+            $message = new MessageReclamation();
+            $message->setReclamation($reclamation);
+            $message->setUser($user); 
+            $message->setContenu($autoResponse);  
+            $message->setDateMessage(new \DateTime()); 
+
+            $em->persist($message);
+            $reclamation->setStatut(StatutReclamation::RESOLUE);
+            $em->flush();
+
+            // Return the response for the frontend
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'Auto-reply generated and saved successfully',
+                'response' => $autoResponse,
+            ], Response::HTTP_OK);
+
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'Failed to generate auto-reply: ' . $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/test-auto-reply', name: 'test_reclamation_auto_reply')]
+    public function testAutoReply(EntityManagerInterface $em): Response
+    {
+        // Fetch all reclamations
+        $reclamations = $em->getRepository(Reclamations::class)->findAll();
+    
+        return $this->render('reclamation/test_auto_reply.html.twig', [
+            'reclamations' => $reclamations,
+        ]);
+    }
+    
     
 
 

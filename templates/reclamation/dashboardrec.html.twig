@@ -152,6 +152,9 @@
                                                             </span>
                                                         {% endif %}
                                                     </a>
+                                                    <button class="auto-reply-btn btn btn-icon btn-gradient-info" data-reclamation-id="{{ reclamation.id }}" title="Generate Auto-Reply">
+                                                        <i class="fas fa-reply"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -219,6 +222,7 @@
 
     <!-- JavaScript -->
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // Status Dropdown Update
         document.querySelectorAll('.status-dropdown').forEach(dropdown => {
@@ -329,6 +333,33 @@
             const diffDays = Math.floor(diffMs / 86400000);
             return diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago';
         }
+
+        // Auto-Reply Button Functionality
+        $(document).ready(function() {
+            $('.auto-reply-btn').click(function(e) {
+                e.preventDefault();
+                const reclamationId = $(this).data('reclamation-id');
+                const url = `/reclamation/${reclamationId}/auto-reply`;
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    dataType: 'json',
+                    headers: { 'Content-Type': 'application/json' },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Auto-reply generated: ' + response.response);
+                            location.reload(); // Reloads the page to show the new message
+                        } else {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Failed to generate auto-reply: ' + error);
+                    }
+                });
+            });
+        });
     </script>
 
     <style>
@@ -626,7 +657,7 @@
             border-radius: 8px;
             padding: 8px 36px 8px 12px;
             font-size: 0.95rem;
-            
+            background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2c7d3f" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
             background-repeat: no-repeat;
             background-position: right 12px center;
             transition: all 0.3s ease;
@@ -724,6 +755,28 @@
             border: 1px dashed #e2e8f0;
         }
 
+        /* Auto-Reply Button */
+        .auto-reply-btn {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #51ad65, #2c7d3f);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px; /* Space from other action buttons */
+        }
+
+        .auto-reply-btn:hover {
+            background: linear-gradient(135deg, #2c7d3f, #51ad65);
+            transform: scale(1.1);
+        }
+
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             .header-row {
@@ -742,6 +795,9 @@
             .action-buttons {
                 flex-wrap: wrap;
                 gap: 5px;
+            }
+            .auto-reply-btn {
+                margin-left: 5px; /* Adjust spacing for mobile */
             }
         }
     </style>

@@ -1,0 +1,50 @@
+
+{% block body %}
+    <div class="container">
+        <h2>Test Auto-Reply</h2>
+        
+        {% if reclamations is empty %}
+            <p>No reclamations found.</p>
+        {% else %}
+            <form id="autoReplyForm">
+                <label for="reclamationId">Select a Reclamation:</label>
+                <select id="reclamationId" name="reclamationId" required>
+                    <option value="">-- Choose a reclamation --</option>
+                    {% for reclamation in reclamations %}
+                        <option value="{{ reclamation.id }}">{{ reclamation.title }} (ID: {{ reclamation.id }})</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Generate Auto-Reply</button>
+            </form>
+
+            <div id="responseContainer" style="margin-top: 20px;"></div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.getElementById("autoReplyForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let reclamationId = document.getElementById("reclamationId").value;
+
+            if (!reclamationId) {
+                alert("Please select a reclamation.");
+                return;
+            }
+
+            fetch(`/reclamation/${reclamationId}/auto-reply`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            })
+            .then(response => response.json())
+            .then(data => {
+                let responseContainer = document.getElementById("responseContainer");
+                if (data.success) {
+                    responseContainer.innerHTML = `<p style="color: green;"><strong>Auto-Reply:</strong> ${data.response}</p>`;
+                } else {
+                    responseContainer.innerHTML = `<p style="color: red;"><strong>Error:</strong> ${data.error}</p>`;
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+{% endblock %}
