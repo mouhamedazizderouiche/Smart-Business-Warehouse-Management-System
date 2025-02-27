@@ -143,6 +143,15 @@ if ($dateExpiration < $dateActuelle) {
     
         
         $commandeFinalisee->setQuantite($commande->getQuantite());
+        $produit = $commande->getProduit();
+if ($produit) {
+    if (!$produit->diminuerQuantite($commande->getQuantite())) {
+        $this->addFlash('error', '❌ Stock insuffisant pour le produit '.$produit->getNom());
+        return $this->redirectToRoute('mon_panier');
+    }
+    $entityManager->persist($produit);
+}
+
         $commandeFinalisee->setPrixTotal($commande->getProduit()->getPrixUnitaire() * $commande->getQuantite());
         $commandeFinalisee->setUser($user);  
     

@@ -156,4 +156,13 @@ class Produit
     {
         return $this->nom;
     } 
+    public function diminuerQuantite(int $quantite): bool
+{
+    if ($this->quantite >= $quantite) {
+        $this->quantite -= $quantite;
+        return true;
+    }
+    return false; // Quantité insuffisante
+}
+
 }
