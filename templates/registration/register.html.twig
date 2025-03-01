@@ -108,4 +108,55 @@
         </div>
     </div>
     {{ form_end(registrationForm) }}
+       <!-- Chatbot Widget -->
+    <div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; width: 300px; background: white; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.3); padding: 10px; text-align: center;">
+        <img src="{{ asset('images/chat-bot.gif') }}" alt="Chatbot" style="width: 80px; height: 80px; margin-bottom: 10px;">
+        <div id="chatbot-messages" style="max-height: 200px; overflow-y: auto;"></div>
+        <input type="text" id="chatbot-input" placeholder="Posez-moi une question..." style="width: 80%; margin-top: 10px;">
+        <button id="chatbot-send" style="width: 18%;">Envoyer</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatbotMessages = document.getElementById('chatbot-messages');
+            const chatbotInput = document.getElementById('chatbot-input');
+            const chatbotSend = document.getElementById('chatbot-send');
+            const csrfToken = '{{ csrf_token('chatbot') }}';
+            const chatbotUrl = '{{ path('chatbot_response') }}';
+
+            function addMessage(text, isUser = false) {
+                const msgDiv = document.createElement('div');
+                msgDiv.textContent = text;
+                msgDiv.style.textAlign = isUser ? 'right' : 'left';
+                msgDiv.style.color = isUser ? 'blue' : 'black';
+                chatbotMessages.appendChild(msgDiv);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
+
+            chatbotSend.addEventListener('click', () => {
+                const message = chatbotInput.value.trim();
+                if (message) {
+                    addMessage(message, true);
+                    fetch(chatbotUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken
+                        },
+                        body: JSON.stringify({ message: message })
+                    })
+                    .then(response => response.json())
+                    .then(data => addMessage(data.response))
+                    .catch(error => addMessage(`Erreur: ${error.message}.`));
+                    chatbotInput.value = '';
+                }
+            });
+
+            chatbotInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') chatbotSend.click();
+            });
+
+            addMessage('Salut, bro ! Comment je peux t’aider ?');
+        });
+    </script>
 {% endblock %}

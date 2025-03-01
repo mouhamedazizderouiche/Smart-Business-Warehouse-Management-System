@@ -8,6 +8,8 @@ parameters:
     images_directory: '%kernel.project_dir%/public/uploads/images'
 
 services:
+    App\Service\ChatbotService:
+        arguments: []
     Pusher\Pusher:
         arguments:
             $auth_key: '%env(PUSHER_KEY)%'
