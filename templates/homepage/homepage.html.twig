@@ -38,7 +38,33 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+ <a href="{{ path('app_profile_show') }}" class="profile-button">
+        <button>
+            <i class="fas fa-user"></i> Profile
+        </button>
+    </a>
 
+    <style>
+        .profile-button {
+            position: fixed;
+            top: 36px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .profile-button button {
+            background-color: #4CAF50;
+           
+        }
+
+        .profile-button button:hover {
+            background-color: #45a049;
+        }
+
+        .profile-button i {
+            font-size: 18px;
+        }
+    </style>
 
         <style>
             html, body {

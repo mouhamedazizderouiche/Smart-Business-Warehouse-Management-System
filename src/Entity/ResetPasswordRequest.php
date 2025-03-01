@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\ResetPasswordRequestRepository;
@@ -14,7 +13,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     use ResetPasswordRequestTrait;
 
     #[ORM\Id]
-    #[ORM\Column]
+    #[ORM\Column(type: "uuid", unique: true)]
     private ?Uuid $id = null;
 
     #[ORM\ManyToOne]
@@ -23,6 +22,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     public function __construct(User $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
     {
+        $this->id = Uuid::v4(); // Génère un UUID valide
         $this->user = $user;
         $this->initialize($expiresAt, $selector, $hashedToken);
     }
@@ -30,12 +30,6 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
     public function getId(): ?Uuid
     {
         return $this->id;
-    }
-
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-        return $this;
     }
 
     public function getUser(): User
