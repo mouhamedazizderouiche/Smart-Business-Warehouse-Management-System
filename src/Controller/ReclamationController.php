@@ -60,7 +60,7 @@ class ReclamationController extends AbstractController
         if ($form->isValid()) {
             $reclamation->setDateReclamation(new \DateTime());
             $entityManager->persist($reclamation);
-
+            
             // Save notification in database
             $notification = new Notifications();
             $notification->setTitle($title);
@@ -71,6 +71,9 @@ class ReclamationController extends AbstractController
             $notification->setIsForAdmins(true);
             $entityManager->persist($notification);
             $entityManager->flush();
+            if ($reclamation->getTag() === null) {
+                $this->assignTagToReclamation($entityManager, $reclamation->getId()); 
+            }
 
             $pusher->trigger('admin-notifications', 'new_reclamation', [
                 'title' => $title,
@@ -270,20 +273,36 @@ class ReclamationController extends AbstractController
     {
         $user = $this->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
-
         $form = $this->createForm(ReclamationsType::class, $reclamation);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
+            $title = $form->get('title')->getData();
+            $description = $form->get('description')->getData();
+            $hasProfanity = false;
+            if (!Profanity::blocker($title, languages: ['en', 'fr'])->clean()) {
+                $this->addFlash('title', 'Do not use bad words in the title.');
+                $hasProfanity = true;
+            }
+            if (!Profanity::blocker($description, languages: ['en', 'fr'])->clean()) {
+                $this->addFlash('des', 'Do not use bad words in the description.');
+                $hasProfanity = true;
+            }
+            if ($hasProfanity) {
+                return $this->redirectToRoute('reclamation_edit', ['id' => $reclamation->getId()]);
+            }
             $entityManager->flush();
-        if ($isAdmin) {
-            return $this->redirectToRoute('reclamation_showA');
-        } else {
-            return $this->redirectToRoute('reclamation_showU');
+            if ($reclamation->getTag() === null) {
+                $this->assignTagToReclamation($entityManager, $reclamation->getId());
+            }
+            if ($isAdmin) {
+                return $this->redirectToRoute('reclamation_showA');
+            } else {
+                return $this->redirectToRoute('reclamation_showU');
+            }
         }
-        
-            
-        }
+    
+        // Render the appropriate template based on role
         if ($isAdmin) {
             return $this->render('reclamation/editrec.html.twig', [
                 'reclamation' => $reclamation,
@@ -387,7 +406,7 @@ private function assignTagToReclamation(EntityManagerInterface $entityManager, U
     $client = Gemini::client($apiKey);
     $result = $client->geminiFlash()->generateContent($prompt);
     $responseText = trim($result->text());
-
+    error_log("Gemini response: " . $responseText);
     $tag = $entityManager->getRepository(Tag::class)->findOneBy(['name' => $responseText]);
 
     if (!$tag) {

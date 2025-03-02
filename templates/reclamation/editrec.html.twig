@@ -221,12 +221,18 @@
                             <label for="{{ form.title.vars.id }}">Title <span class="required">*</span></label>
                             {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
                             <div class="error-message">{{ form_errors(form.title) }}</div>
+                             {% for message in app.flashes('title') %}
+                                <div class="alert alert-danger">{{ message }}</div>
+                            {% endfor %}
                         </div>
 
                         <div class="form-group">
                             <label for="{{ form.description.vars.id }}">Your Thoughts <span class="required">*</span></label>
                             {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
                             <div class="error-message">{{ form_errors(form.description) }}</div>
+                             {% for message in app.flashes('des') %}
+                            <div class="alert alert-danger">{{ message }}</div>
+                        {% endfor %}
                         </div>
 
                         <div class="form-group">
