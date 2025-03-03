@@ -42,6 +42,11 @@
                     <!-- Header Row with Bell and Title -->
                     <div class="header-row d-flex align-items-center justify-content-between mb-4">
                         <h2 class="header animate__fadeIn mb-0">Gestion Réclamations</h2>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <button id="retrainButton" class="btn btn-gradient-primary" title="Retrain Model">
+                                <i class="fas fa-sync-alt"></i> Retrain Model
+                            </button>
+                        {% endif %}
                         <!-- Notification Bell and Dropdown -->
                         <div id="notificationContainer" class="notification-bell-container">
                             <button id="notificationButton" class="notification-bell" title="Notifications">
@@ -155,6 +160,11 @@
                                                     <button class="auto-reply-btn btn btn-icon btn-gradient-info" data-reclamation-id="{{ reclamation.id }}" title="Generate Auto-Reply">
                                                         <i class="fas fa-reply"></i>
                                                     </button>
+                                                    {% if is_granted('ROLE_ADMIN') %}
+                                                        <button class="add-to-csv-btn btn btn-icon btn-gradient-success" data-reclamation-id="{{ reclamation.id }}" title="Add to CSV">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    {% endif %}
                                                 </div>
                                             </td>
                                         </tr>
@@ -220,10 +230,78 @@
         </div>
     </main>
 
+    <!-- Custom Modal for Pop-ups -->
+    <div id="customModal" class="modal" style="display: none;">
+        <div class="modal-content animate__animated animate__fadeInDown">
+            <div class="modal-header">
+                <h5 id="modalTitle"></h5>
+                <button id="modalClose" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="modalOk" class="btn btn-gradient-primary">OK</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // Custom Pop-up Function
+        function showPopup(type, message) {
+            const modal = document.getElementById('customModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalHeader = document.querySelector('.modal-header');
+            const modalOk = document.getElementById('modalOk');
+
+            // Reset classes
+            modalHeader.className = 'modal-header';
+            modalOk.className = 'btn btn-gradient-primary';
+
+            // Set content and styling based on type
+            switch (type) {
+                case 'success':
+                    modalTitle.textContent = 'Success';
+                    modalHeader.classList.add('success-header');
+                    modalOk.classList.add('btn-gradient-success');
+                    break;
+                case 'error':
+                    modalTitle.textContent = 'Error';
+                    modalHeader.classList.add('error-header');
+                    modalOk.classList.add('btn-gradient-danger');
+                    break;
+                case 'info':
+                    modalTitle.textContent = 'Info';
+                    modalHeader.classList.add('info-header');
+                    modalOk.classList.add('btn-gradient-info');
+                    break;
+                default:
+                    modalTitle.textContent = 'Notification';
+            }
+
+            modalMessage.textContent = message;
+            modal.style.display = 'block';
+
+            // Close modal on click
+            document.getElementById('modalClose').onclick = function() {
+                modal.style.display = 'none';
+            };
+            modalOk.onclick = function() {
+                modal.style.display = 'none';
+            };
+
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
         // Status Dropdown Update
         document.querySelectorAll('.status-dropdown').forEach(dropdown => {
             dropdown.addEventListener('change', function() {
@@ -245,12 +323,12 @@
                         row.classList.add('animate__pulse');
                         setTimeout(() => row.classList.remove('animate__pulse'), 500);
                     } else {
-                        alert('Erreur : ' + data.error);
+                        showPopup('error', 'Erreur : ' + data.error);
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Une erreur est survenue.');
+                    showPopup('error', 'Une erreur est survenue.');
                 });
             });
         });
@@ -334,7 +412,7 @@
             return diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago';
         }
 
-        // Auto-Reply Button Functionality
+        // Button Functionality with Custom Pop-ups
         $(document).ready(function() {
             $('.auto-reply-btn').click(function(e) {
                 e.preventDefault();
@@ -348,44 +426,93 @@
                     headers: { 'Content-Type': 'application/json' },
                     success: function(response) {
                         if (response.success) {
-                            alert('Auto-reply generated: ' + response.response);
-                            location.reload(); // Reloads the page to show the new message
+                            showPopup('success', 'Auto-reply generated: ' + response.response);
+                            setTimeout(() => location.reload(), 1500); 
                         } else {
-                            alert('Error: ' + response.error);
+                            showPopup('error', 'Error: ' + response.error);
                         }
                     },
                     error: function(xhr, status, error) {
-                        alert('Failed to generate auto-reply: ' + error);
+                        showPopup('error', 'Failed to generate auto-reply: ' + error);
                     }
                 });
+            });
+
+            $('.add-to-csv-btn').click(function(e) {
+                e.preventDefault();
+                const reclamationId = $(this).data('reclamation-id');
+                const url = `/reclamation/${reclamationId}/add-to-csv`;
+
+                if (confirm('Are you sure you want to add this reclamation and response to the CSV?')) {
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        dataType: 'json',
+                        headers: { 'Content-Type': 'application/json' },
+                        success: function(response) {
+                            if (response.success) {
+                                showPopup('success', 'Reclamation added to CSV: ' + response.message);
+                            } else {
+                                showPopup('info', 'Failed to add to CSV: ' + response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            showPopup('error', "No Admin Response");
+                        }
+                    });
+                }
+            });
+
+            $('#retrainButton').click(function(e) {
+                e.preventDefault();
+                const url = "{{ path('retrain_model') }}";
+
+                if (confirm('Are you sure you want to retrain the model? This may take some time.')) {
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                showPopup('success', 'Model retrained: ' + response.message);
+                            } else {
+                                showPopup('error', 'Retraining failed: ' + response.error + (response.details ? ' - ' + response.details : ''));
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            showPopup('error', 'Error retraining model: ' + error);
+                        }
+                    });
+                }
             });
         });
     </script>
 
     <style>
-        /* Core Layout */
+        .btn-gradient-success {
+            background: linear-gradient(135deg, #48bb78, #2f855a);
+            color: #fff;
+        }
+        .btn-gradient-success:hover {
+            background: linear-gradient(135deg, #2f855a, #48bb78);
+            transform: scale(1.1);
+        }
         body {
             background: linear-gradient(135deg, #eef2f7, #d9e4ec);
             color: #2d3748;
             line-height: 1.7;
             overflow-x: hidden;
         }
-
-        .page-wrapper {
-            min-height: 100vh;
-        }
-
+        .page-wrapper { min-height: 100vh; }
         .main-container {
             border-radius: 16px;
             background: #fff;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .main-container:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
         }
-
         .header {
             color: #2c7d3f;
             font-size: 2rem;
@@ -397,13 +524,7 @@
             padding-bottom: 12px;
             margin: 0;
         }
-
-        /* Notification Bell */
-        .notification-bell-container {
-            position: relative;
-            z-index: 1000;
-        }
-
+        .notification-bell-container { position: relative; z-index: 1000; }
         .notification-bell {
             background: linear-gradient(135deg, #51ad65, #2c7d3f);
             border: none;
@@ -419,12 +540,10 @@
             transition: all 0.3s ease;
             cursor: pointer;
         }
-
         .notification-bell:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(81, 173, 101, 0.6);
         }
-
         .notification-badge {
             position: absolute;
             top: -5px;
@@ -438,13 +557,10 @@
             box-shadow: 0 2px 8px rgba(245, 101, 101, 0.5);
             transition: transform 0.2s ease;
         }
-
         .notification-badge.pulse {
             transform: scale(1.2);
             box-shadow: 0 0 15px rgba(245, 101, 101, 0.8);
         }
-
-        /* Notification Dropdown */
         .notification-dropdown {
             position: absolute;
             top: 60px;
@@ -459,7 +575,6 @@
             overflow-y: auto;
             z-index: 999;
         }
-
         .dropdown-header {
             display: flex;
             justify-content: space-between;
@@ -469,14 +584,12 @@
             background: #f7fafc;
             border-radius: 8px 8px 0 0;
         }
-
         .dropdown-header h6 {
             margin: 0;
             font-size: 1rem;
             font-weight: 600;
             color: #2c7d3f;
         }
-
         .notification-total {
             font-size: 0.85rem;
             color: #000000;
@@ -484,41 +597,17 @@
             padding: 2px 8px;
             border-radius: 12px;
         }
-
-        .notification-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
+        .notification-list { list-style: none; padding: 0; margin: 0; }
         .notification-item {
             padding: 10px 12px;
             border-bottom: 1px solid #f1f5f9;
             transition: background 0.2s ease;
         }
-
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        .notification-item.unread {
-            background: #f0f9ff;
-        }
-
-        .notification-item:hover {
-            background: #f8fafc;
-        }
-
-        .notification-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-img-container {
-            flex-shrink: 0;
-        }
-
+        .notification-item:last-child { border-bottom: none; }
+        .notification-item.unread { background: #f0f9ff; }
+        .notification-item:hover { background: #f8fafc; }
+        .notification-content { display: flex; align-items: center; gap: 12px; }
+        .user-img-container { flex-shrink: 0; }
         .user-img {
             width: 32px;
             height: 32px;
@@ -527,16 +616,8 @@
             border: 2px solid #51ad65;
             transition: transform 0.2s ease;
         }
-
-        .user-img:hover {
-            transform: scale(1.1);
-        }
-
-        .notification-text {
-            flex-grow: 1;
-            min-width: 0; /* Prevents overflow */
-        }
-
+        .user-img:hover { transform: scale(1.1); }
+        .notification-text { flex-grow: 1; min-width: 0; }
         .notification-text strong {
             color: #2c7d3f;
             font-size: 0.95rem;
@@ -546,7 +627,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .notification-desc {
             margin: 2px 0 0;
             font-size: 0.85rem;
@@ -557,50 +637,31 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .notification-text small {
             font-size: 0.75rem;
             color: #718096;
             margin-top: 4px;
             display: block;
         }
-
-        .user-name {
-            color: #2c7d3f;
-            font-weight: 500;
-        }
-
-        .notification-item.unread .user-name {
-            color: #1e40af; /* Slightly different for unread */
-        }
-
+        .user-name { color: #2c7d3f; font-weight: 500; }
+        .notification-item.unread .user-name { color: #1e40af; }
         .no-notifications {
             padding: 20px;
             font-size: 0.95rem;
             color: #718096;
             text-align: center;
         }
-
-        .notification-list::-webkit-scrollbar {
-            width: 5px;
-        }
-
+        .notification-list::-webkit-scrollbar { width: 5px; }
         .notification-list::-webkit-scrollbar-thumb {
             background: linear-gradient(135deg, #51ad65, #2c7d3f);
             border-radius: 10px;
         }
-
-        .notification-list::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
-        /* Tables */
+        .notification-list::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0 8px;
         }
-
         .thead-gradient {
             background: linear-gradient(135deg, #51ad65, #2c7d3f);
             color: #fff;
@@ -608,31 +669,18 @@
             font-size: 0.9rem;
             letter-spacing: 0.5px;
         }
-
-        .custom-table th,
-        .custom-table td {
-            padding: 16px 20px;
-            vertical-align: middle;
-        }
-
+        .custom-table th, .custom-table td { padding: 16px 20px; vertical-align: middle; }
         .table-row {
             background: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         .table-row:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
-
-        .profile-img-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .profile-img-container { display: flex; align-items: center; gap: 12px; }
         .profile-img {
             width: 40px;
             height: 40px;
@@ -641,16 +689,8 @@
             border: 3px solid #51ad65;
             transition: transform 0.3s ease;
         }
-
-        .profile-img:hover {
-            transform: scale(1.1);
-        }
-
-        .user-name {
-            font-weight: 500;
-            color: #2d3748;
-        }
-
+        .profile-img:hover { transform: scale(1.1); }
+        .user-name { font-weight: 500; color: #2d3748; }
         .status-dropdown {
             background: linear-gradient(135deg, #fff, #f7fafc);
             border: 1px solid #e2e8f0;
@@ -662,24 +702,16 @@
             background-position: right 12px center;
             transition: all 0.3s ease;
         }
-
         .status-dropdown:hover {
             border-color: #51ad65;
             box-shadow: 0 0 8px rgba(81, 173, 101, 0.2);
         }
-
         .status-dropdown:focus {
             outline: none;
             border-color: #51ad65;
             box-shadow: 0 0 10px rgba(81, 173, 101, 0.4);
         }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
+        .action-buttons { display: flex; gap: 10px; align-items: center; }
         .btn-icon {
             width: 38px;
             height: 38px;
@@ -690,61 +722,39 @@
             font-size: 1rem;
             transition: all 0.3s ease;
         }
-
         .btn-gradient-primary {
             background: linear-gradient(135deg, #51ad65, #2c7d3f);
             color: #fff;
         }
-
         .btn-gradient-primary:hover {
             background: linear-gradient(135deg, #2c7d3f, #51ad65);
             transform: scale(1.1);
         }
-
         .btn-gradient-danger {
             background: linear-gradient(135deg, #f56565, #c53030);
             color: #fff;
         }
-
         .btn-gradient-danger:hover {
             background: linear-gradient(135deg, #c53030, #f56565);
             transform: scale(1.1);
         }
-
         .btn-gradient-info {
             background: linear-gradient(135deg, #4dabf7, #2b6cb0);
             color: #fff;
         }
-
         .btn-gradient-info:hover {
             background: linear-gradient(135deg, #2b6cb0, #4dabf7);
             transform: scale(1.1);
         }
-
         .badge {
             padding: 4px 8px;
             font-size: 0.8rem;
             transition: transform 0.3s ease;
         }
-
-        .bg-gradient-primary {
-            background: linear-gradient(135deg, #51ad65, #2c7d3f);
-        }
-
-        .badge:hover {
-            transform: scale(1.05);
-        }
-
-        .rating-stars .fas {
-            font-size: 1rem;
-            margin-right: 2px;
-        }
-
-        .pagination {
-            justify-content: center;
-            gap: 12px;
-        }
-
+        .bg-gradient-primary { background: linear-gradient(135deg, #51ad65, #2c7d3f); }
+        .badge:hover { transform: scale(1.05); }
+        .rating-stars .fas { font-size: 1rem; margin-right: 2px; }
+        .pagination { justify-content: center; gap: 12px; }
         .no-reclamations {
             text-align: center;
             color: #718096;
@@ -754,8 +764,6 @@
             border-radius: 12px;
             border: 1px dashed #e2e8f0;
         }
-
-        /* Auto-Reply Button */
         .auto-reply-btn {
             width: 38px;
             height: 38px;
@@ -769,37 +777,76 @@
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-left: 10px; /* Space from other action buttons */
+            margin-left: 10px;
         }
-
         .auto-reply-btn:hover {
             background: linear-gradient(135deg, #2c7d3f, #51ad65);
             transform: scale(1.1);
         }
-
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .header-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            .notification-dropdown {
-                width: 100%;
-                right: 0;
-            }
-            .custom-table th, .custom-table td {
-                padding: 10px;
-                font-size: 0.9rem;
-            }
-            .action-buttons {
-                flex-wrap: wrap;
-                gap: 5px;
-            }
-            .auto-reply-btn {
-                margin-left: 5px; /* Adjust spacing for mobile */
-            }
+            .header-row { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .notification-dropdown { width: 100%; right: 0; }
+            .custom-table th, .custom-table td { padding: 10px; font-size: 0.9rem; }
+            .action-buttons { flex-wrap: wrap; gap: 5px; }
+            .auto-reply-btn { margin-left: 5px; }
         }
+
+        /* Custom Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 12px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal-header {
+            padding: 15px 20px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0;
+        }
+        .success-header { background: linear-gradient(135deg, #48bb78, #2f855a); }
+        .error-header { background: linear-gradient(135deg, #f56565, #c53030); }
+        .info-header { background: linear-gradient(135deg, #4dabf7, #2b6cb0); }
+        .modal-header h5 { margin: 0; font-size: 1.2rem; }
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .close-btn:hover { transform: scale(1.2); }
+        .modal-body { padding: 20px; font-size: 1rem; color: #2d3748; }
+        .modal-footer {
+            padding: 10px 20px;
+            text-align: right;
+            border-top: 1px solid #e2e8f0;
+        }
+        .modal-footer .btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        .modal-footer .btn:hover { transform: scale(1.05); }
     </style>
 </body>
 </html>

@@ -191,7 +191,73 @@ class MessageReclamationController extends AbstractController
             'reclamations' => $reclamations,
         ]);
     }
-    
+
+    #[Route('/reclamation/{id}/add-to-csv', name: 'reclamation_add_to_csv', methods: ['POST'])]
+    public function addReclamationToCsv(?string $id, EntityManagerInterface $em, HttpClientInterface $httpClient): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not authenticated'], Response::HTTP_UNAUTHORIZED);
+        }
+        $reclamation = $em->getRepository(Reclamations::class)->find($id);
+        if (!$reclamation) {
+            return new JsonResponse(['error' => 'Reclamation not found'], Response::HTTP_NOT_FOUND);
+        }
+        $messages = $em->getRepository(MessageReclamation::class)
+        ->findBy(['reclamation' => $reclamation], ['dateMessage' => 'DESC']);
+            $message = null;
+            foreach ($messages as $msg) {
+                $userFromMessage = $msg->getUser();
+                if ($userFromMessage && in_array('ROLE_ADMIN', $userFromMessage->getRoles())) {
+                    $message = $msg;
+                    break;
+                }
+            }
+            if (!$message) {
+                return new JsonResponse(['error' => 'No admin response found for this reclamation'], "No Admin Response");
+            }
+        $reclamationText = trim($reclamation->getTitle() . ' ' . $reclamation->getDescription());
+        $responseText = $message->getContenu();
+
+        try {
+            $response = $httpClient->request('POST', 'http://localhost:5000/add_reclamations', [
+                'headers' => ['Content-Type' => 'application/json'],
+                'json' => [
+                    'reclamation' => $reclamationText,
+                    'response' => $responseText,
+                ],
+            ]);
+
+            $data = $response->toArray();
+            if ($response->getStatusCode() === 200) {
+                if (!empty($data['added'])) {
+                    return new JsonResponse(['success' => true, 'message' => 'Reclamation added to CSV successfully']);
+                } elseif (!empty($data['skipped'])) {
+                    return new JsonResponse(['success' => false, 'message' => 'Reclamation skipped: ' . json_encode($data['skipped'])]);
+                }
+            }
+            return new JsonResponse(['error' => 'Unexpected API response'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Failed to add to CSV: ' . $e->getMessage()], "No admin Response");
+        }
+    }
+
+    #[Route('/admin/retrain', name: 'retrain_model', methods: ['POST'])]
+    public function retrainModel( HttpClientInterface $httpClient): JsonResponse
+    {
+
+        try {
+            $response = $httpClient->request('POST', 'http://localhost:5000/retrain');
+            $data = $response->toArray();
+
+            if ($response->getStatusCode() === 200) {
+                return new JsonResponse(['success' => true, 'message' => $data['message'] ?? 'Model retrained successfully']);
+            }
+            return new JsonResponse(['error' => $data['error'] ?? 'Retraining failed', 'details' => $data['details'] ?? ''], Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Failed to retrain model: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
     
 
 
