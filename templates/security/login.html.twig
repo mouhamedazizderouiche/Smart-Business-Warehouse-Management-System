@@ -59,9 +59,35 @@
                         <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" autocomplete="email" placeholder="Entrez votre email">
                     </div>
                     <div class="mb-3">
-                        <label for="inputPassword" class="form-label">Mot de passe</label>
-                        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" placeholder="Entrez votre mot de passe">
-                    </div>
+    <label for="inputPassword" class="form-label">Mot de passe</label>
+    <div class="input-group">
+        <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" placeholder="Entrez votre mot de passe">
+        <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
+            <i id="toggleIcon" class="fas fa-eye"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("inputPassword");
+        const toggleIcon = document.getElementById("toggleIcon");
+        
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            toggleIcon.classList.remove("fa-eye");
+            toggleIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            toggleIcon.classList.remove("fa-eye-slash");
+            toggleIcon.classList.add("fa-eye");
+        }
+    }
+</script>
+
+<!-- Add FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
                     <div class="mb-3">
                         <div class="g-recaptcha" data-sitekey="6LfxDsEpAAAAAHLhK6H22Gj0zvfXCT2EgcPbpG7U"></div>
@@ -124,7 +150,7 @@
                 if (e.key === 'Enter') chatbotSend.click();
             });
 
-            addMessage('Salut, bro ! Comment je peux t’aider ?');
+            addMessage('Salut ! Comment je peux t’aider ?');
         });
     </script>
 {% endblock %}
