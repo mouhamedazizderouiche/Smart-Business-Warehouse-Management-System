@@ -145,6 +145,7 @@ class Categorie
         return $this->imgUrl;
     }
 
+
     public function setImgUrl(?string $imgUrl): self
     {
         $this->imgUrl = $imgUrl;
