@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use GuzzleHttp\Client;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Psr\Log\LoggerInterface;
 
 class RegistrationController extends AbstractController
@@ -32,7 +31,7 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setIsVerified(true);
+            $user->setIsVerified(false); // Set to false initially until email is verified
             $user->setDateIscri(new \DateTime());
 
             // Gestion de l'image faciale et récupération du face_token
@@ -65,11 +64,19 @@ class RegistrationController extends AbstractController
             );
 
             $this->addFlash('success', 'Registration successful! Please check your email to verify your account.');
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_waiting_confirmation', ['email' => $user->getEmail()]);
         }
 
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form,
+        ]);
+    }
+
+    #[Route('/waiting-confirmation/{email}', name: 'app_waiting_confirmation')]
+    public function waitingConfirmation(string $email): Response
+    {
+        return $this->render('registration/waiting_confirmation.html.twig', [
+            'email' => $email,
         ]);
     }
 
@@ -91,12 +98,10 @@ class RegistrationController extends AbstractController
             if (!empty($result['faces'])) {
                 return $result['faces'][0]['face_token'];
             } else {
-                // Log the error and return null
                 $this->logger->error('No face detected in the provided image.');
                 $this->addFlash('error', 'No face detected. Please try again with a different image.');
             }
         } catch (\Exception $e) {
-            // Log the error
             $this->logger->error('Face detection API error: ' . $e->getMessage());
             $this->addFlash('error', 'There was an error with face detection. Please try again.');
         }
@@ -119,6 +124,6 @@ class RegistrationController extends AbstractController
         }
 
         $this->addFlash('success', 'Your email address has been verified.');
-        return $this->redirectToRoute('app_login');
+        return $this->redirectToRoute('app_login'); // Redirect to home or wherever you want after verification
     }
 }

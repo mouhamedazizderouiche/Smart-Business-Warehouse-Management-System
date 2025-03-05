@@ -1,0 +1,116 @@
+
+
+{% block body %}
+    <!-- Background Video -->
+    <video autoplay muted loop class="background-video">
+        <source src="{{ asset('videos/farm.mp4') }}" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+
+    <div class="waiting-container">
+        <h1>Bienvenue sur AgriPlanner !</h1>
+        <p class="intro-text">Nous préparons les champs pour vous. Veuillez vérifier votre email pour commencer.</p>
+        
+        <div class="email-info">
+            <p>Un email de confirmation a été envoyé à <strong>{{ email }}</strong>.</p>
+            <p>Vérifiez votre boîte de réception (et le dossier spam) et cliquez sur le lien pour activer votre compte.</p>
+        </div>
+
+        <div class="gif-container">
+            <img src="{{ asset('images/woman.gif') }}" alt="GIF Femme" class="farm-gif">
+            <img src="{{ asset('images/man.gif') }}" alt="GIF Homme" class="farm-gif">
+      
+
+    <style>
+        /* Video background styling */
+        .background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the video covers the screen */
+            z-index: -1; /* Places video behind content */
+            filter: brightness(0.6); /* Darkens the video slightly for contrast */
+        }
+
+        /* Darker, cooler agriculture-themed styling */
+        .waiting-container {
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background-color: rgba(46, 46, 46, 0.85); /* Semi-transparent dark gray */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border: 2px solid #5c4033; /* Darker brown border */
+            position: relative; /* Ensures it stays above the video */
+            z-index: 1;
+        }
+
+        h1 {
+            color: #3a5f3a; /* Deeper, cooler green */
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .intro-text {
+            color: #8c6f5a; /* Muted, cooler brown */
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .email-info {
+            background-color: rgba(61, 77, 61, 0.9); /* Semi-transparent darker green */
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            color: #e0e0e0;
+        }
+
+        .email-info strong {
+            color: #6b946b; /* Lighter green for emphasis */
+        }
+
+        .gif-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .farm-gif {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            border: 2px solid #8c6f5a; /* Muted brown border */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-link {
+            font-size: 1.1em;
+            color: #b0a18f; /* Cooler tan */
+        }
+
+        .login-link a {
+            color: #6b946b; /* Matching lighter green */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+            color: #a68b6f; /* Slightly warmer hover */
+        }
+
+        /* Ensure body doesn’t override video */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: none; /* Remove previous background */
+        }
+    </style>
+{% endblock %}
