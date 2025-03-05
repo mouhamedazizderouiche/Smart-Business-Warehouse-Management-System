@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Form;
 
 use App\Entity\Categorie;
@@ -29,11 +28,6 @@ class SubCategorieType extends AbstractType
                 'attr' => ['class' => 'form-control'],
                 'required' => false,
                 'mapped' => false,
-            ])
-            ->add('slug', TextType::class, [
-                'label' => 'Slug',
-                'attr' => ['class' => 'form-control'],
-                'required' => false,
             ]);
     }
 

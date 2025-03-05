@@ -80,6 +80,12 @@
             border-color: #dc3545;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
+
+        .form-help {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +102,7 @@
                 <div class="form-error {% if form.nom.vars.errors|length > 0 %}show{% endif %}">
                     {{ form_errors(form.nom) }}
                 </div>
+                <div class="form-help">{{ form_help(form.nom) }}</div>
             </div>
 
             <div class="form-group">
@@ -104,6 +111,7 @@
                 <div class="form-error {% if form.description.vars.errors|length > 0 %}show{% endif %}">
                     {{ form_errors(form.description) }}
                 </div>
+                <div class="form-help">{{ form_help(form.description) }}</div>
             </div>
 
             <div class="form-group">
@@ -112,14 +120,7 @@
                 <div class="form-error {% if form.imgUrl.vars.errors|length > 0 %}show{% endif %}">
                     {{ form_errors(form.imgUrl) }}
                 </div>
-            </div>
-
-            <div class="form-group">
-                {{ form_label(form.slug) }}
-                {{ form_widget(form.slug, {'attr': {'class': 'form-control' ~ (form.slug.vars.errors|length > 0 ? ' error' : '')}}) }}
-                <div class="form-error {% if form.slug.vars.errors|length > 0 %}show{% endif %}">
-                    {{ form_errors(form.slug) }}
-                </div>
+                <div class="form-help">{{ form_help(form.imgUrl) }}</div>
             </div>
 
             <button type="submit" class="ajout-categorie-btn">Ajouter sous-catégorie</button>

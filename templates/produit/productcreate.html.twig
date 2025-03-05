@@ -139,11 +139,11 @@
         <div class="content-page">
             <div class="display-container">
                 <div class="image-preview-container">
-                    <img id="preview-image" src="#" alt="Aperçu de l'image" class="preview-image">
+                    <img id="preview-image" src="{% if produit and produit.imageName %}{{ vich_uploader_asset(produit, 'imageFile') }}{% else %}#{% endif %}" alt="Aperçu de l'image" class="preview-image">
                     <p class="preview-text">Aucune image sélectionnée</p>
                 </div>
                 <div class="container-form">
-                    {{ form_start(form, {'attr': {'class': 'produit-form'}}) }}
+                    {{ form_start(form, {'attr': {'class': 'produit-form', 'enctype': 'multipart/form-data'}}) }}
                     <div class="nom-container">
                         <div class="label-nom">
                             {{ form_label(form.nom) }}
@@ -212,13 +212,13 @@
                     </div>
 
                     <div class="produit-image-upload">
-                        {{ form_widget(form.urlImageProduit, {'attr': {
+                        {{ form_widget(form.imageFile, {'attr': {
                             'class': 'form-image',
                             'onchange': 'previewFile()'
                         }}) }}
-                        <div class="form-error {% if form.urlImageProduit.vars.errors|length %}show{% endif %}"
-                             id="{{ form.urlImageProduit.vars.id }}_error">
-                            {{ form_errors(form.urlImageProduit) }}
+                        <div class="form-error {% if form.imageFile.vars.errors|length %}show{% endif %}"
+                             id="{{ form.imageFile.vars.id }}_error">
+                            {{ form_errors(form.imageFile) }}
                         </div>
                     </div>
 

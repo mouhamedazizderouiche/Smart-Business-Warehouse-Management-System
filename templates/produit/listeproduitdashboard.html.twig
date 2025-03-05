@@ -124,13 +124,17 @@
 
         .d-flex gap-2
         {
-           display: flex;
+            display: flex;
         }
 
         h1 {
             margin: 0 0 40px 20px;
         }
 
+        img.produit-image {
+            height: 60px !important;
+            width: 60px !important;
+        }
     </style>
 </head>
 
@@ -159,22 +163,22 @@
 
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <h1>Liste produits</h1>
-<!-- Fruits Shop Start -->
-<div class="container-fluid fruite py-5">
-    <div class="container py-5" >
-        <div class="container-flui">
-            <div class="add-btn" onclick="window.location.href='{{ path('ajout_produit') }}'">Ajouter produit</div>
-        </div>
-        <div class="row g-4">
-            <div class="col-lg-12">
-                <div class="row g-4">
-                    <div class="col-lg-3">
+    <!-- Fruits Shop Start -->
+    <div class="container-fluid fruite py-5">
+        <div class="container py-5" >
+            <div class="container-flui">
+                <div class="add-btn" onclick="window.location.href='{{ path('ajout_produit') }}'">Ajouter produit</div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-12">
+                    <div class="row g-4">
+                        <div class="col-lg-3">
 
+                        </div>
                     </div>
-                </div>
 
 
-                <!-- Product Table -->
+                    <!-- Product Table -->
                     <table class="table table-bordered table-striped">
                         <thead>
                         <tr>
@@ -197,8 +201,7 @@
                                 <td>{{ produit.prixUnitaire }} DT</td>
                                 <td>{{ produit.quantite}}</td>
                                 <td class="image-containter">
-                                    <img src="{{ asset(produit.urlImageProduit) }}" class="img-fluid" alt="Image produit" style="width: 100px;">
-                                </td>
+                                    <img class="produit-image" src="{{ vich_uploader_asset(produit, 'imageFile') }}" alt="{{ produit.nom }}">                                </td>
                                 <td class="action-container">
                                     <div class="d-flex gap-2">
 
@@ -220,13 +223,13 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                <!-- End Product Table -->
+                    <!-- End Product Table -->
+                </div>
             </div>
         </div>
     </div>
-</div>
-</div>
-<!-- Fruits Shop End -->
+    </div>
+    <!-- Fruits Shop End -->
 </main>
 <!-- Back to Top -->
 <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>

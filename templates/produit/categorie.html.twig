@@ -160,7 +160,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="3" class="no-data">Aucune catégorie trouvée</td>
+                    <td colspan="4" class="no-data">Aucune catégorie trouvée</td>
                 </tr>
             {% endfor %}
             </tbody>
@@ -181,7 +181,7 @@
             </thead>
             <tbody>
             {% for categorie in categories %}
-                {% for subcategory in categorie.subcategories %}
+                {% for subcategory in categorie.children %}
                     <tr>
                         <td>
                             {% if subcategory.imgUrl %}
