@@ -1,0 +1,57 @@
+{# templates/stock/predictions.html.twig #}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédictions de la demande</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Prédictions de la demande</h1>
+
+    {% if predictions is empty %}
+        <p>Aucune prédiction disponible.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Date</th>
+                    <th>Quantité prédite</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product_id, forecast in predictions %}
+                    {% if forecast.error is defined %}
+                        <tr>
+                            <td colspan="3" style="color: red;">{{ product_id }} : {{ forecast.error }}</td>
+                        </tr>
+                    {% else %}
+                        {% for date, quantity in forecast %}
+                            <tr>
+                                <td>{{ product_id }}</td>
+                                <td>{{ date }}</td>
+                                <td>{{ quantity }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>

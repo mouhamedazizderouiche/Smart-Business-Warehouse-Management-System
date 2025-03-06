@@ -18,12 +18,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use TCPDF;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Process\Process;
-use App\Service\PythonPredictor;
-use App\Service\RapportExportService;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 #[Route('/stock')]
 class StockController extends AbstractController{
 #[Route('/', name: 'app_stock_index', methods: ['GET'])]
@@ -196,12 +198,17 @@ public function exportExcelAction(EntityManagerInterface $entityManager): Respon
 
     // Informations statiques de l'entreprise
     $nomEntreprise = 'Agriplaner';
-    $telephone = '+21671000000';
+    $telephone = '+216 71 000 000';
     $email = 'ContacteInfo@Agriplaner.tn';
 
     // Créer un nouveau fichier Excel
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
+
+    // Ajouter un fond clair à la feuille entière
+    $sheet->getStyle('A1:F' . (count($stocks) + 10))->getFill()
+        ->setFillType(Fill::FILL_SOLID)
+        ->getStartColor()->setRGB('F0F8FF'); // Bleu très clair (équivalent à 240, 248, 255)
 
     // Ajouter un logo à gauche
     $logoLeftPath = $this->getParameter('kernel.project_dir') . '/public/uploads/photos/logo.jpg';
@@ -210,53 +217,72 @@ public function exportExcelAction(EntityManagerInterface $entityManager): Respon
         $drawingLeft->setName('Logo Gauche');
         $drawingLeft->setDescription('Logo Gauche');
         $drawingLeft->setPath($logoLeftPath);
-        $drawingLeft->setHeight(50);
+        $drawingLeft->setHeight(60);
         $drawingLeft->setCoordinates('A1');
+        $drawingLeft->setOffsetX(5);
+        $drawingLeft->setOffsetY(5);
         $drawingLeft->setWorksheet($sheet);
     }
 
     // Ajouter un logo à droite
-    $logoRightPath = $this->getParameter('kernel.project_dir') . '/public/uploads/photos/esprit.jpg'; // Chemin du deuxième logo
+    $logoRightPath = $this->getParameter('kernel.project_dir') . '/public/uploads/photos/esprit.jpg';
     if (file_exists($logoRightPath)) {
         $drawingRight = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
         $drawingRight->setName('Logo Droit');
         $drawingRight->setDescription('Logo Droit');
         $drawingRight->setPath($logoRightPath);
-        $drawingRight->setHeight(50);
-        $drawingRight->setCoordinates('F1'); // Position à droite
+        $drawingRight->setHeight(60);
+        $drawingRight->setCoordinates('F1');
+        $drawingRight->setOffsetX(-5);
         $drawingRight->setWorksheet($sheet);
     }
 
     // Ajouter les informations de l'entreprise
+    $sheet->mergeCells('B2:E2');
     $sheet->setCellValue('B2', $nomEntreprise);
+    $sheet->getStyle('B2')->getFont()->setBold(true)->setSize(18)->getColor()->setRGB('1976D2'); // Bleu vif
+    $sheet->getStyle('B2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    $sheet->mergeCells('B3:E3');
     $sheet->setCellValue('B3', 'Téléphone : ' . $telephone);
+    $sheet->getStyle('B3')->getFont()->setSize(10)->getColor()->setRGB('424242'); // Gris foncé
+    $sheet->getStyle('B3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    $sheet->mergeCells('B4:E4');
     $sheet->setCellValue('B4', 'Email : ' . $email);
+    $sheet->getStyle('B4')->getFont()->setSize(10)->getColor()->setRGB('424242');
+    $sheet->getStyle('B4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+    // Ligne décorative (simulée par une bordure)
+    $sheet->getStyle('A5:F5')->getBorders()->getBottom()->setBorderStyle(Border::BORDER_MEDIUM)->getColor()->setRGB('1976D2');
 
     // Ajouter un en-tête
-    $sheet->mergeCells('B6:F6');
-    $sheet->setCellValue('B6', 'Rapport des Stocks');
-    $sheet->getStyle('B6')->getFont()->setBold(true)->setSize(16);
-    $sheet->getStyle('B6')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $sheet->mergeCells('A6:F6');
+    $sheet->setCellValue('A6', 'Rapport des Stocks');
+    $sheet->getStyle('A6')->getFont()->setBold(true)->setSize(20)->getColor()->setRGB('00C853'); // Vert vif
+    $sheet->getStyle('A6')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
     // Ajouter la date de génération
-    $sheet->mergeCells('B7:F7');
-    $sheet->setCellValue('B7', 'Généré le : ' . date('d/m/Y à H:i'));
-    $sheet->getStyle('B7')->getFont()->setItalic(true)->setSize(10);
-    $sheet->getStyle('B7')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $sheet->mergeCells('A7:F7');
+    $sheet->setCellValue('A7', 'Généré le : ' . date('d/m/Y à H:i'));
+    $sheet->getStyle('A7')->getFont()->setItalic(true)->setSize(10)->getColor()->setRGB('787878'); // Gris moyen
+    $sheet->getStyle('A7')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
     // Ajouter les en-têtes de colonnes
-    $headers = ['Produit', 'Quantité', 'Date Entrée', 'Date Sortie', 'Entrepôt', 'Catégorie'];
+    $headers = ['Produit', 'Quantité', 'Date Entrée', 'Date Sortie', 'Entrepôts', 'Seuil Alerte'];
     $column = 'A';
     foreach ($headers as $header) {
         $sheet->setCellValue($column . '9', $header);
-        $sheet->getStyle($column . '9')->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
-        $sheet->getStyle($column . '9')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('4F81BD');
-        $sheet->getStyle($column . '9')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle($column . '9')->getFont()->setBold(true)->setSize(11)->getColor()->setRGB('F5F7FA');
+        $sheet->getStyle($column . '9')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FFFFFF'); // Bleu vif
+        $sheet->getStyle($column . '9')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle($column . '9')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN)->getColor()->setRGB('FFFFFF');
         $column++;
     }
 
-    // Ajouter les données
+    // Ajouter les données avec alternance de couleurs
     $row = 10;
+    $fill = false;
     foreach ($stocks as $stock) {
         $entrepots = $stock->getEntrepots();
         $entrepotsList = [];
@@ -265,20 +291,43 @@ public function exportExcelAction(EntityManagerInterface $entityManager): Respon
         }
         $entrepotsString = empty($entrepotsList) ? 'N/A' : implode(', ', $entrepotsList);
 
+        // Alternance de couleurs
+        $fillColor = $fill ? 'F5F7FA' : 'FFFFFF'; // Gris clair / Blanc
+        $range = 'A' . $row . ':F' . $row;
+        $sheet->getStyle($range)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB($fillColor);
+        $sheet->getStyle($range)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN)->getColor()->setRGB('D3D3D3');
+
+        // Données
         $sheet->setCellValue('A' . $row, $stock->getProduit()->getNom());
         $sheet->setCellValue('B' . $row, $stock->getProduit()->getQuantite());
         $sheet->setCellValue('C' . $row, $stock->getDateEntree()->format('d/m/Y'));
         $sheet->setCellValue('D' . $row, $stock->getDateSortie() ? $stock->getDateSortie()->format('d/m/Y') : 'N/A');
         $sheet->setCellValue('E' . $row, $entrepotsString);
-        $sheet->setCellValue('F' . $row, $stock->getProduit()->getCategorie());
 
+        // Mise en évidence du seuil d'alerte
+        $quantite = $stock->getProduit()->getQuantite();
+        $seuilAlert = $stock->getSeuilAlert();
+        if ($quantite < $seuilAlert) {
+            $sheet->getStyle('F' . $row)->getFont()->getColor()->setRGB('FF5722'); // Orange vif
+        }
+        $sheet->setCellValue('F' . $row, $seuilAlert ?? 'N/A');
+
+        $sheet->getStyle($range)->getFont()->setSize(10)->getColor()->setRGB('212121'); // Gris foncé
+        $sheet->getStyle($range)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         $row++;
+        $fill = !$fill;
     }
 
     // Ajuster la largeur des colonnes
     foreach (range('A', 'F') as $column) {
         $sheet->getColumnDimension($column)->setAutoSize(true);
     }
+
+    // Ajouter un pied de page
+    $sheet->setCellValue('A' . ($row + 1), '© 2025 Agriplaner - Généré automatiquement');
+    $sheet->mergeCells('A' . ($row + 1) . ':F' . ($row + 1));
+    $sheet->getStyle('A' . ($row + 1))->getFont()->setItalic(true)->setSize(8)->getColor()->setRGB('787878');
+    $sheet->getStyle('A' . ($row + 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
     // Création du fichier Excel en mémoire
     $writer = new Xlsx($spreadsheet);
@@ -296,6 +345,7 @@ public function exportExcelAction(EntityManagerInterface $entityManager): Respon
         'Content-Disposition' => 'attachment; filename="stock_export_' . date('Y-m-d') . '.xlsx"',
     ], true, 'inline', true, true);
 }
+
 #[Route("/stock/export-pdf", name: "export_pdf_stock")]
 public function exportPdfStockAction(EntityManagerInterface $entityManager): Response
 {
@@ -304,80 +354,102 @@ public function exportPdfStockAction(EntityManagerInterface $entityManager): Res
 
     // Informations statiques de l'entreprise
     $nomEntreprise = 'Agriplaner';
-    $telephone = '+21671000000';
+    $telephone = '+216 71 000 000';
     $email = 'ContacteInfo@Agriplaner.tn';
 
     // Initialiser TCPDF
-    $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+    $pdf = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
 
-    // Définir les informations du document
+    // Définir les métadonnées du document
     $pdf->SetCreator(PDF_CREATOR);
-    $pdf->SetAuthor('Votre Application');
-    $pdf->SetTitle('Export des Stocks');
-    $pdf->SetSubject('Export des Stocks');
-    $pdf->SetKeywords('Stock, PDF, Export');
+    $pdf->SetAuthor('Agriplaner');
+    $pdf->SetTitle('Rapport des Stocks - Agriplaner');
+    $pdf->SetSubject('Exportation des Stocks');
+    $pdf->SetKeywords('Stock, PDF, Agriplaner, Rapport');
+
+    // Supprimer les marges par défaut pour un design personnalisé
+    $pdf->SetMargins(10, 10, 10);
+    $pdf->SetAutoPageBreak(true, 10);
 
     // Ajouter une page
     $pdf->AddPage();
 
-    // Ajouter un logo à gauche
+    // Ajouter un fond coloré subtil (dégradé)
+    $pdf->SetFillColor(240, 248, 255); // Bleu très clair
+    $pdf->Rect(0, 0, 210, 297, 'F'); // Fond de la page entière
+
+    // Ajouter un filigrane (optionnel)
+    $pdf->SetAlpha(0.1);
+    $pdf->SetFont('helvetica', 'B', 50);
+    $pdf->SetTextColor(200, 200, 200);
+    $pdf->StartTransform();
+    $pdf->Rotate(45, 50, 200);
+    $pdf->Text(50, 200, 'Agriplaner');
+    $pdf->StopTransform();
+    $pdf->SetAlpha(1);
+
+    // Ajouter les logos avec style
     $logoLeftPath = $this->getParameter('kernel.project_dir') . '/public/uploads/photos/logo.jpg';
     if (file_exists($logoLeftPath)) {
-        $pdf->Image($logoLeftPath, 10, 10, 30, 0, 'JPG'); // Position (x=10, y=10), largeur=30, hauteur automatique
+        $pdf->Image($logoLeftPath, 10, 10, 40, 0, 'JPG', '', '', true, 300, '', false, false, 1, false, false, false);
     }
 
-    // Ajouter un logo à droite
-    $logoRightPath = $this->getParameter('kernel.project_dir') . '/public/uploads/photos/esprit.jpg'; // Chemin du deuxième logo
+    $logoRightPath = $this->getParameter('kernel.project_dir') . '/public/uploads/photos/esprit.jpg';
     if (file_exists($logoRightPath)) {
-        $pdf->Image($logoRightPath, 170, 10, 30, 0, 'JPG'); // Position (x=170, y=10), largeur=30, hauteur automatique
+        $pdf->Image($logoRightPath, 160, 10, 40, 0, 'JPG', '', '', true, 300, '', false, false, 1, false, false, false);
     }
 
-    // Ajouter les informations de l'entreprise
-    $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->SetXY(50, 15); // Position (x=50, y=15)
-    $pdf->Cell(0, 10, $nomEntreprise, 0, 1);
+    // En-tête stylisé de l'entreprise
+    $pdf->SetFont('helvetica', 'B', 18);
+    $pdf->SetTextColor(25, 118, 210); // Bleu vif
+    $pdf->SetXY(50, 15);
+    $pdf->Cell(110, 10, $nomEntreprise, 0, 1, 'C');
     $pdf->SetFont('helvetica', '', 10);
-    $pdf->SetXY(50, 20);
-    $pdf->Cell(0, 10, 'Téléphone : ' . $telephone, 0, 1);
+    $pdf->SetTextColor(66, 66, 66); // Gris foncé
     $pdf->SetXY(50, 25);
-    $pdf->Cell(0, 10, 'Email : ' . $email, 0, 1);
+    $pdf->Cell(110, 5, 'Téléphone : ' . $telephone, 0, 1, 'C');
+    $pdf->SetXY(50, 30);
+    $pdf->Cell(110, 5, 'Email : ' . $email, 0, 1, 'C');
 
-    // Ajouter un en-tête
-    $pdf->SetFont('helvetica', 'B', 16);
+    // Ligne décorative sous l’en-tête
+    $pdf->SetLineStyle(['width' => 0.5, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => [25, 118, 210]]);
+    $pdf->Line(10, 40, 200, 40);
+
+    // Titre du rapport
+    $pdf->SetFont('helvetica', 'B', 20);
+    $pdf->SetTextColor(0, 150, 136); // Vert-bleu vif
+    $pdf->SetXY(0, 50);
     $pdf->Cell(0, 10, 'Rapport des Stocks', 0, 1, 'C');
     $pdf->SetFont('helvetica', 'I', 10);
-    $pdf->Cell(0, 10, 'Généré le : ' . date('d/m/Y à H:i'), 0, 1, 'C');
+    $pdf->SetTextColor(120, 120, 120); // Gris moyen
+    $pdf->Cell(0, 5, 'Généré le : ' . date('d/m/Y à H:i'), 0, 1, 'C');
     $pdf->Ln(10);
 
     // Définir les largeurs des colonnes
     $columnWidths = [
-        'produit' => 40,
+        'produit' => 50,
         'quantite' => 20,
         'date_entree' => 30,
         'date_sortie' => 30,
-        'entrepots' => 50,
-        'seuil_alert' => 30,
+        'entrepots' => 40,
+        'seuil_alert' => 20,
     ];
 
-    // Ajouter l'en-tête du tableau avec des couleurs
-    $pdf->SetFillColor(200, 220, 255); // Couleur de fond des en-têtes
-    $pdf->SetTextColor(0, 0, 0); // Couleur du texte
-    $pdf->SetFont('helvetica', 'B', 12);
-
+    // En-tête du tableau avec dégradé
+    $pdf->SetFont('helvetica', 'B', 11);
+    $pdf->SetFillColor(255,255,255); // Bleu vif
+    $pdf->SetTextColor(33, 33, 33); // Texte blanc
     $pdf->Cell($columnWidths['produit'], 10, 'Produit', 1, 0, 'C', true);
     $pdf->Cell($columnWidths['quantite'], 10, 'Quantité', 1, 0, 'C', true);
     $pdf->Cell($columnWidths['date_entree'], 10, 'Date Entrée', 1, 0, 'C', true);
     $pdf->Cell($columnWidths['date_sortie'], 10, 'Date Sortie', 1, 0, 'C', true);
     $pdf->Cell($columnWidths['entrepots'], 10, 'Entrepôts', 1, 0, 'C', true);
-    $pdf->Cell($columnWidths['seuil_alert'], 10, 'Seuil Alerte', 1, 1, 'C', true); // Saut de ligne après cette cellule
+    $pdf->Cell($columnWidths['seuil_alert'], 10, 'Seuil Alerte', 1, 1, 'C', true);
 
-    // Ajouter les données des stocks
+    // Données du tableau avec alternance de couleurs
     $pdf->SetFont('helvetica', '', 10);
-    $pdf->SetFillColor(255, 255, 255); // Couleur de fond des cellules de données
-    $pdf->SetTextColor(0, 0, 0);
-
-    foreach ($stocks as $stock) {
-        // Gérer les entrepôts associés au stock
+    $fill = false;
+    foreach ($stocks as $index => $stock) {
         $entrepots = $stock->getEntrepots();
         $entrepotsList = [];
         foreach ($entrepots as $entrepot) {
@@ -385,14 +457,33 @@ public function exportPdfStockAction(EntityManagerInterface $entityManager): Res
         }
         $entrepotsString = empty($entrepotsList) ? 'N/A' : implode(', ', $entrepotsList);
 
-        // Ajouter les cellules au PDF
-        $pdf->Cell($columnWidths['produit'], 10, $stock->getProduit()->getNom(), 1, 0, 'L');
-        $pdf->Cell($columnWidths['quantite'], 10, $stock->getProduit()->getQuantite(), 1, 0, 'C');
-        $pdf->Cell($columnWidths['date_entree'], 10, $stock->getDateEntree()->format('d/m/Y'), 1, 0, 'C');
-        $pdf->Cell($columnWidths['date_sortie'], 10, $stock->getDateSortie() ? $stock->getDateSortie()->format('d/m/Y') : 'N/A', 1, 0, 'C');
-        $pdf->Cell($columnWidths['entrepots'], 10, $entrepotsString, 1, 0, 'C');
-        $pdf->Cell($columnWidths['seuil_alert'], 10, $stock->getSeuilAlert() ?? 'N/A', 1, 1, 'C'); // Saut de ligne après cette cellule
+        // Alternance de couleurs pour les lignes
+        $pdf->SetFillColor($fill ? 245 : 255, $fill ? 247 : 255, $fill ? 250 : 255); // Gris clair / Blanc
+        $pdf->SetTextColor(33, 33, 33); // Gris très foncé
+
+        $pdf->Cell($columnWidths['produit'], 8, $stock->getProduit()->getNom(), 1, 0, 'L', true);
+        $pdf->Cell($columnWidths['quantite'], 8, $stock->getProduit()->getQuantite(), 1, 0, 'C', true);
+        $pdf->Cell($columnWidths['date_entree'], 8, $stock->getDateEntree()->format('d/m/Y'), 1, 0, 'C', true);
+        $pdf->Cell($columnWidths['date_sortie'], 8, $stock->getDateSortie() ? $stock->getDateSortie()->format('d/m/Y') : 'N/A', 1, 0, 'C', true);
+        $pdf->Cell($columnWidths['entrepots'], 8, $entrepotsString, 1, 0, 'C', true);
+        
+        // Mettre en évidence le seuil d'alerte si dépassé
+        $quantite = $stock->getProduit()->getQuantite();
+        $seuilAlert = $stock->getSeuilAlert();
+        if ($quantite < $seuilAlert) {
+            $pdf->SetTextColor(255, 87, 34); // Orange vif pour alerte
+        }
+        $pdf->Cell($columnWidths['seuil_alert'], 8, $seuilAlert ?? 'N/A', 1, 1, 'C', true);
+        $pdf->SetTextColor(33, 33, 33); // Réinitialiser la couleur
+
+        $fill = !$fill; // Alterner les couleurs
     }
+
+    // Ajouter un pied de page stylisé
+    $pdf->SetY(-20);
+    $pdf->SetFont('helvetica', 'I', 8);
+    $pdf->SetTextColor(120, 120, 120);
+    $pdf->Cell(0, 10, '© 2025 Agriplaner - Généré automatiquement', 0, 0, 'C');
 
     // Générer le nom du fichier
     $filename = 'stock_export_' . date('Y-m-d') . '.pdf';
@@ -403,8 +494,7 @@ public function exportPdfStockAction(EntityManagerInterface $entityManager): Res
     $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
 
     return $response;
-
-  }
+}
   #[Route('/dashboard', name: 'app_stock_dashboard')]
 
   public function dashboardIndex(StockRepository $stockRepository, EntrepotRepository $entrepotRepository, Request $request): Response
@@ -430,27 +520,41 @@ public function exportPdfStockAction(EntityManagerInterface $entityManager): Res
           'timeRange' => $timeRange,
       ]);
     }
-  
-    private PythonPredictor $pythonPredictor;
+    #[Route('/predict-demand', name: 'app_stock_predict-demand')]
 
-    public function __construct(PythonPredictor $pythonPredictor)
+    public function predictDemand(): Response
     {
-        $this->pythonPredictor = $pythonPredictor;
-    }
+        // Chemin du script Python
+        $pythonScriptPath = $this->getParameter('kernel.project_dir') . '/scripts/predict_demand.py';
 
-    #[Route('/predict-demand', name: 'predict_demand', methods: ['GET'])]
-    public function predictDemand(): \Symfony\Component\HttpFoundation\JsonResponse
-    {
+        // Données de stock à passer au script Python
         $stockData = [
             ['product_id' => '550e8400-e29b-41d4-a716-446655440000', 'quantity' => 10, 'date' => '2023-10-01'],
             ['product_id' => '550e8400-e29b-41d4-a716-446655440000', 'quantity' => 15, 'date' => '2023-10-02'],
-            // Ajoutez plus de données ici
+            ['product_id' => '123e4567-e89b-12d3-a456-426614174000', 'quantity' => 5, 'date' => '2023-10-01'],
         ];
 
-        // Appeler le service PythonPredictor
-        $predictions = $this->pythonPredictor->predict($stockData);
+        // Convertir les données en JSON
+        $inputData = json_encode($stockData);
 
-        return $this->json($predictions);
+        // Exécuter le script Python
+        $process = new Process(['python3', $pythonScriptPath, $inputData]);
+        $process->run();
+
+        // Vérifier si l'exécution a réussi
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        // Récupérer la sortie du script Python
+        $output = $process->getOutput();
+        $predictions = json_decode($output, true);
+
+        // Passer les prédictions au template Twig
+        return $this->render('stock/predictions.html.twig', [
+            'predictions' => $predictions,
+        ]);
     }
+}
 
-  }
+  
