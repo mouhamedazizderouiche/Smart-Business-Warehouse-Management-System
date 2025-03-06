@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Calendar Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+        }
+        .calendar-wrapper {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        li {
+            background-color: #fff;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        li strong {
+            color: #1a73e8;
+            font-size: 1.2em;
+        }
+        .event-time {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .event-description {
+            margin-top: 10px;
+            color: #444;
+            font-size: 0.95em;
+        }
+        .no-events {
+            text-align: center;
+            font-size: 1.1em;
+            color: #888;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Calendar Events</h1>
+    
+    <div class="calendar-wrapper">
+        <iframe src="https://calendar.google.com/calendar/embed?src=medoussemahaggui%40gmail.com&ctz=UTC" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+    </div>
+    
+    <ul>
+        {% for event in events %}
+            <li>
+                <strong>{{ event.summary }}</strong>
+                <div class="event-time">
+                    {{ event.start.dateTime|default(event.start.date)|date('Y-m-d H:i:s') }}
+                </div>
+                <div class="event-description">
+                    {{ event.description|default('No description available') }}
+                </div>
+            </li>
+        {% else %}
+            <li class="no-events">No events found.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

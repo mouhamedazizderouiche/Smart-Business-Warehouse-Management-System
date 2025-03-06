@@ -1,37 +1,22 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
     images_directory: '%kernel.project_dir%/public/uploads/images'
+    google_credentials_path: '%kernel.project_dir%/config/credentials.json'
+    google_token_path: '%kernel.project_dir%/config/token.json'
+    google_api_key: '%env(GOOGLE_API_KEY)%'
+    google_redirect_uri: '%env(GOOGLE_REDIRECT_URI)%'
 
 services:
-    App\Service\ChatbotService:
-        arguments: []
-    Pusher\Pusher:
-        arguments:
-            $auth_key: '%env(PUSHER_KEY)%'
-            $secret: '%env(PUSHER_SECRET)%'
-            $app_id: '%env(PUSHER_APP_ID)%'
-            $options: { cluster: '%env(PUSHER_CLUSTER)%', useTLS: true }
-
-            
-    # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        autowire: true
+        autoconfigure: true
+        bind:
+            string $credentialsPath: '%google_credentials_path%'
+            string $tokenPath: '%google_token_path%'
+            string $redirectUri: '%google_redirect_uri%'
 
-
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            # - '../src/Entity/'
             - '../src/Kernel.php'
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones

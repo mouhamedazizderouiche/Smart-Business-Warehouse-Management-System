@@ -10,6 +10,8 @@ use Doctrine\DBAL\Types\Types;
 use App\Enum\TypeEvenement;
 use App\Enum\StatutEvenement;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Inscription;
+use App\Entity\CommentaireEvent;
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
 class Evenement
@@ -25,10 +27,9 @@ class Evenement
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::TEXT)]
-#[Assert\NotBlank(message: 'La description est obligatoire.')]
-#[Assert\Length(max: 1000, maxMessage: 'La description ne peut pas dépasser 1000 caractères.')]
-private ?string $description = null;
-
+    #[Assert\NotBlank(message: 'La description est obligatoire.')]
+    #[Assert\Length(max: 1000, maxMessage: 'La description ne peut pas dépasser 1000 caractères.')]
+    private ?string $description = null;
 
     #[ORM\Column(length: 20)]
     private ?string $type = null;
@@ -51,12 +52,18 @@ private ?string $description = null;
     #[Assert\Count(min: 1, minMessage: 'Vous devez sélectionner au moins une région.')]
     private Collection $evenementRegions;
 
+    #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Inscription::class, cascade: ['persist', 'remove'])]
+    private Collection $inscriptions;
+
+    #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: CommentaireEvent::class)]
+    private Collection $commentaireEvents;
+
     public function __construct()
     {
         $this->evenementRegions = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
+        $this->commentaireEvents = new ArrayCollection();
     }
-
-    // Getters et Setters
 
     public function getId(): ?int
     {
@@ -140,8 +147,6 @@ private ?string $description = null;
         return $this;
     }
 
-    // Gestion des régions via EvenementRegion
-
     /**
      * @return Collection<int, EvenementRegion>
      */
@@ -171,7 +176,6 @@ private ?string $description = null;
         return $this;
     }
 
-    // Méthode pour obtenir les régions associées directement
     public function getRegions(): array
     {
         $regions = [];
@@ -181,7 +185,6 @@ private ?string $description = null;
         return $regions;
     }
 
-    // Méthode pour ajouter une région directement
     public function addRegion(Region $region): self
     {
         $evenementRegion = new EvenementRegion();
@@ -190,7 +193,6 @@ private ?string $description = null;
         return $this;
     }
 
-    // Méthode pour supprimer une région directement
     public function removeRegion(Region $region): self
     {
         foreach ($this->evenementRegions as $evenementRegion) {
@@ -201,6 +203,62 @@ private ?string $description = null;
         }
         return $this;
     }
+
+    /**
+     * @return Collection<int, Inscription>
+     */
+    public function getInscriptions(): Collection
+    {
+        return $this->inscriptions;
+    }
+
+    public function addInscription(Inscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription)) {
+            if ($inscription->getEvenement() === $this) {
+                $inscription->setEvenement(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireEvent>
+     */
+    public function getCommentaireEvents(): Collection
+    {
+        return $this->commentaireEvents;
+    }
+
+    public function addCommentaireEvent(CommentaireEvent $commentaireEvent): self
+    {
+        if (!$this->commentaireEvents->contains($commentaireEvent)) {
+            $this->commentaireEvents->add($commentaireEvent);
+            $commentaireEvent->setEvenement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireEvent(CommentaireEvent $commentaireEvent): self
+    {
+        if ($this->commentaireEvents->removeElement($commentaireEvent)) {
+            if ($commentaireEvent->getEvenement() === $this) {
+                $commentaireEvent->setEvenement(null);
+            }
+        }
+
+        return $this;
+    }
 }
-
-

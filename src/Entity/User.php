@@ -11,6 +11,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Uid\Uuid;
+use App\Entity\Inscription;
+use App\Entity\CommentaireEvent;
+use App\Entity\Produit;
+use App\Entity\Reclamations;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -19,21 +23,15 @@ use Symfony\Component\Uid\Uuid;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\Column(type: "uuid")]
+    #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $id = null;
 
-    #[ORM\Column(length: 180)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -44,32 +42,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $dateIscri = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $photoUrl = '';
+    private ?string $photoUrl = null;
 
     #[ORM\Column]
     private bool $isVerified = false;
 
     #[ORM\Column(length: 255)]
-    private ?string $Nom = null;
+    private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $Prenom = null;
+    private ?string $prenom = null;
 
-    #[ORM\Column]
-    private ?int $NumTel = null;
+    #[ORM\Column(type: 'integer')]
+    private ?int $numTel = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Reclamations::class, cascade: ['persist', 'remove'])]
     private Collection $reclamations;
 
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'user')]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Produit::class)]
     private Collection $produits;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Inscription::class, cascade: ['persist', 'remove'])]
+    private Collection $inscriptions;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CommentaireEvent::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $commentaireEvents;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $faceToken = null;
 
     public function __construct()
     {
+        $this->id = Uuid::v4();
         $this->reclamations = new ArrayCollection();
+        $this->produits = new ArrayCollection();
+        $this->inscriptions = new ArrayCollection();
+        $this->commentaireEvents = new ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -77,85 +85,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function setId(Uuid $id): static
-    {
-        $this->id = $id;
-        return $this;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
     }
 
-    #[ORM\PrePersist]
-    public function generateUuid(): void
-    {
-        if ($this->id === null) {
-            $this->id = Uuid::v4();
-        }
-    }
-
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     *
-     * @return list<string>
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // Guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(string $password): self
     {
         $this->password = $password;
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // Clear sensitive data if needed
     }
 
     public function getTravail(): ?string
@@ -163,7 +136,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->travail;
     }
 
-    public function setTravail(string $travail): static
+    public function setTravail(string $travail): self
     {
         $this->travail = $travail;
         return $this;
@@ -174,7 +147,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->dateIscri;
     }
 
-    public function setDateIscri(?\DateTimeInterface $dateIscri): static
+    public function setDateIscri(?\DateTimeInterface $dateIscri): self
     {
         $this->dateIscri = $dateIscri;
         return $this;
@@ -185,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->photoUrl;
     }
 
-    public function setPhotoUrl(string $photoUrl): static
+    public function setPhotoUrl(?string $photoUrl): self
     {
         $this->photoUrl = $photoUrl;
         return $this;
@@ -196,7 +169,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isVerified;
     }
 
-    public function setIsVerified(bool $isVerified): static
+    public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
         return $this;
@@ -204,34 +177,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getNom(): ?string
     {
-        return $this->Nom;
+        return $this->nom;
     }
 
-    public function setNom(string $Nom): static
+    public function setNom(string $nom): self
     {
-        $this->Nom = $Nom;
+        $this->nom = $nom;
         return $this;
     }
 
     public function getPrenom(): ?string
     {
-        return $this->Prenom;
+        return $this->prenom;
     }
 
-    public function setPrenom(string $Prenom): static
+    public function setPrenom(string $prenom): self
     {
-        $this->Prenom = $Prenom;
+        $this->prenom = $prenom;
         return $this;
     }
 
     public function getNumTel(): ?int
     {
-        return $this->NumTel;
+        return $this->numTel;
     }
 
-    public function setNumTel(int $NumTel): static
+    public function setNumTel(int $numTel): self
     {
-        $this->NumTel = $NumTel;
+        $this->numTel = $numTel;
         return $this;
     }
 
@@ -240,17 +213,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->faceToken;
     }
 
-    public function setFaceToken(?string $faceToken): static
+    public function setFaceToken(?string $faceToken): self
     {
         $this->faceToken = $faceToken;
         return $this;
     }
 
-    /**
-     * @return Collection|Reclamations[]
-     */
     public function getReclamations(): Collection
     {
         return $this->reclamations;
+    }
+
+    public function addInscription(Inscription $inscription): self
+    {
+        if (!$this->inscriptions->contains($inscription)) {
+            $this->inscriptions->add($inscription);
+            $inscription->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeInscription(Inscription $inscription): self
+    {
+        if ($this->inscriptions->removeElement($inscription) && $inscription->getUser() === $this) {
+            $inscription->setUser(null);
+        }
+        return $this;
+    }
+
+    public function getCommentaireEvents(): Collection
+    {
+        return $this->commentaireEvents;
+    }
+
+    public function addCommentaireEvent(CommentaireEvent $commentaireEvent): self
+    {
+        if (!$this->commentaireEvents->contains($commentaireEvent)) {
+            $this->commentaireEvents->add($commentaireEvent);
+            $commentaireEvent->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeCommentaireEvent(CommentaireEvent $commentaireEvent): self
+    {
+        if ($this->commentaireEvents->removeElement($commentaireEvent) && $commentaireEvent->getUser() === $this) {
+            $commentaireEvent->setUser(null);
+        }
+        return $this;
     }
 }

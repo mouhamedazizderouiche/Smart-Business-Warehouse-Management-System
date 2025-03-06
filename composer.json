@@ -16,6 +16,7 @@
         "doctrine/orm": "^3.3",
         "gedmo/doctrine-extensions": "^3.19",
         "google-gemini-php/client": "^1.0",
+        "google/apiclient": "^2.18",
         "guzzlehttp/guzzle": "^7.9",
         "h4cc/wkhtmltopdf-amd64": "^0.12.4",
         "knplabs/knp-paginator-bundle": "^6.6",

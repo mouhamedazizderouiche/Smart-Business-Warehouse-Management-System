@@ -76,7 +76,7 @@
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
                                     <a href="{{ path('mon_panier') }}" class="dropdown-item">Panier</a>
                                     <a href="{{ path('historique_commandes') }}" class="dropdown-item">Historique des Commandes</a>
-                                     <a href="{{ path('reclamation_show') }}" class="dropdown-item">Community</a>
+                                     <a href="{{ path('reclamation_showU') }}" class="dropdown-item">Community</a>
 
                                     <!-- The 404 page remains a static link unless you create a route for it -->
                                     <a href="{{ path('testimonial') }}"  class="dropdown-item">Reviews</a>
@@ -207,6 +207,32 @@
                     Retour à la liste des événements
                   </a>
                 </div>
+<!-- Affichage du message flash de succès -->
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<!-- Affichage du message flash d'erreur (si l'utilisateur est déjà inscrit) -->
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<div class="mt-4">
+    <a href="{{ path('app_evenement_inscription_form', { id: evenement.id }) }}" class="btn btn-primary">
+        S'inscrire
+    </a>
+</div>
+
+
+
+
+
+
+
               </div>
             </div>
           </div>
@@ -259,6 +285,53 @@
         </div>
       </div>
     </div>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-0 border" style="background-color: #f0f2f5;">
+                <div class="card-body p-4">
+                    <!-- Comment Section - Formulaire d'ajout de commentaire -->
+                    <h4>Ajouter un commentaire</h4>
+                    {{ form_start(form, {'attr': {'class': 'form-group'}}) }}
+                        {{ form_widget(form.contenu, {'attr': {'placeholder': 'Votre commentaire...', 'class': 'form-control'}}) }}
+                        <button type="submit" class="btn btn-primary mt-2">Envoyer</button>
+                    {{ form_end(form) }}
+
+                    <!-- Afficher les erreurs du formulaire -->
+                    {% for error in form.contenu.vars.errors %}
+                        <div class="alert alert-danger">{{ error.message }}</div>
+                    {% endfor %}
+
+                    <h4 class="mt-4">Commentaires</h4>
+                    <!-- Boucle pour afficher les commentaires -->
+                    {% for commentaire in commentaires %}
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <!-- Affichage de l'auteur du commentaire -->
+                                    <div class="d-flex flex-row align-items-center">
+                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp" alt="avatar" width="25" height="25" />
+                                        <p class="small mb-0 ms-2">{{ commentaire.user.nom }}</p>
+                                    </div>
+                                    <!-- Affichage de la date du commentaire -->
+                                    <div class="d-flex flex-row align-items-center">
+                                        <small class="text-muted">{{ commentaire.dateCreation|date('d/m/Y H:i') }}</small>
+                                    </div>
+                                </div>
+                                <!-- Contenu du commentaire -->
+                                <p class="mt-3">{{ commentaire.contenu }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p>Aucun commentaire pour cet événement.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
     <!-- Single Product End -->
 
     <!-- Footer Start -->
