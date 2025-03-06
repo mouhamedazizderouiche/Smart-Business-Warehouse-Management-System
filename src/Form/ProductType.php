@@ -3,17 +3,18 @@ namespace App\Form;
 
 use App\Entity\Categorie;
 use App\Entity\Produit;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ProductType extends AbstractType
 {
@@ -24,7 +25,6 @@ class ProductType extends AbstractType
                 'empty_data' => '',
                 'label' => 'Nom du produit',
                 'constraints' => [
-                   
                     new Assert\Regex([
                         'pattern' => '/^[a-zA-ZÀ-ÿ\s]+$/u',
                         'message' => 'Le nom ne doit contenir que des lettres et des espaces.',
@@ -35,7 +35,6 @@ class ProductType extends AbstractType
                 'label' => 'Prix Unitaire',
                 'empty_data' => '0',
                 'constraints' => [
-                   
                     new Assert\Type([
                         'type' => 'numeric',
                         'message' => 'Le prix doit être un nombre valide.',
@@ -63,26 +62,32 @@ class ProductType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('urlImageProduit', FileType::class, [
-                'label' => 'URL de l\'image',
-                'mapped' => false,
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Image du produit',
                 'required' => !$options['is_edit'],
-                'attr' => ['accept' => 'image/*'],
-                
+                'allow_delete' => true,
+                'download_uri' => false,
+                'image_uri' => true,
+                'asset_helper' => true,
             ])
             ->add('categorie', EntityType::class, [
-        'class' => Categorie::class,
-        'empty_data' => '',
-        'choice_label' => 'nom',
-        'label' => 'Catégorie',
-        'placeholder' => 'Sélectionner une catégorie',
-        'constraints' => [
-            new Assert\NotNull(['message' => 'Veuillez sélectionner une catégorie.']),
-        ],
-    ])
-        ->add('save', SubmitType::class, [
-            'label' => 'Soumettre',
-        ]);
+                'class' => Categorie::class,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('c')
+                        ->where('c.parent IS NOT NULL');
+                },
+                'choice_label' => 'nom',
+                'placeholder' => 'Select a subcategory',
+                'attr' => ['class' => 'form-control'],
+                'required' => false,
+
+                'constraints' => [
+                    new Assert\NotNull(['message' => 'Veuillez sélectionner une catégorie.']),
+                ],
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Soumettre',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

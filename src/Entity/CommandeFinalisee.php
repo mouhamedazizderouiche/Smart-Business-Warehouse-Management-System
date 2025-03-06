@@ -56,6 +56,12 @@ class CommandeFinalisee
     public function setQuantite(int $quantite): self { $this->quantite = $quantite; return $this; }
     public function getPrixTotal(): float { return $this->prixTotal; }
     public function setPrixTotal(float $prixTotal): self { $this->prixTotal = $prixTotal; return $this; }
+    public function setDateCommande(\DateTimeInterface $dateCommande): self 
+{
+    $this->dateCommande = $dateCommande;
+    return $this;
+}
+
     public function getDateCommande(): \DateTimeInterface { return $this->dateCommande; }
     public function getUser(): ?User { return $this->user; }
     public function setUser(?User $user): self { $this->user = $user; return $this; }

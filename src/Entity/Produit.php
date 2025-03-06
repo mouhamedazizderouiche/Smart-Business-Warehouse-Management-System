@@ -5,11 +5,14 @@ namespace App\Entity;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
+#[Vich\Uploadable] // Add this attribute
 class Produit
 {
     #[ORM\Id]
@@ -34,22 +37,23 @@ class Produit
     #[Assert\Positive(message: "Le prix doit être un nombre positif.")]
     private float $prixUnitaire;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private ?string $urlImageProduit = null;
+    #[Vich\UploadableField(mapping: 'product_image', fileNameProperty: 'imageName')]
+    private ?File $imageFile = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $imageName = null;
 
     #[ORM\Column(type: "datetime")]
     private \DateTimeInterface $dateCreation;
 
-    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: "produits")]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull(message: "La catégorie du produit est obligatoire.")]
+    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
+    #[ORM\JoinColumn(name: 'categorie_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private ?Categorie $categorie = null;
 
     #[ORM\Column(type: "integer")]
     #[Assert\NotBlank(message: "La quantité est obligatoire.")]
     #[Assert\PositiveOrZero(message: "La quantité ne peut pas être négative.")]
     private int $quantite;
-
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'produits')]
     #[ORM\JoinColumn(nullable: false)]
@@ -83,12 +87,21 @@ class Produit
         }
         return $this;
     }
+    #[ORM\Column(type: "decimal", precision: 2, scale: 1, nullable: true)]
+    private ?float $rate = null;
+
+
+    // One-to-Many relationship with Commentaire
+    #[ORM\OneToMany(targetEntity: Commentaire::class, mappedBy: 'produit', cascade: ['persist', 'remove'])]
+    private $commentaires;
+
     public function __construct()
     {
         $this->id = Uuid::v4();
         $this->dateCreation = new \DateTime();
         $this->stocks = new ArrayCollection();
 
+        $this->commentaires = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function getId(): ?Uuid
@@ -129,15 +142,28 @@ class Produit
         return $this;
     }
 
-    public function getUrlImageProduit(): ?string
+    public function setImageFile(?File $imageFile = null): void
     {
-        return $this->urlImageProduit;
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            $this->dateCreation = new \DateTimeImmutable();
+        }
     }
 
-    public function setUrlImageProduit(?string $urlImageProduit): self
+    public function getImageFile(): ?File
     {
-        $this->urlImageProduit = $urlImageProduit;
-        return $this;
+        return $this->imageFile;
+    }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
     }
 
     public function getDateCreation(): \DateTimeInterface
@@ -183,14 +209,50 @@ class Produit
         return $this;
     }
 
+    public function getRate(): ?float
+    {
+        return $this->rate;
+    }
+
+    public function setRate(?float $rate): self
+    {
+        $this->rate = $rate;
+        return $this;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\Collection|\App\Entity\Commentaire[]
+     */
+    public function getCommentaires()
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setProduit($this);
+        }
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // Set the owning side to null (unless already changed)
+            if ($commentaire->getProduit() === $this) {
+                $commentaire->setProduit(null);
+            }
+        }
+        return $this;
+    }
+
     public function afficherDetails(): string
     {
         return "Produit: {$this->nom}, Prix: {$this->prixUnitaire} TND";
     }
-    public function __toString(): string
-    {
-        return $this->nom;
-    } 
+   
     public function diminuerQuantite(int $quantite): bool
 {
     if ($this->quantite >= $quantite) {
@@ -200,4 +262,20 @@ class Produit
     return false; // Quantité insuffisante
 }
 
+public function _toString(): string
+{
+    return $this->nom;
+}
+
+    public function __toString(): string
+    {
+        return sprintf(
+            $this->nom,
+            $this->description ?? 'Aucune description',
+            $this->prixUnitaire,
+            $this->quantite,
+            $this->categorie ? $this->categorie->getNom() : 'Non spécifiée',
+            $this->dateCreation->format('Y-m-d H:i:s'),
+        );
+    }
 }

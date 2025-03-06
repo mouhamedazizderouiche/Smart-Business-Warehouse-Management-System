@@ -260,6 +260,7 @@
 
 
          <!-- categorie section -->
+         <!-- categorie section -->
          <div class="categorie-section">
              <div class="row">
                  <div class="col-md-12">
@@ -280,11 +281,9 @@
                      <div class="category-carousel swiper">
                          <div class="swiper-wrapper">
                              {% for category in categories %}
-                                 {% for subcategory in category.subcategories %}
+                                 {% for subcategory in category.children %}
                                      <a href="category.html" class="nav-link swiper-slide text-center">
-                                         <img src="{{ asset(subcategory.imgUrl) }}"
-                                              class="rounded-circle"
-                                              alt="{{ subcategory.nom }}">
+                                         <img src="{{ asset(subcategory.imgUrl) }}" class="rounded-circle" alt="{{ subcategory.nom }}">
                                          <h4 class="fs-6 mt-3 fw-normal category-title">{{ subcategory.nom }}</h4>
                                      </a>
                                  {% endfor %}

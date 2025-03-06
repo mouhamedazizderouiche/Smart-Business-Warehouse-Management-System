@@ -3,6 +3,7 @@
 namespace App\Controller\produit;
 
 use App\Entity\Categorie;
+use App\Entity\Produit;
 use App\Form\CategorieType;
 use App\Form\SubCategorieType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -127,5 +128,15 @@ class CategorieController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('liste_categories');
+    }
+
+    #[Route('/categorie/{slug}', name: 'categorie_show')]
+    public function show(EntityManagerInterface $entityManager,Categorie $categorie): Response
+    {
+        $products = $entityManager->getRepository(Produit::class)->findAll();
+        return $this->render('produit/categorieShow.html.twig', [
+            'categorie' => $categorie,
+            'produits' => $products,
+        ]);
     }
 }

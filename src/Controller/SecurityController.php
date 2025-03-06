@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\ChatbotService;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -51,6 +52,7 @@ class SecurityController extends AbstractController
     {
         return $this->render('security/face_authentication.html.twig');
     }
+    
 
     #[Route('/verify-face', name: 'verify_face', methods: ['POST'])]
     public function verifyFace(Request $request): JsonResponse
@@ -111,4 +113,36 @@ class SecurityController extends AbstractController
             return new JsonResponse(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
         }
     }
+    #[Route('/chatbot', name: 'chatbot_response', methods: ['POST'])]
+    public function chatbotResponse(Request $request, ChatbotService $chatbotService): JsonResponse
+    {
+        $this->logger->info('Chatbot route hit. Headers: ' . json_encode($request->headers->all()));
+        $this->logger->info('Request body: ' . $request->getContent());
+
+        if (!$this->isCsrfTokenValid('chatbot', $request->headers->get('X-CSRF-Token'))) {
+            $this->logger->warning('CSRF token invalid');
+            return new JsonResponse(['response' => 'Erreur de sécurité (CSRF). Rechargez !'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (!$data || !isset($data['message'])) {
+            $this->logger->warning('Invalid JSON or no message');
+            return new JsonResponse(['response' => 'Message vide ou mal formé !'], 400);
+        }
+
+        $userMessage = $data['message'];
+        if (empty($userMessage)) {
+            return new JsonResponse(['response' => 'Dis quelque chose, bro !']);
+        }
+
+        try {
+            $response = $chatbotService->getResponse($userMessage);
+            $this->logger->info('Chatbot response: ' . $response);
+            return new JsonResponse(['response' => $response]);
+        } catch (\Exception $e) {
+            $this->logger->error('Chatbot exception: ' . $e->getMessage());
+            return new JsonResponse(['response' => 'Erreur serveur: ' . $e->getMessage()], 500);
+        }
+    }
 }
+

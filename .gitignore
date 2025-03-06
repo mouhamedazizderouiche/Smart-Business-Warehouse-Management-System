@@ -26,6 +26,7 @@
 ###> liip/imagine-bundle ###
 /public/media/cache/
 ###< liip/imagine-bundle ###
+<<<<<<< HEAD
 
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
@@ -33,3 +34,5 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+=======
+>>>>>>> 77605554034a3beae3d8d9b9807b235c4995a274

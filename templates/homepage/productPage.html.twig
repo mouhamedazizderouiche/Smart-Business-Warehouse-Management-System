@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Grid with Filters</title>
+
+    <link href="{{ asset('css/products.css') }}" rel="stylesheet">
+
+</head>
+<body>
+<div class="nav-section"></div>
+<div class="categories-dropdowns"></div>
+
+<div class="content-wrapper">
+    <div class="pages-container">
+        <a>home ></a>
+    </div>
+
+    <div class="content-container">
+        <div class="filter-section">
+            <p class="filter-title">Filtrer</p>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Rechercher des produits...">
+            </div>
+            <p class="filter-title">Prix</p>
+            <input type="range" id="price-slider" min="0" max="100" value="100" step="1" class="slider">
+            <p id="price-value">100 DT</p>
+            {% for category in categories %}
+                {% if category.parent is null %}
+                    {% for subcategory in category.children %}
+                        <p class="filter-title">{{ subcategory.nom }}</p>
+
+                        <div class="categories-list">
+                            {% for produit in pager %}
+                                {% if produit.categorie.id == subcategory.id %}
+                                    <label><input type="checkbox" name="category"
+                                                  value="{{ produit.nom }}">{{ produit.nom }}</label>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="products-wrapper">
+            <div class="display-container">
+                <div class="grids">
+                    <img class="grid-2" src="{{ asset('images/grid2.png') }}">
+                    <img class="grid-1" src="{{ asset('images/grid1.svg') }}">
+                </div>
+                <div class="products-number">Il y a 24 produits.</div>
+                <div class="trie-filter">
+                    <select id="sort-order">
+                        <option value="asc">Ordre croissant</option>
+                        <option value="desc">Ordre décroissant</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="products-container">
+                {% for produit in pager %}
+                    <div class="product-card"
+                         data-id="{{ produit.id }}"
+                         data-price="{{ produit.prixUnitaire }}"
+                         data-category="{{ produit.categorie.nom }}"
+                         data-name="{{ produit.nom }}">
+
+                        <div class="image-container">
+                            <img class="produit-image" src="{{ vich_uploader_asset(produit, 'imageFile') }}" alt="{{ produit.nom }}">                                </td>
+                        </div>
+                        <div class="td">
+                            <p class="produit-titre">{{ produit.nom }}</p>
+                            <p class="produit-description">{{ produit.description|slice(0, 100) }}</p>
+                            <div class="tags"><p>{{ produit.categorie.nom }}</p></div>
+                        </div>
+                        <div class="stock-disp">
+                            <p>Disponibilité</p>
+                            <div class="stock-status">
+                                {% if produit.quantite > 0 %}
+                                    <p class="in-stock">en stock</p>
+                                {% else %}
+                                    <p class="out-of-stock">Rupture de stock</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="psi">
+                            <p class="prix-produit">Prix : {{ produit.prixUnitaire }} DT</p>
+                            {% if produit.quantite > 0 %}
+                                <p class="ens">En stock</p>
+                            {% else %}
+                                <p class="rep">Rupture de stock</p>
+                            {% endif %}
+                            <div class="buttons-container">
+                                <button class="add-to-cart">Ajouter au panier</button>
+                                <button class="add-to-fav">Ajouter aux favoris</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+
+
+            <div class="pagination">
+                {{ pagerfanta(pager, 'default', {
+                    'routeParams': app.request.query.all
+                }) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="product-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-body">
+            <div class="product-image-section">
+                <img id="modal-product-image" src="" alt="Product Image">
+            </div>
+            <div class="product-comments-section">
+                <div class="product-info">
+                    <h2 id="modal-product-title"></h2>
+                    <p id="modal-product-description"></p>
+
+
+                    <div class="rating">
+                        <input value="5" name="rate" id="star5" type="radio" >
+                        <label title="text" for="star5"></label>
+                        <input value="4" name="rate" id="star4" type="radio">
+                        <label title="text" for="star4"></label>
+                        <input value="3" name="rate" id="star3" type="radio">
+                        <label title="text" for="star3"></label>
+                        <input value="2" name="rate" id="star2" type="radio">
+                        <label title="text" for="star2"></label>
+                        <input value="1" name="rate" id="star1" type="radio" checked="">
+                        <label title="text" for="star1"></label>
+                    </div>
+
+                    <div class="like-section">
+                        <button class="like-btn"><span class="like-count"></span></button>
+                    </div>
+                </div>
+                <div class="comments-container">
+                    {% for produit in  pager %}
+                        {% for commentaire in produit.commentaires %}
+                            <div class="comment">
+                                <strong>{{ commentaire.auteur}}</strong>
+                                <p>{{ commentaire.contenu}}</p>
+                                <small>{{ commentaire.dateCreation|date('d/m/Y H:i') }}</small>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+
+                <div class="add-comment">
+                    <input type="text" placeholder="Add a comment..." class="comment-input">
+                    <button class="post-comment-btn">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const priceSlider = document.getElementById('price-slider');
+    const priceValue = document.getElementById('price-value');
+    const searchInput = document.getElementById('search-input');
+    const productCards = document.querySelectorAll('.product-card');
+    const categoryCheckboxes = document.querySelectorAll('.categories-list input[type="checkbox"]');
+    const sortOrderDropdown = document.getElementById('sort-order');
+
+
+    priceSlider.addEventListener('input', () => {
+        priceValue.textContent = `${priceSlider.value} DT`;
+        filterProducts();
+    });
+
+    searchInput.addEventListener('input', filterProducts);
+
+    categoryCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', filterProducts);
+    });
+
+    function filterProducts() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const maxPrice = parseFloat(priceSlider.value);
+        const selectedCategories = Array.from(categoryCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value.toLowerCase());
+
+        console.log(selectedCategories)
+        productCards.forEach(card => {
+            const productPrice = parseFloat(card.dataset.price);
+            const productCategory = card.dataset.name.toLowerCase();
+            const productName = card.dataset.name.toLowerCase();
+
+            const matchesSearch = productName.includes(searchTerm);
+            const matchesPrice = productPrice <= maxPrice;
+            const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(productCategory);
+
+            card.style.display = (matchesSearch && matchesPrice && matchesCategory) ? 'flex' : 'none';
+        });
+    }
+
+
+    sortOrderDropdown.addEventListener('change', sortProducts);
+    function sortProducts() {
+        const sortOrder = sortOrderDropdown.value;
+        const productsContainer = document.querySelector('.products-container');
+        const productCards = Array.from(productsContainer.querySelectorAll('.product-card'));
+
+        productCards.sort((a, b) => {
+            const priceA = parseFloat(a.dataset.price);
+            const priceB = parseFloat(b.dataset.price);
+
+            if (sortOrder === 'asc') {
+                return priceA - priceB;
+            } else {
+                return priceB - priceA;
+            }
+        });
+
+        productsContainer.innerHTML = '';
+        productCards.forEach(card => productsContainer.appendChild(card));
+    }
+
+
+    document.querySelectorAll('.product-card').forEach(card => {
+        const commentBtn = document.createElement('button');
+        commentBtn.className = 'view-comments-btn';
+        commentBtn.textContent = '💬 View Comments';
+        card.querySelector('.buttons-container').appendChild(commentBtn);
+
+        const productId = card.dataset.id;
+        card.dataset.productId = productId;
+
+
+        if (!localStorage.getItem(`comments-${productId}`)) {
+            localStorage.setItem(`comments-${productId}`, JSON.stringify([]));
+        }
+
+        commentBtn.addEventListener('click', () => showCommentsModal(card));
+    });
+
+    function showCommentsModal(card) {
+        const modal = document.getElementById('product-modal');
+        const productId = card.dataset.productId;
+        currentProductId = productId;
+
+        document.getElementById('modal-product-image').src = card.querySelector('img').src;
+        document.getElementById('modal-product-title').textContent = card.querySelector('.produit-titre').textContent;
+        document.getElementById('modal-product-description').textContent = card.querySelector('.produit-description').textContent;
+
+        loadComments(productId);
+        modal.style.display = 'block';
+    }
+
+    document.querySelector('.close').addEventListener('click', () => {
+        document.getElementById('product-modal').style.display = 'none';
+    });
+
+
+
+    document.querySelector('.post-comment-btn').addEventListener('click', async function () {
+        const commentInput = document.querySelector('.comment-input');
+        const commentText = commentInput.value.trim();
+
+        if (!commentText) {
+            alert('Veuillez saisir un commentaire.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/product/${currentProductId}/comment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    content: commentText,
+                    note: 5
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.reload();
+                loadComments(currentProductId);
+            } else {
+                alert('Erreur lors de l\'ajout du commentaire.');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Une erreur s\'est produite. Veuillez réessayer.');
+        }
+    });
+
+    function loadComments(productId) {
+        const commentsContainer = document.querySelector('.comments-container');
+
+    }
+
+    function addCommentToUI(comment) {
+
+    }
+
+    window.addEventListener('click', (event) => {
+        const modal = document.getElementById('product-modal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+</script>
+</body>
+</html>

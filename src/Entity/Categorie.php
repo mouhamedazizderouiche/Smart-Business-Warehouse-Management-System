@@ -2,54 +2,66 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Uuid;
+use Gedmo\Mapping\Annotation as Gedmo;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: 'App\Repository\CategorieRepository')]
+#[Gedmo\Tree(type: 'nested')]
 class Categorie
 {
     #[ORM\Id]
-    #[ORM\Column(type: "uuid", unique: true)]
-    private ?Uuid $id = null;
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $nom;
+    #[ORM\Column(type: 'string', length: 255)]
+    private $nom;
 
-    #[ORM\Column(type: "text", nullable: true)]
-    private ?string $description = null;
+    #[Gedmo\Slug(fields: ['nom'])]
+    #[ORM\Column(type: 'string', length: 255, unique: true, nullable: true)]
+    private $slug;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
-    private ?string $imgUrl = null;
+    #[Gedmo\TreeLeft]
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $lft;
 
-    #[ORM\Column(type: "string", length: 255, unique: true, nullable: true)]
-    private ?string $slug = null;
+    #[Gedmo\TreeRight]
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $rgt;
 
+    #[Gedmo\TreeLevel]
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private $lvl;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: "subcategories")]
-    #[ORM\JoinColumn(name: "parent_id", referencedColumnName: "id", onDelete: "CASCADE")]
-    private ?self $parent = null;
+    #[Gedmo\TreeParent]
+    #[ORM\ManyToOne(targetEntity: 'App\Entity\Categorie', inversedBy: 'children')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private $parent;
 
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: "parent")]
-    private Collection $subcategories;
+    #[ORM\OneToMany(targetEntity: 'App\Entity\Categorie', mappedBy: 'parent', cascade: ['remove'])]
+    #[ORM\OrderBy(['lft' => 'ASC'])]
+    private $children;
 
-    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: "categorie", cascade: ["persist", "remove"])]
-    private Collection $produits;
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $imgUrl;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $description;
+
+    #[ORM\OneToMany(targetEntity: Produit::class, mappedBy: 'categorie', cascade: ['remove'])]
+    private $produits;
 
     public function __construct()
     {
-        $this->id = Uuid::v4();
-        $this->subcategories = new ArrayCollection();
-        $this->produits = new ArrayCollection();
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): string
+    public function getNom(): ?string
     {
         return $this->nom;
     }
@@ -65,32 +77,32 @@ class Categorie
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
-        $this->description = $description;
+        $this->description= $description;
         return $this;
     }
 
-    public function getImgUrl(): ?string
-    {
-        return $this->imgUrl;
-    }
 
-    public function setImgUrl(?string $imgUrl): self
-    {
-        $this->imgUrl = $imgUrl;
-        return $this;
-    }
-
-    public function getSlug(): string
-    {
-        return $this->slug;
-    }
-
-    public function setSlug(string $slug): self
+    public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
         return $this;
+    }
+
+    public function getLft(): ?int
+    {
+        return $this->lft;
+    }
+
+    public function getRgt(): ?int
+    {
+        return $this->rgt;
+    }
+
+    public function getLvl(): ?int
+    {
+        return $this->lvl;
     }
 
     public function getParent(): ?self
@@ -104,45 +116,39 @@ class Categorie
         return $this;
     }
 
-    public function getSubcategories(): Collection
+    public function getChildren(): \Doctrine\Common\Collections\Collection
     {
-        return $this->subcategories;
+        return $this->children;
     }
 
-    public function addSubcategory(self $subcategory): self
+    public function addChild(self $child): self
     {
-        if (!$this->subcategories->contains($subcategory)) {
-            $this->subcategories[] = $subcategory;
-            $subcategory->setParent($this);
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setParent($this);
         }
         return $this;
     }
 
-    public function removeSubcategory(self $subcategory): self
+    public function removeChild(self $child): self
     {
-        if ($this->subcategories->removeElement($subcategory)) {
-            if ($subcategory->getParent() === $this) {
-                $subcategory->setParent(null);
+        if ($this->children->removeElement($child)) {
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
             }
         }
         return $this;
     }
 
-    public function ajouterProduit(Produit $produit): void
+    public function getImgUrl(): ?string
     {
-        if (!$this->produits->contains($produit)) {
-            $this->produits[] = $produit;
-            $produit->setCategorie($this);
-        }
+        return $this->imgUrl;
     }
 
-    public function getProduits(): Collection
-    {
-        return $this->produits;
-    }
 
-    public function __toString(): string
+    public function setImgUrl(?string $imgUrl): self
     {
-        return $this->nom;
+        $this->imgUrl = $imgUrl;
+        return $this;
     }
 }

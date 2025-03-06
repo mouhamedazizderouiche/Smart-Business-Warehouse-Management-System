@@ -1,0 +1,11 @@
+vich_uploader:
+  db_driver: orm
+
+  mappings:
+    product_image: # Name of the mapping
+      uri_prefix: /images/products # Public URL path
+      upload_destination: '%kernel.project_dir%/public/images/products' # Directory to store files
+      namer: Vich\UploaderBundle\Naming\OrignameNamer # Use the original file name
+      delete_on_remove: true # Delete file when the entity is deleted
+      delete_on_update: true # Delete old file when a new file is uploaded
+      inject_on_load: true # Inject the file object into the entity when loaded
