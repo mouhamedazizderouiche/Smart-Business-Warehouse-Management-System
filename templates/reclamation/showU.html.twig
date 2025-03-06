@@ -1,0 +1,492 @@
+
+{% include 'homepage/newNav.html.twig' %}
+
+<div class="page-wrapper">
+    <div class="content-container">
+        <!-- Main Content -->
+        <div class="main-container">
+            <h2 class="header">
+                <span class="header-text">Reclamation Discussions</span>
+                <span class="header-count">{{ reclamations|length }} active</span>
+            </h2>
+
+            {% if reclamations is empty %}
+                <div class="empty-state">
+                    <div class="empty-icon">📪</div>
+                    <p class="empty-text">No discussions yet. Be the first to start one!</p>
+                </div>
+            {% else %}
+                <div class="reclamations-container animate-in">
+                    {% for reclamation in reclamations %}
+                        <div class="reclamation-card 
+                            {% if reclamation.statut.value == 'fermee' %} closed-card unclickable 
+                            {% elseif reclamation.statut.value == 'resolue' %} resolved-card{% endif %}"
+                            data-href="{{ path('message_reclamation_index', {'id': reclamation.id}) }}">
+                            
+                            <div class="reclamation-header">
+                                <div class="profile-container">
+                                    <div class="profile-status {% if reclamation.statut.value == 'fermee' %}closed{% elseif reclamation.statut.value == 'resolue' %}resolved{% endif %}"></div>
+                                    <img src="{{ reclamation.user and reclamation.user.photoUrl ? asset('uploads/photos/' ~ reclamation.user.photoUrl) : asset('images/admin.jpg') }}"
+                                         alt="User Photo" 
+                                         class="profile-avatar">
+                                </div>
+                                
+                                <div class="content-wrapper">
+                                    <div class="title-bar">
+                                        <h3 class="reclamation-title">{{ reclamation.title }}</h3>
+                                        <span class="tag" 
+                                              style="background-color: {{ reclamation.tag.color ?? '#7AAE49' }}">
+                                            #{{ reclamation.tag.name|default('No Tag') }}
+                                        </span>
+                                    </div>
+                                    
+                                    <p class="reclamation-desc">{{ reclamation.description }}</p>
+                                    
+                                    <div class="meta-info">
+                                        <span class="date" data-timestamp="{{ reclamation.dateReclamation|date('c') }}">{{ reclamation.dateReclamation|date('d M Y H:i') }}</span>
+                                        <span class="author">by {{ reclamation.user.Prenom }}</span>
+                                    </div>
+                                </div>
+
+                                {% if reclamation.user and app.user and reclamation.user.id == app.user.id %}
+                                    <div class="action-buttons">
+                                        <button class="action-btn edit" onclick="event.stopPropagation(); window.location.href='{{ path('reclamation_edit', {'id': reclamation.id}) }}'">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="{{ path('reclamation_delete', {'id': reclamation.id}) }}" method="POST" class="delete-form">
+                                            <button type="submit" 
+                                                    class="action-btn delete" 
+                                                    onclick="return confirm('Are you sure?');">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pagination-wrapper">
+                    {{ knp_pagination_render(reclamations, 'paginations/pageReclamation.html.twig') }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Enhanced Sidebar -->
+        <aside class="sidebar animate-in">
+            <div class="search-wrapper">
+                <form action="{{ path('reclamation_showU') }}" method="get" class="search-form">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" 
+                               name="q" 
+                               class="search-input" 
+                               placeholder="Search discussions..." 
+                               value="{{ searchTerm }}">
+                    </div>
+                </form>
+            </div>
+
+            <div class="sidebar-actions">
+                <button class="btn btn-primary glow" 
+                        onclick="window.location.href='{{ path('reclamation_new') }}'">
+                    <i class="fas fa-plus"></i> New Discussion
+                </button>
+                <button class="btn btn-secondary glow" 
+                        onclick="window.location.href='{{ path('reclamation_newReview') }}'">
+                    <i class="fas fa-star"></i> Write Review
+                </button>
+            </div>
+
+            <div class="sidebar-info">
+                <p>Click any discussion to join the conversation</p>
+                <div class="stats">
+                    <span><i class="fas fa-users"></i> {{ totalUsers ?? '100+' }} Members</span>
+                    <span><i class="fas fa-comments"></i> {{ totalPosts ?? '500+' }} Posts</span>
+                </div>
+            </div>
+
+            <div class="tags-cloud">
+                {{ render(controller('App\\Controller\\TagController::sidebarTags')) }}
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Updated Footer remains the same but with added animations -->
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.reclamation-card:not(.unclickable)');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const href = card.getAttribute('data-href');
+            if (href) {
+                window.location.href = href;
+            }
+        });
+    });
+
+    // Add hover effects
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.classList.add('hovered');
+        });
+        card.addEventListener('mouseleave', () => {
+            card.classList.remove('hovered');
+        });
+    });
+});
+
+function timeAgo(date) {
+    const now = new Date();
+    const past = new Date(date);
+    const diffMs = now - past; 
+    if (diffMs < 0) {
+        return 'in the future';
+    }
+    const diffSeconds = Math.floor(diffMs / 1000);
+    if (diffSeconds < 10) {
+        return 'just now';
+    } else if (diffSeconds < 60) {
+        return diffSeconds + ' sec' + (diffSeconds > 1 ? 's' : '') + ' ago';
+    }
+    const diffMinutes = Math.floor(diffMs / 60000);
+    if (diffMinutes < 60) {
+        return diffMinutes + ' minute' + (diffMinutes > 1 ? 's' : '') + ' ago';
+    }
+    const diffHours = Math.floor(diffMs / 3600000);
+    if (diffHours < 24) {
+        return diffHours + ' hour' + (diffHours > 1 ? 's' : '') + ' ago';
+    }
+    const diffDays = Math.floor(diffMs / 86400000);
+    return diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago';
+}
+
+// Function to update all .date elements
+function updateDateTimes() {
+    document.querySelectorAll('.date').forEach(function(span) {
+        const timestamp = span.getAttribute('data-timestamp');
+        if (timestamp) {
+            span.textContent = timeAgo(timestamp);
+        }
+    });
+}
+
+// Run initially
+updateDateTimes();
+
+// Optional: Update every minute for a live effect
+setInterval(updateDateTimes, 60000);
+</script>
+
+<style>
+/* Core Layout */
+.page-wrapper {
+    padding: 2rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+.content-container {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+.header {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to right, #6C983B, #7AAE49);
+    color: white;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.header-text {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.header-count {
+    font-size: 1rem;
+    background: rgba(255,255,255,0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-text {
+    color: #666;
+    font-size: 1.2rem;
+}
+
+/* Reclamation Cards */
+.reclamation-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.reclamation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.reclamation-card.hovered::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.02);
+    pointer-events: none;
+}
+
+.reclamation-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+}
+
+.profile-container {
+    position: relative;
+}
+
+.profile-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.profile-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.profile-status.closed { background: #ff5555; }
+.profile-status.resolved { background: #4CAF50; }
+
+.content-wrapper {
+    padding: 0 1rem;
+}
+
+.title-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.reclamation-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.tag {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.reclamation-desc {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0.5rem 0;
+}
+
+.meta-info {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.author {
+    font-weight: 600;
+    color: #6C983B;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #f5f5f5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.action-btn.edit:hover { background: #4CAF50; color: white; }
+.action-btn.delete:hover { background: #ff5555; color: white; }
+
+/* Status Styles */
+.closed-card {
+    background: #fff5f5;
+    border-left: 5px solid #ff5555;
+}
+
+.resolved-card {
+    background: #f5fff5;
+    border-left: 5px solid #4CAF50;
+}
+
+/* Sidebar */
+.sidebar {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+}
+
+.search-wrapper {
+    margin-bottom: 2rem;
+}
+
+.search-input-group {
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: none;
+    border-radius: 25px;
+    background: #f5f5f5;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(108,152,59,0.2);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.sidebar-actions .btn {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn.glow {
+    box-shadow: 0 4px 15px rgba(108,152,59,0.2);
+}
+
+.btn.glow:hover {
+    box-shadow: 0 6px 20px rgba(108,152,59,0.4);
+    transform: translateY(-2px);
+}
+
+.sidebar-info {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.stats {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Animations */
+.animate-in {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .sidebar {
+        position: static;
+    }
+    
+    .reclamation-header {
+        grid-template-columns: auto 1fr;
+    }
+    
+    .action-buttons {
+        grid-column: 1 / -1;
+        margin-top: 1rem;
+    }
+}
+</style>

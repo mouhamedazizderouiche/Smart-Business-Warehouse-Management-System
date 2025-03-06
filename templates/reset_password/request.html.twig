@@ -1,0 +1,71 @@
+
+{% block title %}Réinitialisation du mot de passe{% endblock %}
+
+{% block body %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0fff0;
+            color: #2d572c;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: 50px auto;
+            border-left: 5px solid #2d572c;
+        }
+        h1 {
+            color: #2d572c;
+        }
+        .btn {
+            background-color: #2d572c;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #256d1b;
+        }
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 300px;
+        }
+        .alert {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+    </style>
+
+    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo">
+
+    <div class="container">
+        {% for flash_error in app.flashes('reset_password_error') %}
+            <div class="alert" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+
+        <h1>Réinitialisez votre mot de passe</h1>
+
+        {{ form_start(requestForm) }}
+            {{ form_row(requestForm.email) }}
+            <div>
+                <small>Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.</small>
+            </div>
+
+            <button class="btn">Envoyer l'email de réinitialisation</button>
+        {{ form_end(requestForm) }}
+    </div>
+{% endblock %}

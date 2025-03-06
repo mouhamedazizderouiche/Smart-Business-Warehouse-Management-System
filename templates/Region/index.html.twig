@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>"
+    />
+
+    <!-- CSS Assets -->
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/all.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet" />
+
+    {% block stylesheets %}
+    <style>
+      html,
+      body {
+        height: 100% !important;
+        background-color: #ffffff !important;
+      }
+      .navbar {
+        position: absolute;
+        top: 0;
+        left: 250px;
+        width: calc(100% - 250px);
+        background-color: #eeeeee !important;
+        color: #d1d1d1;
+        z-index: 3;
+      }
+      .navbar-toggler-icon {
+        background-color: #d1d1d1;
+      }
+      .navbar-nav .nav-link {
+        color: #d1d1d1;
+      }
+      .navbar-nav .nav-link:hover {
+        color: #000000;
+      }
+      .navbar .nav-item {
+        display: flex;
+        align-items: center;
+      }
+      .navbar .nav-item i {
+        margin-right: 10px;
+        color: #d1d1d1;
+      }
+      .navbar .nav-item:hover i {
+        color: #000000;
+      }
+      .sidebar {
+        height: 100vh;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 20px;
+        overflow: hidden;
+        text-align: center;
+        background-color: #2c3e50;
+      }
+      .sidebar::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("https://media.istockphoto.com/id/1547533623/fr/photo/vue-a%C3%A9rienne-dun-paysage-rural.jpg?s=612x612&w=0&k=20&c=Bz9alSGdhWXekHzN4FpJc5vdqEOIUE7PojOItcn6FGY=");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: blur(3px);
+        z-index: 1;
+      }
+      .sidebar::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2;
+      }
+      .sidebar a {
+        position: relative;
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #d1d1d1;
+        display: block;
+        z-index: 3;
+        text-align: left;
+      }
+      .sidebar a:hover,
+      .sidebar a.selected {
+        color: #ffffff;
+        background-color: #a0a0a0;
+      }
+      .sidebar a.active {
+        background-color: #50aa54;
+        color: #ffffff;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+        background-color: #eeeeee;
+        min-height: 100vh;
+      }
+      .logo {
+        width: 150px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 3;
+      }
+      .sidebar .nav-item {
+        display: flex;
+        align-items: center;
+      }
+      .sidebar .nav-item i {
+        margin-right: 10px;
+      }
+    </style>
+    {% endblock %}
+  </head>
+  <body>
+    {% include 'backoffice/sidebar.html.twig' %}
+    <main class="main-content">
+      <div class="example-wrapper">
+        <h1>Liste des Régions</h1>
+
+        <a href="{{ path('app_region_ajouter') }}" class="btn btn-success mb-4">
+          Ajouter region
+        </a>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Ville</th>
+              <th scope="col">Description</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for region in regions %}
+            <tr>
+              <th scope="row">{{ region.id }}</th>
+              <td>{{ region.nom }}</td>
+              <!-- Affichage du nom de la région -->
+              <td>{{ region.ville }}</td>
+              <!-- Affichage de la ville de la région -->
+              <td>{{ region.description }}</td>
+              <!-- Affichage de la description de la région -->
+              <td>
+                <a
+                  href="{{ path('app_region_voir', { id: region.id }) }}"
+                  class="btn btn-info btn-sm"
+                  >Voir</a
+                >
+                <a
+                  href="{{ path('app_region_modifier', { id: region.id }) }}"
+                  class="btn btn-warning btn-sm"
+                  >Modifier</a
+                >
+                <a
+                  href="{{ path('app_region_supprimer', { id: region.id }) }}"
+                  class="btn btn-danger btn-sm"
+                  onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette région ?')"
+                  >Supprimer</a
+                >
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="text-center">Aucune région trouvée.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </body>
+</html>

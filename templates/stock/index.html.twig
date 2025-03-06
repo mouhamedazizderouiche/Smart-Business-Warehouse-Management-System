@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sidebar.css" rel="stylesheet">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap JS (avec Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+    {% block stylesheets %}
+    <style>
+        html, body {
+            height: 100%;
+            background-color: #eeeeee;
+        }
+
+        .navbar {
+            position: absolute;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #eeeeee !important; /* Couleur de la navbar */
+            color: #d1d1d1; /* Texte gris */
+            z-index: 3;
+        }
+
+        .navbar-toggler-icon {
+            background-color: #d1d1d1; /* Icône de menu en gris */
+        }
+
+        .navbar-nav .nav-link {
+            color: #d1d1d1; /* Couleur des liens en gris */
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #000000; /* Changement de couleur au survol */
+        }
+
+        .navbar .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-item i {
+            margin-right: 10px;
+            color: #d1d1d1; /* Couleur gris pour les icônes */
+        }
+
+        .navbar .nav-item:hover i {
+            color: #000000; /* Changement de couleur au survol */
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            overflow: hidden;
+            text-align: center;
+            background-color: #2c3e50; /* Couleur de fond de la sidebar */
+        }
+
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.istockphoto.com/id/1547533623/fr/photo/vue-a%C3%A9rienne-dun-paysage-rural.jpg?s=612x612&w=0&k=20&c=Bz9alSGdhWXekHzN4FpJc5vdqEOIUE7PojOItcn6FGY=');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(3px);
+            z-index: 1;
+        }
+
+        .sidebar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        .sidebar a {
+            position: relative;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #d1d1d1;
+            display: block;
+            z-index: 3;
+            text-align: left;
+        }
+
+        .sidebar a:hover, .sidebar a.selected {
+            color: #ffffff;
+            background-color: #a0a0a0;
+        }
+
+        .sidebar a.active {
+            background-color: #50aa54;
+            color: #ffffff;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            background-color: #eeeeee;
+        }
+
+        .logo {
+            width: 150px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-item i {
+            margin-right: 10px;
+        }
+
+        /* Styles pour DataTables */
+        .dataTables_wrapper {
+            margin-top: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter,
+        .dataTables_wrapper .dataTables_info,
+        .dataTables_wrapper .dataTables_paginate {
+            margin: 10px 0;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+        /* Animation pour les boutons */
+        .btn {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Animation pour les lignes du tableau */
+        #stock-table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+        
+        #stock-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Style pour les badges */
+        .badge {
+            font-size: 0.9em;
+            margin: 2px;
+        }
+        
+        /* Style pour les cartes */
+        .card {
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+        .dataTables_filter {
+            display: none;
+        }
+        /* Ajoutez ce style dans votre bloc de styles CSS */
+        .input-group-text i {
+            color: black; /* Change la couleur de toutes les icônes en noir */
+        }
+
+        /* Styles pour le menu déroulant */
+        .dropdown-menu {
+            position: absolute;
+            will-change: transform;
+            top: 100%; /* Affiche le menu en dessous du bouton */
+            right: 0; /* Aligne le menu à droite */
+            z-index: 1000; /* Assure que le menu est au-dessus des autres éléments */
+            min-width: 300px; /* Largeur minimale du menu */
+            padding: 1rem; /* Espacement interne */
+            background-color: white; /* Couleur de fond */
+            border: 1px solid #ddd; /* Bordure */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre */
+        }
+
+        .dropdown {
+            position: relative; /* Nécessaire pour le positionnement absolu du menu */
+            overflow: visible; /* Assure que le menu n'est pas coupé */
+        }
+        /* Styles pour le menu déroulant */
+
+
+.dropdown-menu.show {
+    display: block; /* Affiche le menu lorsque la classe "show" est ajoutée */
+}
+    </style>
+    {% endblock %}
+
+    {% block body %}
+        {% include 'backoffice/sidebar.html.twig' %}
+        <main>
+          <div class="main-content">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="text-3xl">Gestion des Stocks</h1>
+                <div class="btn-group">
+                    <a href="{{ path('app_stock_new') }}" class="btn btn-primary"><i class="fas fa-plus me-2"></i> Ajouter</a>
+                    <a href="{{ path('export_excel_stock') }}" class="btn btn-success"><i class="fas fa-download me-2"></i> Excel</a>
+                    <a href="{{ path('export_pdf_stock') }}" class="btn btn-warning"><i class="fas fa-file-pdf me-2"></i> PDF</a>
+                </div>
+            </div>
+
+
+                <!-- Notifications flash -->
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+
+                <!-- Filtres et recherche -->
+                <div class="card shadow-sm mb-4" style="overflow: visible;">
+                    <div class="card-body" style="overflow: visible;">
+                        <div class="row g-3 align-items-center">
+                            <!-- Champ de recherche -->
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input type="text" id="stock-search" class="form-control" placeholder="Rechercher un stock...">
+                                </div>
+                            </div>
+
+                            <!-- Bouton Filtre -->
+                            <div class="col-md-8 d-flex justify-content-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-filter"></i> Filtres
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end p-3" aria-labelledby="filterDropdown" style="min-width: 300px; position: absolute; z-index: 1000;">
+                                        <!-- Filtre par catégorie -->
+                                        <div class="mb-3">
+                                            <label for="filter-categorie" class="form-label"><i class="fas fa-tags me-2"></i> Catégorie</label>
+                                            <select id="filter-categorie" class="form-control">
+                                                <option value="">Toutes les catégories</option>
+                                                {% for categorie in categories %}
+                                                    <option value="{{ categorie.id }}">{{ categorie.nom }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <!-- Filtre par entrepôt -->
+                                        <div class="mb-3">
+                                            <label for="filter-entrepot" class="form-label"><i class="fas fa-warehouse me-2"></i> Entrepôt</label>
+                                            <select id="filter-entrepot" class="form-control">
+                                                <option value="">Tous les entrepôts</option>
+                                                {% for entrepot in entrepots %}
+                                                    <option value="{{ entrepot.id }}">{{ entrepot.nom }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        
+
+                                        <!-- Bouton de réinitialisation -->
+                                        <div class="d-grid">
+                                            <button id="reset-filters" class="btn btn-secondary">
+                                                <i class="fas fa-sync me-2"></i> Réinitialiser les filtres
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tableau des stocks -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <table id="stock-table" class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Produit</th>
+                                    <th>Image</th>
+                                    <th>Quantité</th>
+                                    <th>Date Entrée</th>
+                                    <th>Date Sortie</th>
+                                    <th>Seuil Alerte</th>
+                                    <th>Entrepôt</th>
+                                    <th>Catégorie</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stock in stocks %}
+                                    <tr data-categorie="{{ stock.produit.categorie.id }}" 
+                                        data-entrepot="{{ stock.entrepots|map(e => e.id)|join(',') }}" 
+                                        data-fournisseur="{{ stock.fournisseurs|map(f => f.id)|join(',') }}">
+                                        <td>{{ stock.id }}</td>
+                                        <td>{{ stock.produit }}</td>
+                                        <td>
+                                            {% if stock.produit.urlImageProduit %}
+                                                <img src="{{ asset(stock.produit.urlImageProduit) }}" class="img-thumbnail" alt="Image produit" style="width: 80px;">
+                                            {% else %}
+                                                <span class="text-muted">Aucune image</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ stock.produit.quantite ?? 'N/A' }}</td>
+                                        <td>{{ stock.dateEntree|date('d/m/Y H:i') }}</td>
+                                        <td>{{ stock.dateSortie ? stock.dateSortie|date('d/m/Y H:i') : 'N/A' }}</td>
+                                        <td>{{ stock.seuilAlert }}</td>
+                                        <td>
+                                            {% for entrepot in stock.entrepots %}
+                                                <span class="badge bg-primary">{{ entrepot.nom }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ stock.produit.categorie.nom }}</td>
+                                        <td>
+                                            <div class="d-flex gap-2">
+                                                <a href="{{ path('app_stock_edit', { id: stock.id }) }}" class="btn btn-sm btn-warning">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a href="{{ path('app_stock_increase', { id: stock.id }) }}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                                <form action="{{ path('app_stock_delete', { id: stock.id }) }}" method="post" class="d-inline">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ stock.id) }}">
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce stock ?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-4">
+                    {{ knp_pagination_render(stocks) }}
+                </div>
+            </div>
+        </main>
+    {% endblock %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Sélection des éléments
+    const searchInput = document.getElementById("stock-search");
+    const categoryFilter = document.getElementById("filter-categorie");
+    const warehouseFilter = document.getElementById("filter-entrepot");
+    const resetFilterButton = document.getElementById("reset-filters");
+    const stockTable = document.getElementById("stock-table");
+    const tableRows = stockTable.querySelector("tbody").getElementsByTagName("tr");
+
+    function filterTable() {
+        const searchValue = (searchInput.value || "").trim().toLowerCase();
+        const categoryValue = (categoryFilter.value || "").trim().toLowerCase();
+        const warehouseValue = (warehouseFilter.value || "").trim().toLowerCase();
+
+        Array.from(tableRows).forEach(row => {
+            // Récupération des attributs data
+            const rowCategory = (row.getAttribute("data-categorie") || "").trim().toLowerCase();
+            const rowWarehouses = (row.getAttribute("data-entrepot") || "").split(',').map(id => id.trim().toLowerCase());
+            const cells = row.getElementsByTagName("td");
+
+            // Filtre de recherche globale
+            const matchesSearch = searchValue === "" || Array.from(cells).some(cell => {
+                const cellText = (cell.textContent || "").trim().toLowerCase();
+                // Exclure la colonne image du filtrage textuel
+                return !cell.querySelector('img') && cellText.includes(searchValue);
+            });
+
+            // Filtre par catégorie
+            const matchesCategory = categoryValue === "" || rowCategory === categoryValue;
+
+            // Filtre par entrepôt (vérifie si l'entrepôt sélectionné est dans la liste)
+            const matchesWarehouse = warehouseValue === "" || rowWarehouses.includes(warehouseValue);
+
+            // Affichage de la ligne si tous les filtres correspondent
+            row.style.display = (matchesSearch && matchesCategory && matchesWarehouse) ? "" : "none";
+        });
+    }
+
+    // Ajout des écouteurs d'événements
+    searchInput.addEventListener("input", filterTable);
+    categoryFilter.addEventListener("change", filterTable);
+    warehouseFilter.addEventListener("change", filterTable);
+    
+    resetFilterButton.addEventListener("click", function () {
+        searchInput.value = "";
+        categoryFilter.value = "";
+        warehouseFilter.value = "";
+        filterTable();
+    });
+
+    // Filtrage initial
+    filterTable();
+});
+</script>

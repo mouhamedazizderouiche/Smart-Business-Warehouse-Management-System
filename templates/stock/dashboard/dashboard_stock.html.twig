@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Libraries Stylesheet -->
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {% block stylesheets %}
+    <style>
+  html, body {
+        height: 100%;
+        background-color: #FFFFFF !important; /* Fond blanc */
+        color: #000000 !important; /* Police noire pour contraste maximal */
+        font-family: 'Raleway', sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .main-content {
+        margin-left: 250px;
+        padding: 30px;
+        background: #FFFFFF !important; /* Fond blanc */
+        min-height: 100vh;
+        width: calc(100% - 250px);
+    }
+
+    .sidebar {
+        height: 100vh;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        padding-top: 20px;
+        background: #F5F5F5 !important; /* Gris très clair pour la sidebar */
+        box-shadow: 2px 0 15px rgba(98, 0, 238, 0.1);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar a {
+        padding: 15px 20px;
+        font-size: 16px;
+        color: #6200EE; /* Violet profond pour les liens */
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar a:hover {
+        color: #FFFFFF; /* Blanc au survol */
+        background: linear-gradient(45deg, #6200EE, #9575CD);
+        padding-left: 25px;
+        box-shadow: 0 4px 15px rgba(98, 0, 238, 0.4);
+    }
+
+    .card {
+        background: #FAFAFA !important; /* Gris-blanc clair pour les cartes */
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(98, 0, 238, 0.2);
+    }
+
+    .card-body {
+        padding: 25px;
+    }
+
+    .card-title {
+        color: #6200EE; /* Violet profond pour les titres */
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .display-6 {
+        font-weight: 800;
+        color: #000000; /* Police noire pour les chiffres */
+        text-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .trend-indicator {
+        font-size: 0.9rem;
+        padding: 4px 10px;
+        border-radius: 15px;
+        background: rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        color: #000000; /* Texte noir */
+    }
+
+    .trend-up {
+        color: #03DAC6; /* Cyan pour tendances positives */
+        box-shadow: 0 2px 8px rgba(3, 218, 198, 0.3);
+    }
+
+    .trend-down {
+        color: #D81B60; /* Rose vif pour tendances négatives */
+        box-shadow: 0 2px 8px rgba(216, 27, 96, 0.3);
+    }
+
+    .filter-group select {
+        background: rgba(0, 0, 0, 0.05);
+        border: 2px solid #6200EE;
+        color: #000000; /* Police noire */
+        padding: 8px 15px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .filter-group select:hover {
+        background: #6200EE;
+        border-color: #9575CD;
+        color: #FFFFFF; /* Blanc au survol */
+        box-shadow: 0 4px 15px rgba(98, 0, 238, 0.4);
+    }
+
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+    }
+
+    .card:hover .trend-indicator {
+        animation: bounce 1s;
+    }
+
+    .card-header {
+        background: rgba(98, 0, 238, 0.1);
+        border-bottom: 1px solid rgba(98, 0, 238, 0.3);
+        color: #6200EE;
+    }
+
+    .footer {
+        background: #F5F5F5 !important;
+        border-top: 1px solid rgba(98, 0, 238, 0.2);
+        color: #424242; /* Gris foncé pour le footer */
+    }
+
+    .fa-warehouse, .fa-building, .fa-exclamation-triangle {
+        color: #6200EE !important; /* Violet pour les icônes */
+    }
+    </style>
+    {% endblock %}
+
+    {% block body %}
+    {% include 'backoffice/sidebar.html.twig' %}
+    <main class="main-content">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2" style="color: #ff6b6b;">Tableau de bord</h1>
+            <div class="filter-group">
+              <select id="timeFilter" class="form-select">
+                <option value="7" {% if timeRange == '7' %} selected {% endif %}>Derniers 7 jours</option>
+                <option value="30" {% if timeRange == '30' %} selected {% endif %}>Derniers 30 jours</option>
+                <option value="31" {% if timeRange == '31' %} selected {% endif %}>Dernier Mois</option>
+                <option value="90" {% if timeRange == '90' %} selected {% endif %}>Derniers 90 jours</option>
+                <option value="365" {% if timeRange == '365' %} selected {% endif %}>Dernière année</option>
+            </select>
+            
+            </div>
+        </div>
+        
+
+      
+      
+
+        <!-- Summary Cards avec Stocks Totaux réel -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Stocks Totaux</h5>
+                                <p class="card-text display-6" id="totalStock">{{ totalStocks|default(0)|number_format(0, ',', ' ') }}</p>
+                                <small>
+                                    <span class="trend-indicator trend-{{ stockTrend.direction }}">
+                                        <i class="fas fa-arrow-{{ stockTrend.direction }}"></i>
+                                        {{ stockTrend.trend >= 0 ? '+' : '' }}{{ stockTrend.trend|number_format(1) }}%
+                                    </span> vs hier
+                                </small>
+                            </div>
+                            <i class="fas fa-warehouse fa-2x"></i>
+                        </div>
+                        <small style="color: #a0a0a0;">Mis à jour: {{ "now"|date("d/m/Y H:i") }}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Entrepôts Actifs</h5>
+                                <p class="card-text display-6" id="activeWarehouses">{{ activeWarehouses|default(0)|number_format(0, ',', ' ') }}</p>
+                            </div>
+                            <i class="fas fa-building fa-2x"></i>
+                        </div>
+                        <small style="color: #a0a0a0;">En ligne actuellement</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card" id="alertCard">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Alertes</h5>
+                                <p class="card-text display-6" id="alertsCount">{{ alertsCount|default(0)|number_format(0, ',', ' ') }}</p>
+                            </div>
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                        <small style="color: #a0a0a0;">Stock faible détecté</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Répartition des stocks</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="stockPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Mouvement des stocks</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="stockMovementChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer mt-auto py-3">
+            <div class="container">
+                <span class="text-muted">© 2025 Gestion des Stocks. Tous droits réservés.</span>
+            </div>
+        </footer>
+    </main>
+    {% endblock %}
+
+    {% block javascripts %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Données initiales injectées depuis Twig
+        const timeRange = "{{ timeRange|default('7') }}";
+        const stockData = {
+            '7': {
+                total: {{ totalStocks|default(0)|json_encode|raw }},
+                warehouses: {{ activeWarehouses|default(0)|json_encode|raw }},
+                alerts: {{ alertsCount|default(0)|json_encode|raw }},
+                trend: {{ stockTrend|default({direction: 'up', trend: 0})|json_encode|raw }},
+                pie: {{ stockDistribution.quantities|default([])|json_encode|raw }},
+                movement: {{ stockMovement.quantities|default([])|json_encode|raw }}
+            },
+            '30': {
+                total: {{ stockRepository.getTotalStocks(30)|default(0)|json_encode|raw }},
+                warehouses: {{ activeWarehouses|default(0)|json_encode|raw }},
+                alerts: {{ stockRepository.getAlertsCount(30)|default(0)|json_encode|raw }},
+                trend: {{ stockRepository.getStockTrend(30)|default({direction: 'up', trend: 0})|json_encode|raw }},
+                pie: {{ stockRepository.getStockDistribution(30).quantities|default([])|json_encode|raw }},
+                movement: {{ stockRepository.getStockMovement(30).quantities|default([])|json_encode|raw }}
+            },
+            '31': {
+                total: {{ stockRepository.getTotalStocks(31)|default(0)|json_encode|raw }},
+                warehouses: {{ activeWarehouses|default(0)|json_encode|raw }},
+                alerts: {{ stockRepository.getAlertsCount(31)|default(0)|json_encode|raw }},
+                trend: {{ stockRepository.getStockTrend(31)|default({direction: 'up', trend: 0})|json_encode|raw }},
+                pie: {{ stockRepository.getStockDistribution(31).quantities|default([])|json_encode|raw }},
+                movement: {{ stockRepository.getStockMovement(31).quantities|default([])|json_encode|raw }}
+            },
+            '90': {
+                total: {{ stockRepository.getTotalStocks(90)|default(0)|json_encode|raw }},
+                warehouses: {{ activeWarehouses|default(0)|json_encode|raw }},
+                alerts: {{ stockRepository.getAlertsCount(90)|default(0)|json_encode|raw }},
+                trend: {{ stockRepository.getStockTrend(90)|default({direction: 'up', trend: 0})|json_encode|raw }},
+                pie: {{ stockRepository.getStockDistribution(90).quantities|default([])|json_encode|raw }},
+                movement: {{ stockRepository.getStockMovement(90).quantities|default([])|json_encode|raw }}
+            },
+            '365': {
+                total: {{ stockRepository.getTotalStocks(365)|default(0)|json_encode|raw }},
+                warehouses: {{ activeWarehouses|default(0)|json_encode|raw }},
+                alerts: {{ stockRepository.getAlertsCount(365)|default(0)|json_encode|raw }},
+                trend: {{ stockRepository.getStockTrend(365)|default({direction: 'up', trend: 0})|json_encode|raw }},
+                pie: {{ stockRepository.getStockDistribution(365).quantities|default([])|json_encode|raw }},
+                movement: {{ stockRepository.getStockMovement(365).quantities|default([])|json_encode|raw }}
+            }
+        };
+    
+        // Fonction pour formater les nombres avec séparateurs
+        const formatNumber = (num) => new Intl.NumberFormat('fr-FR').format(num);
+    
+        // Initialisation du graphique en donut (Répartition des stocks)
+        const pieChart = new Chart(document.getElementById('stockPieChart'), {
+            type: 'doughnut',
+            data: {
+                labels: {{ stockDistribution.labels|default([])|json_encode|raw }},
+                datasets: [{
+                    data: stockData[timeRange].pie,
+                    backgroundColor: ['#ff6b6b', '#00cc99', '#ffde7d', '#533483', '#f5a623'],
+                    borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'],
+                    borderWidth: 2,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            font: { size: 14, family: 'Raleway' },
+                            color: '#ffffff'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        titleFont: { size: 14, color: '#ffffff' },
+                        bodyFont: { size: 12, color: '#ffffff' },
+                        callbacks: {
+                            label: function (context) {
+                                const label = context.label || '';
+                                const value = formatNumber(context.raw);
+                                const total = context.dataset.data.reduce((a, b) => a + b);
+                                const percentage = ((context.raw / total) * 100).toFixed(1);
+                                return `${label}: ${value} unités (${percentage}%)`;
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Répartition des stocks',
+                        font: { size: 18, family: 'Raleway' },
+                        color: '#ff8787'
+                    }
+                }
+            }
+        });
+    
+        // Initialisation du graphique linéaire (Mouvement des stocks)
+        const lineChart = new Chart(document.getElementById('stockMovementChart'), {
+            type: 'line',
+            data: {
+                labels: {{ stockMovement.labels|default([])|json_encode|raw }},
+                datasets: [{
+                    label: 'Mouvement des stocks',
+                    data: stockData[timeRange].movement,
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255, 107, 107, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#ff6b6b',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutBounce'
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: {
+                            color: '#ffffff',
+                            callback: (value) => formatNumber(value) + ' u'
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#ffffff' }
+                    }
+                },
+              plugins: {
+    title: {
+        color: '#6200EE'
+    },
+    legend: {
+        labels: {
+            color: '#000000' // Noir pour les légendes
+        }
+    },
+    tooltip: {
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        titleFont: { color: '#000000' }, // Noir pour le tooltip
+        bodyFont: { color: '#000000' }
+    }
+}
+            }
+        });
+    
+        // Fonction pour mettre à jour le tableau de bord
+        function updateDashboard(timeRange) {
+            // Mettre à jour les cartes de résumé
+            document.getElementById('totalStock').textContent = formatNumber(stockData[timeRange].total);
+            document.getElementById('activeWarehouses').textContent = formatNumber(stockData[timeRange].warehouses);
+            document.getElementById('alertsCount').textContent = formatNumber(stockData[timeRange].alerts);
+    
+            // Mettre à jour la tendance des stocks
+            const trendIndicator = document.querySelector('#totalStock').closest('.col-md-4').querySelector('.trend-indicator');
+            trendIndicator.classList.remove('trend-up', 'trend-down');
+            trendIndicator.classList.add(`trend-${stockData[timeRange].trend.direction}`);
+            trendIndicator.innerHTML = `<i class="fas fa-arrow-${stockData[timeRange].trend.direction}"></i> ${stockData[timeRange].trend.trend >= 0 ? '+' : ''}${stockData[timeRange].trend.trend.toFixed(1)}% vs hier`;
+    
+            // Mettre à jour le graphique de répartition des stocks
+            pieChart.data.datasets[0].data = stockData[timeRange].pie;
+            pieChart.update();
+    
+            // Mettre à jour le graphique de mouvement des stocks
+            lineChart.data.datasets[0].data = stockData[timeRange].movement;
+            lineChart.update();
+        }
+    
+        // Écouteur d'événement pour le changement de filtre de temps
+        document.getElementById('timeFilter').addEventListener('change', function () {
+            const selectedValue = this.value;
+            updateDashboard(selectedValue);
+        });
+    
+        // Initialisation du tableau de bord avec la plage de temps par défaut (7 jours)
+        updateDashboard(timeRange);
+    });
+     </script>
+    {% endblock %}
+</html>

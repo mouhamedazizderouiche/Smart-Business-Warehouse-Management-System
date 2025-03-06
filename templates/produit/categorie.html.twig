@@ -1,0 +1,216 @@
+<head>
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+
+    <style>
+        /* General Styles */
+        .add-categorie-button {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #81c408;
+            height: 45px !important;
+            width: 180px !important;
+            border-radius: 4px;
+            color: #fff !important;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .add-categorie-button:hover {
+            background-color: #6daa07;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px; /* Add spacing between rows */
+            margin-bottom: 30px; /* Add space between tables */
+        }
+
+        .table thead th {
+            background-color: #81c408;
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 15px;
+            border: none;
+        }
+
+        .table tbody tr {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .table tbody td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border: none;
+        }
+
+        .table tbody td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .table tbody td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-buttons a {
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .fa, .fas {
+            color: #fff;
+        }
+
+        .add-subcategory-button {
+            background-color: #81c408;
+            color: #fff !important;
+        }
+
+        .supprimer-button {
+            background-color: #747D88;
+            color: #747D88 !important;
+        }
+
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .subcategory-table {
+            margin-top: 30px;
+        }
+
+        .subcategory-table thead th {
+            background-color: #81c408;
+        }
+
+        .subcategory-image {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+{% block body %}
+    {% include 'backoffice/sidebar.html.twig' %}
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <h1>Liste des catégories</h1>
+
+        <!-- Table for Parent Categories -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for categorie in categories %}
+                <tr>
+                    <td>
+                        {% if categorie.imgUrl %}
+                            <img src="{{ asset(categorie.imgUrl) }}" alt="{{ categorie.nom }}" class="subcategory-image">
+                        {% else %}
+                            <span class="no-data">Aucune image</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ categorie.nom }}</td>
+                    <td>{{ categorie.description }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a class="add-subcategory-button"
+                               href="{{ path('ajout_sous_categorie', {'id': categorie.id}) }}"
+                               title="Ajouter une sous-catégorie">
+                                <i class="fas fa-plus"></i>
+                                <span>Ajouter sous-catégorie</span>
+                            </a>
+                            <a class="supprimer-button" href="{{ path('supprimer_categorie', {'id': categorie.id}) }}"
+                               title="Supprimer">
+                                <i class="fas fa-trash-alt"></i>
+                                <span>Supprimer</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3" class="no-data">Aucune catégorie trouvée</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{{ path('ajout_categorie') }}" class="add-categorie-button">Ajouter une catégorie</a>
+
+        <!-- Table for Subcategories -->
+        <h2>Liste des sous-catégories</h2>
+        <table class="table subcategory-table">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Catégorie parente</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for categorie in categories %}
+                {% for subcategory in categorie.subcategories %}
+                    <tr>
+                        <td>
+                            {% if subcategory.imgUrl %}
+                                <img src="{{ asset(subcategory.imgUrl) }}" alt="{{ subcategory.nom }}"
+                                     class="subcategory-image">
+                            {% else %}
+                                <span class="no-data">Aucune image</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ subcategory.nom }}</td>
+                        <td>{{ subcategory.description }}</td>
+                        <td>{{ categorie.nom }}</td> <!-- Display parent category name -->
+                        <td>
+                            <div class="action-buttons">
+                                <a class="supprimer-button"
+                                   href="{{ path('supprimer_categorie', {'id': subcategory.id}) }}" title="Supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                    <span>Supprimer</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="no-data">Aucune sous-catégorie trouvée</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </main>
+{% endblock %}

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="" name="keywords" />
+    <meta content="" name="description" />
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icon Font Stylesheet -->
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet" />
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+
+<body>
+
+
+
+    <!-- Sidebar -->
+    <div class="container-fluid">
+      <nav id="sidebar">
+        <div class="position-sticky pt-3">
+          <img
+            src="{{ asset('images/logo.png') }}"
+            alt="Logo"
+            class="sidebar-logo"
+          />
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="{{ path('app_stock_dashboard') }}"
+                data-target="dashboard"
+              >
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de bord</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="{{ path('app_admin_user_index') }}"
+                data-target="gestion-utilisateur"
+              >
+                <i class="fas fa-chart-line"></i>
+                <span>Gestion Utilisateur</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ path('reclamation_showA') }}" data-target="gestion-reclamation">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span>Community </span>
+              </a>
+          </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="{{ path('app_evenement') }}"
+                data-target="gestion-evenement"
+              >
+                <i class="fas fa-calendar-alt"></i>
+                <span>Gestion Evenement</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="{{ path('liste_produits') }}"
+                data-target="gestion-produit"
+              >
+                <i class="fas fa-shopping-cart"></i>
+                <span>Gestion Produit</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                href="{{ path('liste_categories') }}"
+                data-target="categories"
+              >
+              <i class="fas fa-boxes"></i>
+                <span>Gestion Categorie</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ path('admin_commandes') }}">
+                <i class="fas fa-receipt"></i>
+                <span>Gestion Commande</span>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{{ path('app_stock_index') }}"  data-target="gestion-stocks">
+                <i class="fas fa-box"></i>
+                <span>Gestion Stocks</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ path('app_entrepot_index') }}"  data-target="gestion-stocks">
+                <i class="fas fa-box"></i>
+                <span>Gestion Entrepot</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout" >
+            <a class="nav-link text-white no-hover" href="{{ path('app_logout') }}" data-target="logout">
+                <i class="fas fa-sign-out-alt text-white"></i> 
+                <span>Logout</span>
+            </a>
+        </div>
+      </nav>
+    </div>
+    <!-- End Sidebar -->
+
+    <!-- JavaScript to Handle Active State -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const navLinks = document.querySelectorAll(".nav-link");
+          const currentUrl = window.location.href;
+
+          navLinks.forEach((link) => {
+              if (link.dataset.target === "logout") {
+                  return;
+              }
+
+              if (link.href === currentUrl) {
+                  link.classList.add("active");
+              }
+          });
+
+          navLinks.forEach((link) => {
+
+              if (link.dataset.target === "logout") {
+                  return;
+              }
+
+              link.addEventListener("click", function () {
+                  navLinks.forEach((el) => el.classList.remove("active"));
+                  this.classList.add("active");
+              });
+          });
+      });
+
+    </script>
+  </body>
+</html>

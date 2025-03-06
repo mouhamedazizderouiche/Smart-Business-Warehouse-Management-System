@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Password Reset Email Sent{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0fff0;
+            color: #2d572c;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 500px;
+            margin: 50px auto;
+            border-left: 5px solid #2d572c;
+        }
+        h1 {
+            color: #2d572c;
+        }
+        a {
+            color: #2d572c;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 300px; /* Augmenter la taille */
+    height: auto;
+}
+
+    </style>
+</head>
+<body>
+
+<img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo">
+
+<div class="container">
+    <h1>Réinitialisation du mot de passe</h1>
+    <p>
+        Un lien pour réinitialiser votre mot de passe vous a été envoyé.
+        Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+    </p>
+    <p>Si vous ne recevez pas d'email, vérifiez votre dossier spam ou <a href="{{ path('app_forgot_password_request') }}">essayez à nouveau</a>.</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+{# templates/stock/_form.html.twig #}
+
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="row g-3">
+        <div class="col-md-6">
+            {{ form_label(form.produit) }}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-cube"></i></span>
+                {{ form_widget(form.produit) }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            {{ form_label(form.quantite) }}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                {{ form_widget(form.quantite) }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            {{ form_label(form.dateEntree) }}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-calendar-plus"></i></span>
+                {{ form_widget(form.dateEntree) }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            {{ form_label(form.dateSortie) }}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-calendar-minus"></i></span>
+                {{ form_widget(form.dateSortie) }}
+            </div>
+        </div>
+        <div class="col-12 text-end">
+            <button type="submit" class="btn btn-primary shadow-sm">
+                <i class="fas fa-save mr-2"></i>{{ button_label|default('Enregistrer') }}
+            </button>
+        </div>
+    </div>
+{{ form_end(form) }}

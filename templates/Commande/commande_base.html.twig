@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>{% block title %}Commande{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ asset('lib/lightbox/css/lightbox.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet (même structure que homepage et checkout) -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+
+    {% block styles %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Inclusion de la navigation principale -->
+    {% include 'homepage/newNav.html.twig' %}
+
+    <!-- Messages Flash -->
+    {% for label, messages in app.flashes %}
+        <div class="flash-messages">
+            {% for message in messages %}
+                <div class="flash-message flash-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    <!-- Contenu Principal -->
+    <div class="container-fluid">
+        <div class="container py-5">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('lib/easing/easing.min.js') }}"></script>
+    <script src="{{ asset('lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ asset('lib/lightbox/js/lightbox.min.js') }}"></script>
+    <script src="{{ asset('lib/owlcarousel/owl.carousel.min.js') }}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{ asset('js/main.js') }}"></script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("🚀 Chargement global du panier");
+
+    function updateCartCount() {
+        fetch("/api/cart/count")
+        .then(response => response.json())
+        .then(data => {
+            const cartCountElement = document.getElementById("cart-count");
+            if (cartCountElement) {
+                cartCountElement.textContent = data.count;
+                cartCountElement.style.display = data.count > 0 ? "inline-block" : "none"; // Cacher si 0
+            }
+        })
+        .catch(error => console.error("❌ Erreur mise à jour panier :", error));
+    }
+
+    // 🚀 Mettre à jour le compteur au chargement de chaque page
+    updateCartCount();
+
+    // 🛒 Ajouter au panier et mettre à jour dynamiquement
+    document.querySelectorAll(".add-to-cart").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.preventDefault();
+            const productId = this.getAttribute("data-id");
+            const quantite = this.getAttribute("data-quantite");
+
+            fetch(`/produit/ajouter-au-panier/${productId}/${quantite}`, {
+                method: "POST",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Produit ajouté :", data);
+
+                // 🚀 Mettre à jour le compteur du panier après ajout
+                updateCartCount();
+            })
+            .catch(error => console.error("❌ Erreur AJAX :", error));
+        });
+    });
+});
+</script>
+
+</body>
+</html>

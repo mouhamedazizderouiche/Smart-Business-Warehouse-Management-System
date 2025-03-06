@@ -1,0 +1,205 @@
+{# templates/dashboard/index.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sidebar.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+
+{% include 'backoffice/sidebar.html.twig' %}
+
+            <!-- Contenu principal -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Tableau de bord</h1>
+                </div>
+
+                <!-- Cartes de résumé -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card text-white bg-primary mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Stocks Totaux</h5>
+                                <p class="card-text">unités</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-white bg-success mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Entrepôts Actifs</h5>
+                                <p class="card-text"> entrepôts</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-white bg-warning mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Alertes</h5>
+                                <p class="card-text">3 alertes</p> <!-- Vous pouvez remplacer par une logique dynamique -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphiques -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Répartition des stocks</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="stockPieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Mouvement des stocks</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="stockMovementChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+              
+               
+
+    <!-- Footer -->
+    <footer class="footer mt-auto py-3 bg-dark">
+        <div class="container">
+            <span class="text-muted">© 2023 Gestion des Stocks. Tous droits réservés.</span>
+        </div>
+    </footer>
+
+    <!-- JavaScript Libraries -->
+    <script src="lib/jquery/jquery.min.js"></script>
+    <script src="lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Scripts personnalisés -->
+    <script>
+        // Graphique de répartition des stocks
+        const stockPieChart = new Chart(document.getElementById('stockPieChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Bananes', 'Pommes de terre', 'Brocoli'], // Remplacez par des données dynamiques
+                datasets: [{
+                    label: 'Répartition des stocks',
+                    data: [300, 500, 200], // Remplacez par des données dynamiques
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Répartition des stocks par produit'
+                    }
+                }
+            }
+        });
+
+        // Graphique de mouvement de stock
+        const stockMovementChart = new Chart(document.getElementById('stockMovementChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil'], // Remplacez par des données dynamiques
+                datasets: [{
+                    label: 'Mouvement des stocks',
+                    data: [100, 150, 200, 180, 220, 250, 300], // Remplacez par des données dynamiques
+                    borderColor: '#36A2EB',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Évolution des stocks au fil du temps'
+                    }
+                }
+            }
+        });
+
+        // Basculer entre thème sombre et clair
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            body.classList.toggle('light-theme');
+            const isDarkTheme = body.classList.contains('dark-theme');
+            themeToggle.innerHTML = isDarkTheme ? '<i class="fas fa-sun"></i> Thème clair' : '<i class="fas fa-moon"></i> Thème sombre';
+        });
+
+        // Recherche dans le tableau
+        const searchInput = document.getElementById('searchInput');
+        const stockTable = document.getElementById('stockTable').getElementsByTagName('tbody')[0];
+
+        searchInput.addEventListener('input', () => {
+            const filter = searchInput.value.toLowerCase();
+            const rows = stockTable.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let match = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = match ? '' : 'none';
+            }
+        });
+    </script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>

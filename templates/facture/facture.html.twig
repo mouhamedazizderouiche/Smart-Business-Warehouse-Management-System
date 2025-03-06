@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture - {{ commande.id }}</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; margin: 20px; padding: 0; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+        h1, h2, h3 { text-align: center; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        .company-details, .client-details { width: 50%; }
+        .company-details { text-align: left; }
+        .client-details { text-align: right; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        .total-row { font-weight: bold; background-color: #f1f1f1; }
+        .footer { text-align: center; margin-top: 20px; font-size: 14px; color: #777; }
+        .signature { margin-top: 40px; display: flex; justify-content: space-between; }
+        .signature .client, .signature .company { width: 45%; text-align: center; }
+        .thanks { margin-top: 30px; text-align: center; font-size: 16px; font-weight: bold; color: #007bff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="company-details">
+                <h2> Agriplanner</h2>
+                <p>123 Rue de l'Agriculture, Tunis, Tunisie</p>
+                <p>Email : contact@agrocoop.tn</p>
+                <p>Tél : +216 71 123 456</p>
+            </div>
+            <div class="client-details">
+                <h3>Facture #{{ commande.id }}</h3>
+                <p>Date : {{ commande.dateCommande|date('d/m/Y H:i') }}</p>
+                <p>Client : {{ commande.user.nom }}</p>
+                <p>Email : {{ commande.user.email }}</p>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix Unitaire (DT)</th>
+                    <th>Total (DT)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ commande.nomProduit }}</td>
+                    <td>{{ commande.quantite }}</td>
+                    <td>{{ commande.produitPrix }} DT</td>
+                    <td class="total">{{ commande.prixTotal }} DT</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3"><strong>Montant total :</strong></td>
+                    <td><strong>{{ commande.prixTotal }} DT</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Signature Section -->
+        <div class="signature">
+            <div class="client">
+                <p>Signature du Client :</p>
+                <p>_______________________</p>
+            </div>
+            <div class="company">
+                <p>Signature de l'Entreprise :</p>
+                <p>_______________________</p>
+            </div>
+        </div>
+
+        <!-- Footer Section -->
+        <p class="thanks">Merci pour votre achat !  Nous espérons vous revoir bientôt.</p>
+        <p class="footer">Facture générée automatiquement - Aucune signature manuscrite requise.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends 'Commande/commande_base.html.twig' %}
+
+{% block title %}Mon Panier{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">🛒 Mon Panier</h2>
+
+    {% if commandes is empty %}
+        <p class="text-center text-muted">Votre panier est vide.</p>
+    {% else %}
+        {% set totalPanier = 0 %} {# Initialisation du total du panier #}
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Produit</th>
+                        <th>Image</th>
+                        <th>Quantité</th>
+                        <th>Prix Unitaire</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commande in commandes %}
+                        {% set produit = commande.produit %}
+                        {% set totalProduit = produit.prixUnitaire * commande.quantite %}
+                        {% set totalPanier = totalPanier + totalProduit %} {# Ajout au total général #}
+
+                        <tr>
+                            <td>{{ produit.nom }}</td>
+                            <td>
+                                <img src="{{ asset(produit.urlImageProduit) }}" width="80" height="80" alt="{{ produit.nom }}">
+                            </td>
+                            <td>
+                                <form action="{{ path('modifier_quantite', {id: commande.id}) }}" method="POST" class="d-flex">
+                                    <input type="number" name="quantite" value="{{ commande.quantite }}" min="1" class="form-control w-50">
+                                    <button type="submit" class="btn btn-warning ms-2">🔄</button>
+                                </form>
+                            </td>
+                            <td>{{ produit.prixUnitaire }} DT</td>
+                            <td>{{ totalProduit }} DT</td>
+                            <td>
+                                <a href="{{ path('supprimer_commande', {id: commande.id}) }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">❌</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ✅ Affichage du Total Général du Panier -->
+        <div class="text-end mt-3">
+            <h4>Total du panier: <strong>{{ totalPanier }} DT</strong></h4>
+        </div>
+    {% endif %}
+
+    <!-- Boutons d'action -->
+    <div class="text-center mt-4 d-flex justify-content-center gap-3">
+        <a href="{{ path('shop_produits') }}" class="btn btn-primary">🛍️ Continuer mes achats</a>
+        {% if commandes is not empty %}
+            <a href="{{ path('paiement') }}" class="btn btn-success">💳 Finaliser la commande</a>
+        {% endif %}
+        <a href="{{ path('historique_commandes') }}" class="btn btn-info">📜 Voir Historique</a>
+    </div>
+</div>
+{% endblock %}

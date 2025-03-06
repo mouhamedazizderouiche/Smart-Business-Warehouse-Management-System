@@ -1,0 +1,275 @@
+{# templates/dashboard/index.html.twig #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dashboard - Gestion des Stocks</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ asset('lib/lightbox/css/lightbox.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css') }}" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary:rgb(224, 224, 115);
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .page-wrapper {
+            padding: 2rem;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .reclamation-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .reclamation-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(74, 144, 226, 0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+            z-index: -1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+            text-shadow: 2px 2px 4px #27ae60;
+        }
+
+        p {
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .form-control, .textarea {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .title-input {
+            border: 2px solid var(--secondary);
+            font-weight: 600;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #fff, #f8f9fa);
+        }
+
+        .textarea {
+            min-height: 200px;
+            resize: vertical;
+            background: linear-gradient(45deg, #fff, #f8f9fa);
+        }
+
+        .form-control:focus, .textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px #27ae60;
+            background: white;
+        }
+
+        .submit-button {
+            background: linear-gradient(45deg, var(--secondary), #27ae60);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+            background: linear-gradient(45deg, #27ae60, var(--secondary));
+        }
+
+        .error-message {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            position: absolute;
+            bottom: -1.5rem;
+            left: 0;
+        }
+
+        .required {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* Floating effect for labels when focused */
+        .form-group:focus-within label {
+            transform: translateY(-20px);
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .reclamation-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'backoffice/sidebar.html.twig' %}
+
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="page-wrapper">
+            <div class="content-container">
+                <div class="main-container">
+                    <div class="reclamation-container">
+                        <h1>Edit Your Reclamation</h1>
+                        <p>Refine your thoughts and let us assist you better</p>
+
+                        <div class="particles" id="particles"></div>
+
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                        <div class="form-group">
+                            <label for="{{ form.title.vars.id }}">Title <span class="required">*</span></label>
+                            {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
+                            <div class="error-message">{{ form_errors(form.title) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.description.vars.id }}">Your Thoughts <span class="required">*</span></label>
+                            {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
+                            <div class="error-message">{{ form_errors(form.description) }}</div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form_widget(form.save, {'attr': {'class': 'submit-button'}}) }}
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Particle animation
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: ${Math.random() * 5 + 2}px;
+                height: ${Math.random() * 5 + 2}px;
+                background: rgba(74, 144, 226, ${Math.random() * 0.3 + 0.1});
+                border-radius: 50%;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                animation: float ${Math.random() * 5 + 3}s infinite ease-in-out;
+                animation-delay: ${Math.random() * 2}s;
+            `;
+            particlesContainer.appendChild(particle);
+        }
+
+        // Form animation on load
+        document.querySelectorAll('.form-group').forEach(group => {
+            group.style.opacity = '0';
+            group.animate([
+                { opacity: 0, transform: 'translateY(20px)' },
+                { opacity: 1, transform: 'translateY(0)' }
+            ], {
+                duration: 500,
+                easing: 'ease-out',
+                delay: 200 * Array.from(group.parentElement.children).indexOf(group)
+            }).onfinish = () => group.style.opacity = '1';
+        });
+    </script>
+</body>
+</html>

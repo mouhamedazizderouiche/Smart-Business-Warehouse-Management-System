@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    {% block titre %} <title>AgriPlanner</title> {% endblock %}
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+    <!-- Favicon -->
+    <link href="templateFront/img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    {% block css %}
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="{{ asset('templateFront/lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('templateFront/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css') }}"
+              rel="stylesheet"/>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    {% endblock %}
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ asset('templatefront/css/style.css') }}" rel="stylesheet">
+
+</head>
+ <!-- Loader CSS -->
+    <style>
+        /* Loader Styles */
+        #global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Ensure it's on top of everything */
+        }
+
+        .loader {
+            position: relative;
+            width: 2.5em;
+            height: 2.5em;
+            transform: rotate(165deg);
+        }
+
+        .loader:before, .loader:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: block;
+            width: 0.5em;
+            height: 0.5em;
+            border-radius: 0.25em;
+            transform: translate(-50%, -50%);
+        }
+
+        .loader:before {
+            animation: before8 2s infinite;
+        }
+
+        .loader:after {
+            animation: after6 2s infinite;
+        }
+
+        @keyframes before8 {
+            0% {
+                width: 0.5em;
+                box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+            }
+            35% {
+                width: 2.5em;
+                box-shadow: 0 -0.5em rgba(225, 20, 98, 0.75), 0 0.5em rgba(111, 202, 220, 0.75);
+            }
+            70% {
+                width: 0.5em;
+                box-shadow: -1em -0.5em rgba(225, 20, 98, 0.75), 1em 0.5em rgba(111, 202, 220, 0.75);
+            }
+            100% {
+                box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
+            }
+        }
+
+        @keyframes after6 {
+            0% {
+                height: 0.5em;
+                box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+            }
+            35% {
+                height: 2.5em;
+                box-shadow: 0.5em 0 rgba(61, 184, 143, 0.75), -0.5em 0 rgba(233, 169, 32, 0.75);
+            }
+            70% {
+                height: 0.5em;
+                box-shadow: 0.5em -1em rgba(61, 184, 143, 0.75), -0.5em 1em rgba(233, 169, 32, 0.75);
+            }
+            100% {
+                box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Global Loader -->
+    <div id="global-loader">
+        <div class="loader"></div>
+    </div>
+
+    {% block header %}
+    
+        <!-- Topbar Start -->
+        <div class="container-fluid bg-light pt-3 d-none d-lg-block">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+                        <div class="d-inline-flex align-items-center">
+                            <p><i class="fa fa-envelope mr-2"></i>contact@agriplanner.tn</p>
+                            <p class="text-body px-3">|</p>
+                            <p><i class="fa fa-phone-alt mr-2"></i>+216 71 000 000</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 text-center text-lg-right">
+                        <div class="d-inline-flex align-items-center">
+                            <a class="text-primary px-3" href="">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a class="text-primary px-3" href="">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a class="text-primary px-3" href="">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a class="text-primary px-3" href="">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a class="text-primary pl-3" href="">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+    <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+            <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+                <a class="navbar-brand">
+                    <h1 class="m-0 text-primary" style="font-size: 28px;"><span class="text-dark">Agri</span>Planner</h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <div class="navbar-nav ml-auto py-0">
+                        <a class="nav-item nav-link active" href="/home">Home</a>
+                        <a class="nav-item nav-link" href="/register">Sign Up</a> <!-- Remplacez "/about" par l'URL de la page "About" -->
+                        <a class="nav-item nav-link" href="/login">Log in</a> <!-- Remplacez "/about" par l'URL de la page "About" -->
+
+                        <a class="nav-item nav-link" href="/contact">Contact</a> <!-- Remplacez "/contact" par l'URL de la page "Contact" -->
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+
+    {% block body %}{% endblock %}
+
+    <!-- JavaScript to Control Loader -->
+    <script>
+        // Hide the loader when the page is fully loaded
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('global-loader');
+            loader.style.display = 'none';
+        });
+
+        // Show the loader immediately when the page starts loading
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('global-loader').style.display = 'flex';
+        });
+    </script>
+
+    {% block javascripts %}{% endblock %}
+</body>
+
+
+
+
+{# <body>
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-light pt-3 d-none d-lg-block">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 text-center text-lg-left mb-2 mb-lg-0">
+                  
+                </div>
+                <div class="col-lg-6 text-center text-lg-right">
+                    <div class="d-inline-flex align-items-center">
+                        <a class="text-primary px-3" href="">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a class="text-primary px-3" href="">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="text-primary px-3" href="">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a class="text-primary px-3" href="">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a class="text-primary pl-3" href="">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div> #}
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Header Start -->
+
+{% endblock %}
+    
+
+
+    
+
+
+    <script src="//code.tidio.co/utiubshkqedllfk1bb1m20ys4hdqefng.js" async></script>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+{% block js %}
+
+    <!-- JavaScript Libraries -->
+    <script src="{{ asset('https://code.jquery.com/jquery-3.4.1.min.js') }}"></script>
+    <script src="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js') }}"></script>
+    <script src="{{ asset('templateFront/lib/easing/easing.min.js') }}"></script>
+    <script src="{{ asset('templateFront/lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('templateFront/lib/tempusdominus/js/moment.min.js') }}"></script>
+    <script src="{{ asset('templateFront/lib/tempusdominus/js/moment-timezone.min.js') }}"></script>
+    <script src="{{ asset('templateFront/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="{{ asset('templateFront/mail/jqBootstrapValidation.min.js') }}"></script>
+    <script src="{{ asset('templateFront/mail/contact.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('mohamed_Css/script.js') }}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{ asset('templateFront/js/main.js') }}"></script>
+
+{% endblock %}
+
+</body>
+
+</html>

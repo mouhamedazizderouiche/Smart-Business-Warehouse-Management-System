@@ -1,0 +1,336 @@
+{% block head %}
+    <link rel="stylesheet" href="{{ asset('css/homepage.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --secondary: #27ae60;
+            --dark: #2d3436;
+            --light: #f7f8fc;
+            --accent: #3498db;
+            --error: #e74c3c;
+        }
+
+        * {
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(120deg, #f0f2f5 0%, #e6eef9 100%);
+            margin: 0;
+            padding: 0;
+        }
+
+        .reclamation-container {
+            max-width: 700px;
+            margin: 80px auto;
+            padding: 40px;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 2.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .reclamation-container p {
+            color: #666;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .required {
+            color: var(--primary);
+        }
+
+        .form-control, .textarea {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            background: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .textarea {
+            min-height: 220px;
+            resize: vertical;
+        }
+
+        .title-input {
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: 2px solid var(--primary);
+        }
+
+        .form-control:focus, .textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.2);
+            outline: none;
+        }
+
+        .submit-button {
+            background: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .submit-button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .submit-button::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .submit-button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Footer Styling */
+        .footer {
+            background: var(--dark);
+            padding: 60px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.1), transparent);
+        }
+
+        .footer h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .footer-item h4 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .footer-item p, .btn-link {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            padding: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .btn-link:hover {
+            color: var(--primary);
+            padding-left: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline-secondary {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .form-control.border-0 {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 20px;
+        }
+
+        .form-control.border-0::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 600px) {
+            .reclamation-container {
+                margin: 40px 15px;
+                padding: 25px;
+            }
+            h1 { font-size: 1.9rem; }
+            .footer { padding: 40px 0 0; }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% include 'homepage/newNav.html.twig' %}
+
+    <div class="reclamation-container">
+        <h1>Edit Problem</h1>
+        <p>Please update your reclamation details below.</p>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <div class="form-group">
+            <label for="{{ form.title.vars.id }}">Title: <span class="required">*</span></label>
+            {{ form_widget(form.title, {'attr': {'class': 'form-control title-input'}}) }}
+            {% for error in form.title.vars.errors %}
+                <div class="error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.vars.id }}">Describe Your Reclamation: <span class="required">*</span></label>
+            {{ form_widget(form.description, {'attr': {'class': 'textarea'}}) }}
+            {% for error in form.description.vars.errors %}
+                <div class="error-message">{{ error.message }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form_widget(form.save, {'attr': {'class': 'submit-button'}}) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(46, 204, 113, 0.2);">
+                <div class="row g-4 align-items-center">
+                    <div class="col-lg-3">
+                        <a href="#">
+                            <h1 class="mb-0">Fruitables</h1>
+                            <p class="text-secondary mb-0">Fresh products</p>
+                        </a>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="position-relative mx-auto">
+                            <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="email" placeholder="Your Email">
+                            <button type="submit" class="btn btn-primary border-0 py-3 px-4 position-absolute rounded-pill text-white" style="top: 0; right: 0;">Subscribe Now</button>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="d-flex justify-content-end pt-3">
+                            <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-secondary btn-md-square rounded-circle" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-item">
+                        <h4>Why Choose Us</h4>
+                        <p class="mb-4">Premium quality products and exceptional service that keeps our customers coming back.</p>
+                        <a href="" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Read More</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="d-flex flex-column text-start footer-item">
+                        <h4>Shop Info</h4>
+                        <a class="btn-link" href="">About Us</a>
+                        <a class="btn-link" href="">Contact Us</a>
+                        <a class="btn-link" href="">Privacy Policy</a>
+                        <a class="btn-link" href="">Terms & Conditions</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="d-flex flex-column text-start footer-item">
+                        <h4>Account</h4>
+                        <a class="btn-link" href="">My Account</a>
+                        <a class="btn-link" href="">Shop Details</a>
+                        <a class="btn-link" href="">Shopping Cart</a>
+                        <a class="btn-link" href="">Wishlist</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-item">
+                        <h4>Contact</h4>
+                        <p>Address: 1429 Netus Rd, NY 48247</p>
+                        <p>Email: Example@gmail.com</p>
+                        <p>Phone: +0123 4567 8910</p>
+                        <p>Payment Accepted</p>
+                        <img src="img/payment.png" class="img-fluid" alt="Payment Methods">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

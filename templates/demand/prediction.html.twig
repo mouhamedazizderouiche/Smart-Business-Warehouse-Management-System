@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport de Prédiction de la Demande</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .alert {
+            color: red;
+            font-weight: bold;
+        }
+        .error {
+            color: darkred;
+            background-color: #ffebee;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Rapport de Prédiction de la Demande</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Stock Actuel</th>
+                <th>Demande Prédite</th>
+                <th>Recommandation</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product_id, recommendation in recommendations %}
+                <tr>
+                    <td>{{ product_id }}</td>
+                    {% if recommendation.error is defined %}
+                        <td colspan="3" class="error">
+                            Erreur : {{ recommendation.error }}
+                        </td>
+                    {% else %}
+                        <td>{{ recommendation.current_stock }}</td>
+                        <td>{{ recommendation.predicted_demand }}</td>
+                        <td class="{{ recommendation.recommendation == 'Stock suffisant' ? '' : 'alert' }}">
+                            {{ recommendation.recommendation }}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

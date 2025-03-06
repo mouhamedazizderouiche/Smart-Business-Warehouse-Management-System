@@ -1,0 +1,14 @@
+knp_snappy:
+    pdf:
+         enabled: true
+         binary: '%kernel.project_dir%/bin/wkhtmltopdf/bin/wkhtmltopdf.exe'
+         options:
+            page-size: A4
+            margin-top: 10mm
+            margin-bottom: 10mm
+            margin-left: 10mm
+            margin-right: 10mm
+    image:
+        enabled:    true
+        binary:     '%kernel.project_dir%/bin/wkhtmltopdf/bin/wkhtmltoimage.exe'
+        options:    []

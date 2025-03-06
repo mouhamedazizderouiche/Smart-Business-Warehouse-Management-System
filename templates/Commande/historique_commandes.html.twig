@@ -1,0 +1,82 @@
+{% extends 'Commande/commande_base.html.twig' %}
+
+{% block title %}Historique des Commandes{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">📜 Historique des Commandes</h2>
+
+    {% if commandesFinalisees is empty %}
+        <div class="alert alert-info text-center">Aucune commande finalisée pour l'instant.</div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered text-center big-table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="text-white bg-dark">📅 Date</th>
+                        <th class="text-white bg-dark">🛍 Produit</th>
+                        <th class="text-white bg-dark">🔢 Qté</th>
+                        <th class="text-white bg-dark">💰 Total (DT)</th>
+                        <th class="text-white bg-dark">🛑 Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commande in commandesFinalisees %}
+                        <tr data-id="{{ commande.id }}">
+                            <td style="font-size: 15px; font-weight: 500;">{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+                            <td style="font-size: 15px;">{{ commande.nomProduit }}</td>
+                            <td style="font-size: 15px;">{{ commande.quantite }}</td>
+                            <td style="font-size: 15px; color: green; font-weight: bold;">{{ commande.prixTotal }} DT</td>
+                            <td class="d-flex gap-2 justify-content-center">
+                                
+                                <!-- 🔴 Bouton Télécharger Facture -->
+                                <a href="{{ path('facture_utilisateur', { id: commande.id }) }}" 
+                                   class="btn btn-primary btn-sm" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> Facture
+                                </a>
+
+                                <!-- 🗑 Bouton Supprimer -->
+                                <a href="{{ path('supprimer_commande_historique', { id: commande.id }) }}" 
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette commande de l’historique ?');">
+                                    🗑 Supprimer
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{{ path('mon_panier') }}" class="btn btn-primary btn-lg">🛒 Retour au panier</a>
+    </div>
+</div>
+
+<style>
+    .big-table th, .big-table td {
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+
+    .table thead th {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background-color: #343a40 !important;
+    }
+
+    .container {
+        max-width: 90%;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+{% endblock %}

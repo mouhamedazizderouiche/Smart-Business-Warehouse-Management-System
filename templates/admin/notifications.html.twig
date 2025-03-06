@@ -1,0 +1,29 @@
+
+
+{% block body %}
+    <h1>Admin Notifications</h1>
+    <ul id="notifications-list">
+        <!-- Notifications will be added here dynamically -->
+    </ul>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script>
+        // Enable Pusher logging
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher('5e84f2b708f7b43445d8', {
+            cluster: 'eu',
+            forceTLS: true
+        });
+
+        var channel = pusher.subscribe('admin-notifications');
+        channel.bind('new-reclamation', function(data) {
+            console.log("New reclamation received:", data);
+            var notificationItem = '<li><strong>' + data.user + '</strong> added a new reclamation: <em>' + data.title + '</em></li>';
+            $('#notifications-list').append(notificationItem);
+        });
+    </script>
+{% endblock %}

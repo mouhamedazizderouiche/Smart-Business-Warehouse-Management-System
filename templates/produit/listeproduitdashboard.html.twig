@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title | default('Fruitables - Vegetable Website Template') }}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="{{ meta_keywords | default('') }}" name="keywords">
+    <meta content="{{ meta_description | default('') }}" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ asset('lib/lightbox/css/lightbox.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/sidebar.css')}}" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
+
+        body{
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .fruite-item {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .fruite-img img {
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .image-containter{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .p-4 {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .d-flex.justify-content-between {
+            margin-top: auto;
+        }
+
+        .container-fluid.page-header.py-5 {
+            background: url("{{ asset('images/cart-page-header-img.jpg') }}") no-repeat center center;
+            background-size: cover;
+        }
+
+        .fruite-categorie li {
+            list-style-type: none;
+            padding: 10px 0;
+        }
+
+        .fruite-name a {
+            text-decoration: none;
+            color: #555;
+        }
+
+        .fruite-name span {
+            font-weight: bold;
+        }
+
+        .container-flui
+        {
+            display: flex;
+            align-items: center;
+            margin: 18px 0 0 0;
+        }
+
+        .add-btn
+        {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #81c408;
+            height: 45px !important;
+            width: 180px !important;
+            border-radius: 4px;
+            color:#fff;
+            cursor: pointer;
+            margin: 0 12px 20px auto;
+        }
+
+        row.g-4.justify-content-center
+        {
+            margin: 0 0 10px 0 !important;
+        }
+
+        .container.py-5
+        {
+            margin: 0 0 0 auto !important;
+        }
+
+        .col-lg-9 {
+            margin-left: auto !important; /* Force override */
+        }
+
+        .img-fluid
+        {
+            height: 60px !important;
+            width: 60px !important;
+        }
+
+        .d-flex gap-2
+        {
+           display: flex;
+        }
+
+        h1 {
+            margin: 0 0 40px 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+{% include 'backoffice/sidebar.html.twig' %}
+
+
+<!-- Modal Search Start -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center">
+                <div class="input-group w-75 mx-auto d-flex">
+                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Search End -->
+
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <h1>Liste produits</h1>
+<!-- Fruits Shop Start -->
+<div class="container-fluid fruite py-5">
+    <div class="container py-5" >
+        <div class="container-flui">
+            <div class="add-btn" onclick="window.location.href='{{ path('ajout_produit') }}'">Ajouter produit</div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-12">
+                <div class="row g-4">
+                    <div class="col-lg-3">
+
+                    </div>
+                </div>
+
+
+                <!-- Product Table -->
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Catégorie</th>
+                            <th>Prix</th>
+                            <th>Quantité</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for produit in produits %}
+                            <tr>
+
+                                <td>{{ produit.nom }}</td>
+                                <td>{{ produit.description }}</td>
+                                <td>{{ produit.categorie.nom }}</td>
+                                <td>{{ produit.prixUnitaire }} DT</td>
+                                <td>{{ produit.quantite}}</td>
+                                <td class="image-containter">
+                                    <img src="{{ asset(produit.urlImageProduit) }}" class="img-fluid" alt="Image produit" style="width: 100px;">
+                                </td>
+                                <td class="action-container">
+                                    <div class="d-flex gap-2">
+
+                                        <a href="{{ path('edit_produit', {id: produit.id}) }}" class="btn btn-sm btn-warning" title="Modifier">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+
+                                        <a href="{{ path('delete_produit', {id: produit.id}) }}" class="btn btn-sm btn-danger" title="Supprimer"
+                                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucun produit trouvé</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                <!-- End Product Table -->
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Fruits Shop End -->
+</main>
+<!-- Back to Top -->
+<a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+<!-- JavaScript Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="lib/easing/easing.min.js"></script>
+<script src="lib/waypoints/waypoints.min.js"></script>
+<script src="lib/lightbox/js/lightbox.min.js"></script>
+<script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="js/main.js"></script>
+</body>
+
+</html>

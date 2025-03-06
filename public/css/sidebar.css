@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
+#sidebar {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    background-color: rgba(29, 31, 34, 0.95);
+    background-image: url('../sidebar-2.jpg');
+    background-blend-mode: overlay;
+    background-size: cover;
+    background-position: center;
+    text-align: left;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+a,span{
+    color: #fff !important;
+}
+
+#sidebar .logo {
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.nav.flex-column {
+    text-align: left;
+    padding: 10px 12px 0 12px;
+}
+
+.nav-item {
+    text-align: left;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding-left: 5px;
+    margin: 8px 0 0 0;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-link.active {
+    background-color:  #81c408;
+    height: 45px !important;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+
+img.sidebar-logo
+{
+    margin: 12px 0 0 12px;
+    width: 200px;
+}
+
+.nav-link i {
+    margin: 0 8px 0 12px;
+}
+
+.content-page {
+    padding: 0 0 0 90px;
+}
