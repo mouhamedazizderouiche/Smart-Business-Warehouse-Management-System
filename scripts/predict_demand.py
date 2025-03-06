@@ -1,6 +1,7 @@
 import pandas as pd
 from statsmodels.tsa.arima.model import ARIMA
 import json
+import requests
 
 def predict_demand_for_all_products(stock_data):
     # Convertir les données de stock en DataFrame pandas
@@ -46,5 +47,13 @@ def predict_demand_for_all_products(stock_data):
         # Convertir les résultats en format JSON
         forecast_dict = {date.strftime('%Y-%m-%d'): round(quantity, 2) for date, quantity in forecast.items()}
         predictions[product_id] = forecast_dict
+        url = "http://example.com/api/stock/predictions"
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, headers=headers, data=json.dumps(predictions))
+
+    if response.status_code == 200:
+        print("Prédictions envoyées avec succès.")
+    else:
+        print("Erreur lors de l'envoi des prédictions.")
 
     return predictions
